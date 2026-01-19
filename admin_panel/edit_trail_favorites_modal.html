@@ -1,0 +1,21 @@
+<!-- Edit Trail Favorites Modal -->
+<div id="editTrailFavoritesModal" class="modal">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="editTrailFavoritesTitle" aria-describedby="editTrailFavoritesDesc" tabindex="-1">
+        <h2 id="editTrailFavoritesTitle">Edit Trail Favorites</h2>
+        <p id="editTrailFavoritesDesc">Select which products to feature in your Trail Favorites section:</p>
+        
+        <div class="product-list" id="available-products">
+            <!-- Available products will be listed here -->
+        </div>
+        
+        <h3>Current Trail Favorites</h3>
+        <div class="product-list" id="trail-favorites-list">
+            <!-- Current trail favorites will be listed here -->
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" class="cancel-btn" onclick="closeModal('editTrailFavoritesModal')">Cancel</button>
+            <button type="button" class="save-btn" onclick="saveTrailFavorites()">Save Changes</button>
+        </div>
+    </div>
+</div>

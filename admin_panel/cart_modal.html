@@ -1,0 +1,42 @@
+<!-- Cart Drawer Modal -->
+<div id="cartModal" class="modal" style="display:none;">
+    <div class="modal-content cart-panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle" tabindex="-1">
+        <div class="cart-header">
+            <h2 id="cartTitle">Your Cart</h2>
+            <button class="cancel-btn" onclick="closeModal('cartModal')">Close</button>
+        </div>
+        <div id="cartItems" class="cart-items" aria-live="polite"></div>
+        <div class="cart-extra">
+            <div class="promo-row">
+                <input id="promoCode" type="text" placeholder="Promo code" aria-label="Promo code">
+                <button class="apply-btn" onclick="applyPromo()">Apply</button>
+            </div>
+            <div class="shipping-row">
+                <select id="shippingRegion" aria-label="Shipping region" onchange="renderCart()">
+                    <option value="sa">South Africa</option>
+                    <option value="intl">International</option>
+                </select>
+                <div id="shippingAmount" aria-label="Shipping amount">Shipping: R 0.00</div>
+            </div>
+        </div>
+        <div class="cart-footer" style="flex-direction: column; align-items: stretch; gap: 0.5rem;">
+            <div style="display:flex; justify-content: space-between;">
+                <div>Subtotal</div>
+                <div id="cartSubtotal">R 0.00</div>
+            </div>
+            <div style="display:flex; justify-content: space-between;">
+                <div>Discount</div>
+                <div id="cartDiscount">- R 0.00</div>
+            </div>
+            <div style="display:flex; justify-content: space-between;">
+                <div>Shipping</div>
+                <div id="cartShipping">R 0.00</div>
+            </div>
+            <div style="display:flex; justify-content: space-between; font-weight: 700;">
+                <div>Total</div>
+                <div id="cartTotal" aria-label="Cart total">R 0.00</div>
+            </div>
+            <button id="checkoutBtn" class="checkout-btn" onclick="openCheckout()">Checkout</button>
+        </div>
+    </div>
+</div>
