@@ -10,6 +10,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
         rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-init.js"></script>
+    <script src="/js/auth.js"></script>
     <style>
         :root {
             --bg-color: #FFFFFF;
@@ -368,7 +371,7 @@
 
             <div class="section-title">
                 Contact
-                <span class="sign-in-link">Log in</span>
+                <span class="sign-in-link" id="loginLink" onclick="openLoginModal('signin')">Log in</span>
             </div>
             <div class="form-group">
                 <input type="email" id="email" placeholder="Email" required>
@@ -417,14 +420,6 @@
                 <div class="form-group">
                     <input type="text" id="city" placeholder="City" required>
                     <span class="required-star" id="star-city">*</span>
-                </div>
-                <div class="form-group">
-                    <select id="province">
-                        <option value="" disabled selected>Province</option>
-                        <option value="Gauteng">Gauteng</option>
-                        <option value="Western Cape">Western Cape</option>
-                        <option value="KwaZulu-Natal">KwaZulu-Natal</option>
-                    </select>
                 </div>
                 <div class="form-group">
                     <input type="text" id="postalCode" placeholder="Postal code" required>
@@ -493,6 +488,82 @@
                     </span>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Login/Signup Modal -->
+    <div id="loginModal" class="modal"
+        style="display: none; position: fixed; z-index: 2001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(5px); align-items: center; justify-content: center;">
+        <div
+            style="background-color: #fff; width: 90%; max-width: 400px; border-radius: 16px; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); position: relative; text-align: center;">
+            <button onclick="closeModal('loginModal')"
+                style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999;">&times;</button>
+
+            <div class="login-header">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 10px; color: #000;">
+                    Welcome Back</h2>
+                <p style="color: #666; margin-bottom: 30px; font-size: 0.95rem;">Sign in to access your saved profile.
+                </p>
+            </div>
+
+            <div style="display: flex; margin-bottom: 25px; border-bottom: 1px solid #eee;">
+                <button class="auth-tab active" onclick="switchAuthTab('signin')"
+                    style="flex: 1; padding: 15px; background: none; border: none; font-size: 1rem; font-weight: 600; color: #A0522D; cursor: pointer; border-bottom: 2px solid #A0522D;">Sign
+                    In</button>
+                <button class="auth-tab" onclick="switchAuthTab('signup')"
+                    style="flex: 1; padding: 15px; background: none; border: none; font-size: 1rem; font-weight: 600; color: #999; cursor: pointer;">Sign
+                    Up</button>
+            </div>
+
+            <form id="signinForm" onsubmit="handleEmailSignIn(event)"
+                style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="text-align: left;">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 5px;">Email</label>
+                    <input type="email" id="signinEmail" placeholder="name@example.com" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+                <div style="text-align: left;">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 5px;">Password</label>
+                    <input type="password" id="signinPassword" placeholder="••••••••" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+                <button type="submit"
+                    style="background: #000; color: #fff; border: none; padding: 14px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px;">Sign
+                    In</button>
+            </form>
+
+            <form id="signupForm" onsubmit="handleEmailSignUp(event)"
+                style="display: none; flex-direction: column; gap: 15px;">
+                <div style="text-align: left;">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 5px;">Email</label>
+                    <input type="email" id="signupEmail" placeholder="name@example.com" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+                <div style="text-align: left;">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 5px;">Password</label>
+                    <input type="password" id="signupPassword" placeholder="Create a password" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+                <button type="submit"
+                    style="background: #000; color: #fff; border: none; padding: 14px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px;">Create
+                    Account</button>
+            </form>
+
+            <div style="display: flex; align-items: center; margin: 25px 0; color: #999; font-size: 0.85rem;">
+                <div style="flex: 1; height: 1px; background: #eee;"></div>
+                <span style="padding: 0 10px;">OR</span>
+                <div style="flex: 1; height: 1px; background: #eee;"></div>
+            </div>
+
+            <button onclick="handleGoogleSignIn()"
+                style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: #fff; border: 1px solid #ddd; border-radius: 8px; cursor: pointer;">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18">
+                Continue with Google
+            </button>
         </div>
     </div>
 
@@ -690,6 +761,9 @@
             payButton.disabled = true;
             payButton.textContent = 'Creating payment session...';
 
+            // Save profile before proceeding
+            await saveUserProfile();
+
             try {
                 const cart = loadCart();
                 if (cart.length === 0) {
@@ -764,6 +838,74 @@
             payButton.style.cursor = allFilled ? 'pointer' : 'not-allowed';
         }
 
+        // Supabase Profile Sync
+        async function loadUserProfile() {
+            if (typeof supabaseClient === 'undefined') return;
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session?.user) return;
+
+            // Auto-fill email
+            const emailEl = document.getElementById('email');
+            if (emailEl) emailEl.value = session.user.email;
+
+            // Fetch profile data
+            const { data: profile } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .maybeSingle();
+
+            if (profile) {
+                if (profile.first_name) document.getElementById('firstName').value = profile.first_name;
+                if (profile.last_name) document.getElementById('lastName').value = profile.last_name;
+                if (profile.address) document.getElementById('address').value = profile.address;
+                if (profile.apartment) document.getElementById('apartment').value = profile.apartment;
+                if (profile.city) document.getElementById('city').value = profile.city;
+                if (profile.postal_code) document.getElementById('postalCode').value = profile.postal_code;
+                if (profile.phone) document.getElementById('phone').value = profile.phone;
+
+                validateForm();
+            }
+        }
+
+        async function saveUserProfile() {
+            if (typeof supabaseClient === 'undefined') return;
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session?.user) return;
+
+            const profileData = {
+                id: session.user.id,
+                email: document.getElementById('email').value,
+                first_name: document.getElementById('firstName').value,
+                last_name: document.getElementById('lastName').value,
+                address: document.getElementById('address').value,
+                apartment: document.getElementById('apartment').value,
+                city: document.getElementById('city').value,
+                postal_code: document.getElementById('postalCode').value,
+                phone: document.getElementById('phone').value,
+                updated_at: new Date().toISOString()
+            };
+
+            await supabaseClient.from('profiles').upsert(profileData);
+        }
+
+        // Debounce helper
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        const debouncedSave = debounce(saveUserProfile, 2000);
+
         document.getElementById('pay-button').addEventListener('click', proceedToPayment);
 
         // Check for payment error in URL
@@ -772,14 +914,65 @@
             showError('Payment failed. Please try again.');
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+
+        function switchAuthTab(tab) {
+            const signinForm = document.getElementById('signinForm');
+            const signupForm = document.getElementById('signupForm');
+            const tabs = document.querySelectorAll('.auth-tab');
+
+            if (tab === 'signin') {
+                signinForm.style.display = 'flex';
+                signupForm.style.display = 'none';
+                tabs[0].style.color = '#A0522D';
+                tabs[0].style.borderBottom = '2px solid #A0522D';
+                tabs[1].style.color = '#999';
+                tabs[1].style.borderBottom = 'none';
+            } else {
+                signinForm.style.display = 'none';
+                signupForm.style.display = 'flex';
+                tabs[1].style.color = '#A0522D';
+                tabs[1].style.borderBottom = '2px solid #A0522D';
+                tabs[0].style.color = '#999';
+                tabs[0].style.borderBottom = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
             renderCheckout();
             validateForm();
+            await loadUserProfile();
+
+            // Listen for auth changes
+            if (typeof supabaseClient !== 'undefined') {
+                supabaseClient.auth.onAuthStateChange(async (event, session) => {
+                    if (event === 'SIGNED_IN') {
+                        await loadUserProfile();
+                        const loginLink = document.getElementById('loginLink');
+                        if (loginLink) loginLink.textContent = 'Logged in';
+                    } else if (event === 'SIGNED_OUT') {
+                        const loginLink = document.getElementById('loginLink');
+                        if (loginLink) loginLink.textContent = 'Log in';
+                        // Clear fields if signed out? Maybe not, keep them for guest
+                    }
+                });
+            }
 
             // Add listeners to all required fields
-            ['email', 'firstName', 'lastName', 'address', 'city', 'postalCode', 'phone'].forEach(id => {
+            ['email', 'firstName', 'lastName', 'address', 'city', 'postalCode', 'phone', 'apartment'].forEach(id => {
                 const el = document.getElementById(id);
-                if (el) el.addEventListener('input', validateForm);
+                if (el) {
+                    el.addEventListener('input', () => {
+                        validateForm();
+                        debouncedSave();
+                    });
+                }
             });
         });
     </script>
