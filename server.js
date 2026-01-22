@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 const { sequelize } = require('./database/index');
+const logger = require('./js/logger');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -36,9 +37,19 @@ app.use('/api/yoco', yocoRoutes);
 // Serve the main page
 app.get('/log', (req, res) => {
     const message = req.query.msg;
+    const level = req.query.level || 'INFO';
     if (message) {
-        console.log(`Frontend Log: ${decodeURIComponent(message)}`);
+        logger[level.toLowerCase()](`Frontend: ${decodeURIComponent(message)}`);
     }
+    res.sendStatus(200);
+});
+
+app.get('/api/logs', (req, res) => {
+    res.json(logger.getLogs());
+});
+
+app.post('/api/logs/clear', (req, res) => {
+    logger.clearLogs();
     res.sendStatus(200);
 });
 
@@ -65,10 +76,10 @@ async function startServer() {
         // await sequelize.sync({ force: false }); 
 
         app.listen(PORT, () => {
-            console.log(`Server running on http://localhost:${PORT}`);
+            logger.info(`Server running on http://localhost:${PORT}`);
         });
     } catch (error) {
-        console.error('Unable to connect to the database:', error);
+        logger.error('Unable to connect to the database:', { error: error.message, stack: error.stack });
     }
 }
 

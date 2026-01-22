@@ -48,6 +48,13 @@
         <p>Thank you for your order. We will send you a confirmation email shortly.</p>
         <a href="/" class="btn">Return to Home</a>
     </div>
+
+    <script>
+        // Clear the cart after successful payment
+        const CART_KEY = 'beha_cart_v1';
+        localStorage.removeItem(CART_KEY);
+        console.log('Cart cleared after successful payment');
+    </script>
 </body>
 
 </html>

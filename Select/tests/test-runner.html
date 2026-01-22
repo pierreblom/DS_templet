@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beha Test Runner</title>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #A0522D;
+            margin-bottom: 20px;
+        }
+        .test-controls {
+            margin-bottom: 20px;
+        }
+        button {
+            background: #A0522D;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #8B4513;
+        }
+        #test-output {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            min-height: 400px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .test-summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e8;
+            border-radius: 4px;
+            border-left: 4px solid #28a745;
+        }
+        .test-summary.error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Beha E-commerce Test Runner</h1>
+
+        <div class="test-controls">
+            <button onclick="runTests()">Run All Tests</button>
+            <button onclick="clearOutput()">Clear Output</button>
+        </div>
+
+        <div id="test-output">
+            Click "Run All Tests" to execute the test suite...
+        </div>
+
+        <div id="test-summary" class="test-summary" style="display: none;">
+        </div>
+    </div>
+
+    <!-- Load application modules -->
+    <script src="../js/utils.js"></script>
+    <script src="../js/modals.js"></script>
+    <script src="../js/cart.js"></script>
+    <script src="../js/navigation.js"></script>
+    <script src="../js/account.js"></script>
+    <script src="../js/search.js"></script>
+
+    <!-- Load test suite -->
+    <script src="test-suite.js"></script>
+
+    <script>
+        let originalConsoleLog = console.log;
+        let testOutput = [];
+
+        // Override console.log to capture test output
+        console.log = function(...args) {
+            testOutput.push(args.join(' '));
+            originalConsoleLog.apply(console, args);
+            updateOutput();
+        };
+
+        function runTests() {
+            testOutput = [];
+            updateOutput();
+
+            // Reset test results
+            testSuite.passed = 0;
+            testSuite.failed = 0;
+            testSuite.results = [];
+
+            // Run tests
+            testSuite.run().then(() => {
+                showSummary();
+            });
+        }
+
+        function updateOutput() {
+            document.getElementById('test-output').textContent = testOutput.join('\n');
+        }
+
+        function clearOutput() {
+            testOutput = [];
+            updateOutput();
+            document.getElementById('test-summary').style.display = 'none';
+        }
+
+        function showSummary() {
+            const summary = document.getElementById('test-summary');
+            const total = testSuite.tests.length;
+            const passed = testSuite.passed;
+            const failed = testSuite.failed;
+            const rate = ((passed / total) * 100).toFixed(1);
+
+            summary.innerHTML = `
+                <h3>Test Results Summary</h3>
+                <p><strong>Total Tests:</strong> ${total}</p>
+                <p><strong>Passed:</strong> ${passed}</p>
+                <p><strong>Failed:</strong> ${failed}</p>
+                <p><strong>Success Rate:</strong> ${rate}%</p>
+            `;
+
+            summary.className = failed > 0 ? 'test-summary error' : 'test-summary';
+            summary.style.display = 'block';
+        }
+
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            setTimeout(runTests, 500);
+        });
+    </script>
+</body>
+</html>

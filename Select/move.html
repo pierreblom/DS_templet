@@ -744,7 +744,7 @@
                 </button>
                 <ul class="nav-links">
                     <li><a href="/">Home</a></li>
-                    <li><a href="../contact.html">Contact</a></li>
+                    <li><a href="/contact.html">Contact</a></li>
                 </ul>
                 <button class="icon-btn mobile-only" aria-label="Search">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -960,7 +960,7 @@
 
             cartItems.innerHTML = cart.map(item => `
                 <div class="cart-item">
-                    <img src="${item.image || '../images/product_1_The_Snap_&_Go_Bra/1.png'}" alt="${item.name}" class="cart-item-img">
+                    <img src="${item.image || '/images/product_1_The_Snap_&_Go_Bra/1.png'}" alt="${item.name}" class="cart-item-img">
                     <div class="cart-item-details">
                         <div class="cart-item-name">${item.name || 'Product'}</div>
                         <div class="cart-item-meta">Size: M | Color: Nude</div>
@@ -1094,6 +1094,7 @@
             </div>
         </div>
     </footer>
+    <script src="/js/debug.js"></script>
 </body>
 
 </html>

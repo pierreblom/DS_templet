@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product - Beha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Load main app script -->
+    <script src="js/app.js"></script>
+</head>
+
+<body>
+    <!-- Header will be loaded by app.js -->
+    <header></header>
+
+    <main>
+        <div class="product-container">
+            <div class="product-card" onclick="openProduct('canopy-bra', 'Canopy Support Bra', 680.00)">
+                <div class="product-image">
+                    <div class="product-placeholder">🍃</div>
+                    <div class="edit-icon">✏️</div>
+                </div>
+                <div class="product-details">
+                    <h1 class="product-title">Canopy Support Bra</h1>
+                    <div class="product-rating">
+                        <div class="stars">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star empty">☆</span>
+                        </div>
+                        <span class="rating-text">(5/5)</span>
+                    </div>
+                    <div class="product-price">R 680.00</div>
+                    <button class="quick-add-btn" onclick="event.stopPropagation(); quickAdd('canopy-bra')">
+                        QUICK ADD
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals container - will be loaded by app.js -->
+    <div id="modals-container"></div>
+
+    <!-- Footer will be loaded by app.js -->
+    <footer></footer>
+
+    <!-- Page-specific JavaScript -->
+    <script>
+        // Initialize page when DOM and app are ready
+        document.addEventListener('DOMContentLoaded', function () {
+            // Wait for app to initialize
+            setTimeout(() => {
+                initializeMovePage();
+            }, 100);
+        });
+
+        function initializeMovePage() {
+            // Set cart badge to show "9" as in the original design
+            const badge = document.getElementById('cartBadge');
+            if (badge) {
+                badge.textContent = '9';
+                badge.style.display = 'inline-block';
+            }
+
+            // Update cart manager with initial items if needed
+            if (typeof cartManager !== 'undefined') {
+                // Add 9 items to cart for display (as shown in original)
+                for (let i = 0; i < 9; i++) {
+                    cartManager.addItem('canopy-bra', {
+                        name: "Canopy Support Bra",
+                        price: 680.00,
+                        quantity: 1
+                    });
+                }
+            }
+        }
+
+        function openProduct(productId, productName, productPrice) {
+            console.log(`Opening product: ${productName} - R${productPrice}`);
+            // Navigate to product detail page
+            const url = `select.html?id=${productId}&name=${encodeURIComponent(productName)}&price=${productPrice}`;
+            window.location.href = url;
+        }
+
+        function quickAdd(productId) {
+            console.log(`Quick adding product: ${productId}`);
+
+            if (typeof cartManager !== 'undefined') {
+                const success = cartManager.addItem(productId, {
+                    name: "Canopy Support Bra",
+                    price: 680.00,
+                    quantity: 1
+                });
+
+                if (success) {
+                    // Show feedback
+                    const button = document.querySelector('.quick-add-btn');
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '✓ ADDED';
+                    button.style.background = '#28a745';
+
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.style.background = '';
+                    }, 2000);
+                }
+            }
+        }
+
+        function openCheckout() {
+            window.location.href = '/checkout.html';
+        }
+    </script>
+</body>
+
+</html>

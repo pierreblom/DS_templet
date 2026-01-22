@@ -625,7 +625,7 @@
 
             cart.forEach(item => {
                 const product = products.find(p => p.id === item.productId);
-                
+
                 const name = product ? product.name : (item.name || 'Unknown Product');
                 const price = product ? product.price : (item.price || 0);
                 const image = product ? product.image : (item.image || '../images/product_1_The_Snap_&_Go_Bra/1.png');
@@ -652,7 +652,7 @@
 
             const shipping = subtotal >= 1000 ? 0 : 60;
             const shippingEl = document.getElementById('shipping');
-            
+
             if (shipping === 0) {
                 shippingEl.textContent = 'Free';
                 shippingEl.style.color = 'green';

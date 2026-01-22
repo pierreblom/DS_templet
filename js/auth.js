@@ -25,9 +25,15 @@ async function handleEmailSignIn(e) {
     });
 
     if (error) {
-        alert("Error signing in: " + error.message);
+        console.error('Sign in error:', error);
+        if (error.status === 400) {
+            alert("Invalid login credentials. Please check your email and password, or sign up if you don't have an account.");
+        } else {
+            alert("Error signing in: " + error.message);
+        }
     } else {
         closeModal('loginModal');
+        // The onAuthStateChange in account-popup.js will handle UI updates
         alert("Signed in successfully!");
     }
 }
@@ -43,10 +49,11 @@ async function handleEmailSignUp(e) {
     });
 
     if (error) {
+        console.error('Sign up error:', error);
         alert("Error signing up: " + error.message);
     } else {
         closeModal('loginModal');
-        alert("Sign up successful! Please check your email for verification.");
+        alert("Sign up successful! Please check your email for a verification link to complete your registration.");
     }
 }
 
@@ -77,6 +84,7 @@ async function handleSignOut() {
 
 // Override the global handleSignIn from front_page.html
 window.handleSignIn = () => openLoginModal('signin');
+window.handleSignUp = () => openLoginModal('signup');
 
 window.handleOrders = function () {
     alert("Orders feature coming soon!");
@@ -105,18 +113,9 @@ function updateAuthUI(user) {
         signinBtn.textContent = "Sign in";
         signinBtn.onclick = () => openLoginModal('signin');
 
-        // Add Sign Up button if it doesn't exist
-        let signupBtn = document.getElementById('signup-btn');
-        if (!signupBtn) {
-            signupBtn = document.createElement('button');
-            signupBtn.id = 'signup-btn';
-            signupBtn.className = 'signin-btn'; // Reuse style
-            signupBtn.style.marginTop = '0.5rem';
-            signupBtn.style.backgroundColor = '#f0f0f0'; // Different color
-            signupBtn.textContent = "Sign up";
-            signupBtn.onclick = () => openLoginModal('signup');
-            signinBtn.parentNode.insertBefore(signupBtn, signinBtn.nextSibling);
-        } else {
+        // Show existing Sign Up button if it exists
+        const signupBtn = document.querySelector('.signup-btn');
+        if (signupBtn) {
             signupBtn.style.display = 'block';
             signupBtn.onclick = () => openLoginModal('signup');
         }

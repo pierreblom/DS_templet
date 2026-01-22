@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - shopbeha.com</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Load main app script -->
+    <script src="js/app.js"></script>
+</head>
+
+<body>
+    <!-- Header will be loaded by app.js -->
+    <header></header>
+
+    <main>
+        <div class="product-container">
+            <!-- Image Gallery -->
+            <div class="image-gallery" id="imageGallery">
+                <!-- Images will be populated by JS -->
+            </div>
+
+            <!-- Product Details -->
+            <div class="product-details">
+                <h1 class="product-title" id="productTitle">Loading...</h1>
+                <div class="product-price" id="productPrice">...</div>
+
+                <div class="product-options">
+                    <div class="option-group">
+                        <label class="option-label">Color</label>
+                        <div class="option-buttons" id="colorOptions">
+                            <!-- Color buttons will be populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="option-group">
+                        <label class="option-label">Size</label>
+                        <div class="option-buttons">
+                            <button class="option-button selected" data-size="xs">XS</button>
+                            <button class="option-button" data-size="s">S</button>
+                            <button class="option-button" data-size="m">M</button>
+                            <button class="option-button" data-size="l">L</button>
+                            <button class="option-button" data-size="xl">XL</button>
+                            <button class="option-button" data-size="xxl">XXL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quantity-selector">
+                    <label class="option-label">Quantity</label>
+                    <div class="quantity-controls">
+                        <button class="qty-btn" onclick="decreaseQuantity()">-</button>
+                        <div class="qty-display" id="quantity">1</div>
+                        <button class="qty-btn" onclick="increaseQuantity()">+</button>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="add-to-cart-btn" onclick="addToCart()">
+                        ADD TO CART
+                    </button>
+                </div>
+
+                <div class="product-description">
+                    <p>Experience the ultimate comfort and support with our premium collection. Designed for every body,
+                        moving with you throughout your day.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- You May Also Like Section -->
+    <section class="related-products">
+        <h2 class="related-title">You may also like</h2>
+        <div class="related-grid">
+            <!-- Product 7: The 24/7 Seamless Bra -->
+            <div class="related-card" onclick="window.location.href='select.html?id=7&name=The%2024%2F7%20Seamless%20Bra&price=480'">
+                <div class="related-image">
+                    <img src="../images/product_7_The_24.7 Seamless Bra/1.png" alt="The 24/7 Seamless Bra">
+                </div>
+                <h3 class="related-name">The 24/7 Seamless Bra</h3>
+            </div>
+
+            <!-- Product 6: The Active Zip Bra -->
+            <div class="related-card" onclick="window.location.href='select.html?id=6&name=The%20Active%20Zip%20Bra&price=550'">
+                <div class="related-image">
+                    <img src="../images/product_6_The_Active_Zip_Bra/1.png" alt="The Active Zip Bra">
+                </div>
+                <h3 class="related-name">The Active Zip Bra</h3>
+            </div>
+
+            <!-- Product 5: The Glimmer Bra -->
+            <div class="related-card" onclick="window.location.href='select.html?id=5&name=The%20Glimmer%20Bra&price=520'">
+                <div class="related-image">
+                    <img src="../images/product_5_The_Glimmer_Bra/2.png" alt="The Glimmer Bra">
+                </div>
+                <h3 class="related-name">The Glimmer Bra</h3>
+            </div>
+
+            <!-- Product 4: The High Compression Bodysuit -->
+            <div class="related-card" onclick="window.location.href='select.html?id=4&name=The%20High%20Compression%20Bodysuit&price=850'">
+                <div class="related-image">
+                    <img src="../images/product_4_The_High_Compression_Bodysuit/2.png" alt="The High Compression Bodysuit">
+                </div>
+                <h3 class="related-name">The High Compression Bodysuit</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modals container - will be loaded by app.js -->
+    <div id="modals-container"></div>
+
+    <!-- Footer will be loaded by app.js -->
+    <footer></footer>
+
+    <!-- Product-specific JavaScript -->
+    <script>
+        // Product Configuration Data
+        const products = {
+            1: {
+                folder: "product_1_The_Snap_&_Go_Bra",
+                colors: [
+                    { id: "black", name: "Black" },
+                    { id: "dark-gray", name: "Dark Gray" },
+                    { id: "gray", name: "Gray" },
+                    { id: "skin", name: "Skin" }
+                ],
+                images: [
+                    { src: "black.png", alt: "Black Bra", id: "mainImage" },
+                    { src: "1.png", alt: "Dark Gray Bra" },
+                    { src: "3.png", alt: "Bra View 3" },
+                    { src: "4.png", alt: "Bra View 4" }
+                ]
+            },
+            2: {
+                folder: "product_2_The_Ultimate_Coverage_Bra",
+                colors: [
+                    { id: "black", name: "Black" },
+                    { id: "beige", name: "Beige" }
+                ],
+                images: [
+                    { src: "black.png", alt: "Black Bra", id: "mainImage" },
+                    { src: "2.png", alt: "Bra View 2" },
+                    { src: "1.png", alt: "Bra View 1" },
+                    { src: "3.png", alt: "Bra View 3" }
+                ]
+            },
+            3: {
+                folder: "product_3_The_Posture_Perfect_Shaper",
+                colors: [
+                    { id: "black", name: "Black" }
+                ],
+                images: [
+                    { src: "black.png", alt: "Black Bra", id: "mainImage" },
+                    { src: "3.png", alt: "Bra View 3" },
+                    { src: "2.png", alt: "Bra View 2" },
+                    { src: "1.png", alt: "Bra View 1" }
+                ]
+            },
+            4: {
+                folder: "product_4_The_High_Compression_Bodysuit",
+                colors: [
+                    { id: "black", name: "Black" },
+                    { id: "beige", name: "Beige" }
+                ],
+                images: [
+                    { src: "black.png", alt: "Black Bodysuit", id: "mainImage" },
+                    { src: "3.png", alt: "Bodysuit View 3" },
+                    { src: "4.png", alt: "Bodysuit View 4" },
+                    { src: "2.png", alt: "Bodysuit View 2" }
+                ]
+            },
+            5: {
+                folder: "product_5_The_Glimmer_Bra",
+                colors: [
+                    { id: "black", name: "Black" },
+                    { id: "gray", name: "Gray" },
+                    { id: "khaki", name: "Khaki" },
+                    { id: "beige", name: "Beige" }
+                ],
+                images: [
+                    { src: "black.png", alt: "Black Bra", id: "mainImage" },
+                    { src: "2.png", alt: "Bra View 2" },
+                    { src: "3.png", alt: "Bra View 3" },
+                    { src: "1.png", alt: "Bra View 1" }
+                ]
+            },
+            6: {
+                folder: "product_6_The_Active_Zip_Bra",
+                colors: [
+                    { id: "black", name: "Black" },
+                    { id: "gray", name: "Gray" },
+                    { id: "white", name: "White" }
+                ],
+                images: [
+                    { src: "black.png", alt: "Black Bra", id: "mainImage" },
+                    { src: "1.png", alt: "Bra View 1" },
+                    { src: "1.png", alt: "Bra View 1" },
+                    { src: "3.jpg", alt: "Bra View 3" }
+                ]
+            },
+            7: {
+                folder: "product_7_The_24.7 Seamless Bra",
+                colors: [
+                    { id: "black", name: "Black" },
+                    { id: "blue", name: "Blue" },
+                    { id: "green", name: "Green" },
+                    { id: "khaki", name: "Khaki" },
+                    { id: "gray", name: "Gray" }
+                ],
+                images: [
+                    { src: "black.png", alt: "Black Bra", id: "mainImage" },
+                    { src: "3.png", alt: "Bra View 3" },
+                    { src: "2.png", alt: "Bra View 2" },
+                    { src: "1.png", alt: "Bra View 1" }
+                ]
+            },
+            8: {
+                folder: "product_8_The_Seamless_Soft_Bra",
+                colors: [
+                    { id: "black", name: "Black" },
+                    { id: "gray", name: "Gray" },
+                    { id: "beige", name: "Beige" },
+                    { id: "white", name: "White" }
+                ],
+                images: [
+                    { src: "black.jpg", alt: "Black Bra", id: "mainImage" },
+                    { src: "4.png", alt: "Bra View 4" },
+                    { src: "1.png", alt: "Bra View 1" },
+                    { src: "2.png", alt: "Bra View 2" }
+                ]
+            }
+        };
+
+        const allProducts = [
+            { id: 1, name: "The Snap & Go Bra", price: 359.00, category: "bras" },
+            { id: 2, name: "The Ultimate Coverage Bra", price: 459.00, category: "bras" },
+            { id: 3, name: "The Posture Perfect Shaper", price: 520.00, category: "shapewear" },
+            { id: 4, name: "The High Compression Bodysuit", price: 899.00, category: "shapewear" },
+            { id: 5, name: "The Glimmer Bra", price: 450.00, category: "bras" },
+            { id: 6, name: "The Active Zip Bra", price: 399.00, category: "bras" },
+            { id: 7, name: "The 24/7 Seamless Bra", price: 350.00, category: "bras" },
+            { id: 8, name: "The Seamless Soft Bra", price: 299.00, category: "bras" }
+        ];
+
+        // Product data
+        let currentProduct = {
+            id: 1,
+            name: "",
+            price: 0,
+            selectedColor: "black",
+            selectedSize: "xs",
+            quantity: 1
+        };
+
+        // Initialize product page
+        document.addEventListener('DOMContentLoaded', function () {
+            // Wait for app to initialize
+            setTimeout(() => {
+                initializeProductPage();
+            }, 100);
+        });
+
+        function initializeProductPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = parseInt(urlParams.get('id')) || 1;
+            const name = urlParams.get('name');
+            const price = urlParams.get('price');
+
+            currentProduct.id = id;
+
+            // Load product configuration
+            const config = products[id] || products[1];
+
+            // Set default selected color
+            currentProduct.selectedColor = config.colors[0].id;
+
+            // Set Image for Cart
+            const mainImage = config.images.find(img => img.id === 'mainImage') || config.images[0];
+            currentProduct.image = `../images/${config.folder}/${mainImage.src}`;
+
+            // Render Images
+            const gallery = document.getElementById('imageGallery');
+            gallery.innerHTML = config.images.map(img => `
+                <div class="gallery-image">
+                    <img ${img.id ? `id="${img.id}"` : ''} src="../images/${config.folder}/${img.src}" alt="${img.alt}">
+                </div>
+            `).join('');
+
+            // Render Color Options
+            const colorContainer = document.getElementById('colorOptions');
+            colorContainer.innerHTML = config.colors.map((color, index) => `
+                <button class="option-button ${index === 0 ? 'selected' : ''}" data-color="${color.id}">${color.name}</button>
+            `).join('');
+
+            // Set product details
+            if (name) {
+                currentProduct.name = name;
+                document.getElementById('productTitle').textContent = name;
+                document.title = name + ' - shopbeha.com';
+            } else {
+                const productInfo = allProducts.find(p => p.id === id);
+                if (productInfo) {
+                    currentProduct.name = productInfo.name;
+                    document.getElementById('productTitle').textContent = productInfo.name;
+                    document.title = productInfo.name + ' - shopbeha.com';
+                }
+            }
+
+            if (price) {
+                currentProduct.price = parseFloat(price);
+                document.getElementById('productPrice').textContent = 'R ' + currentProduct.price.toFixed(2);
+            } else {
+                const productInfo = allProducts.find(p => p.id === id);
+                if (productInfo) {
+                    currentProduct.price = productInfo.price;
+                    document.getElementById('productPrice').textContent = 'R ' + productInfo.price.toFixed(2);
+                }
+            }
+
+            // Initialize cart badge and search
+            if (typeof cartManager !== 'undefined') {
+                cartManager.updateBadge();
+            }
+
+            if (typeof searchManager !== 'undefined') {
+                searchManager.setProducts(allProducts);
+            }
+
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // Color selection
+            document.querySelectorAll('[data-color]').forEach(button => {
+                button.addEventListener('click', function () {
+                    document.querySelectorAll('[data-color]').forEach(btn => btn.classList.remove('selected'));
+                    this.classList.add('selected');
+                    currentProduct.selectedColor = this.dataset.color;
+
+                    // Update main image based on color
+                    const color = this.dataset.color;
+                    let filename = color.replace(/-/g, '_');
+
+                    // Special filename mappings for product 7
+                    if (currentProduct.id === 7 && color === 'khaki') {
+                        filename = 'Khaki ';
+                    }
+
+                    // Determine file extension (product 8 uses .jpg for colors)
+                    const extension = currentProduct.id === 8 ? 'jpg' : 'png';
+
+                    const mainImage = document.getElementById('mainImage');
+                    if (mainImage) {
+                        mainImage.src = `../images/${products[currentProduct.id].folder}/${filename}.${extension}`;
+                    }
+                });
+            });
+
+            // Size selection
+            document.querySelectorAll('[data-size]').forEach(button => {
+                button.addEventListener('click', function () {
+                    document.querySelectorAll('[data-size]').forEach(btn => btn.classList.remove('selected'));
+                    this.classList.add('selected');
+                    currentProduct.selectedSize = this.dataset.size;
+                });
+            });
+        }
+
+        // Quantity controls
+        function increaseQuantity() {
+            currentProduct.quantity = Math.min(10, currentProduct.quantity + 1);
+            updateQuantityDisplay();
+        }
+
+        function decreaseQuantity() {
+            currentProduct.quantity = Math.max(1, currentProduct.quantity - 1);
+            updateQuantityDisplay();
+        }
+
+        function updateQuantityDisplay() {
+            document.getElementById('quantity').textContent = currentProduct.quantity;
+        }
+
+        // Add to cart
+        function addToCart() {
+            if (typeof cartManager !== 'undefined') {
+                cartManager.addItem(currentProduct.id, {
+                    name: currentProduct.name,
+                    price: currentProduct.price,
+                    color: currentProduct.selectedColor,
+                    size: currentProduct.selectedSize,
+                    image: currentProduct.image,
+                    quantity: currentProduct.quantity
+                });
+
+                // Show feedback
+                const button = document.querySelector('.add-to-cart-btn');
+                const originalText = button.innerHTML;
+                button.innerHTML = '✓ ADDED TO CART';
+                button.style.background = '#28a745';
+
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.background = '';
+                }, 2000);
+            }
+        }
+
+        // Checkout redirect
+        function openCheckout() {
+            window.location.href = '/checkout.html';
+        }
+    </script>
+</body>
+
+</html>

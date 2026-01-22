@@ -1,8 +1,8 @@
-<!-- Header -->
+<!-- Header Component -->
 <header>
     <nav>
         <div class="nav-left">
-            <button class="hamburger" aria-label="Toggle navigation" onclick="toggleNav()">
+            <button class="hamburger" aria-label="Toggle navigation" onclick="navigationManager.toggleNav()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -14,7 +14,7 @@
                 <li><a href="/">Home</a></li>
                 <li><a href="../contact.html">Contact</a></li>
             </ul>
-            <button class="icon-btn mobile-only" aria-label="Search" onclick="openSearch()">
+            <button class="icon-btn mobile-only" aria-label="Search" onclick="searchManager.openSearch()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
@@ -24,48 +24,32 @@
         </div>
 
         <div class="logo">
-            Beha
+            <a href="/" style="text-decoration:none; color:inherit;">Beha</a>
         </div>
 
         <div class="nav-right">
             <div class="nav-icons">
-                <button class="icon-btn desktop-only" aria-label="Search" onclick="openSearch()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
+                <button class="icon-btn desktop-only" aria-label="Search" onclick="searchManager.openSearch()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
                     </svg>
                 </button>
-                <button class="icon-btn" aria-label="User account" onclick="toggleAccountPopup(event)">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
+                <button class="icon-btn" aria-label="User account" onclick="accountManager.togglePopup(event)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                 </button>
                 <!-- Account Popup -->
                 <div id="accountPopup" class="account-popup">
-                    <!-- Logged Out State -->
-                    <div id="loggedOutState">
-                        <h2
-                            style="font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 12px; color: #000;">
-                            Account</h2>
-                        <button class="signin-btn" onclick="handleSignIn()">Sign in</button>
-                        <button class="signup-btn" onclick="handleSignUp()">Sign up</button>
-                    </div>
-
-                    <!-- Logged In State -->
-                    <div id="loggedInState" style="display: none;">
-                        <h2
-                            style="font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 5px; color: #000;">
-                            Hi,</h2>
-                        <p id="userEmail"
-                            style="font-size: 0.85rem; color: #666; margin-bottom: 15px; word-break: break-all;"></p>
-                        <button class="signout-btn" onclick="handleSignOut()">Sign out</button>
-                    </div>
-
+                    <h2>Account</h2>
+                    <button class="signin-btn" onclick="accountManager.handleSignIn()">Sign in</button>
+                    <button class="signup-btn" onclick="accountManager.handleSignUp()">Sign up</button>
                     <div class="account-actions">
-                        <button class="action-btn" onclick="handleOrders()">
+                        <button class="action-btn" onclick="accountManager.handleOrders()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                                 <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -73,7 +57,7 @@
                             </svg>
                             Orders
                         </button>
-                        <button class="action-btn" onclick="handleProfile()">
+                        <button class="action-btn" onclick="accountManager.handleProfile()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="12" cy="7" r="4"></circle>
@@ -82,9 +66,9 @@
                         </button>
                     </div>
                 </div>
-                <button class="cart-icon" aria-label="Shopping cart" onclick="openCart()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
+                <button class="cart-icon" aria-label="Shopping cart" onclick="modalManager.openModal('cartModal')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                         <line x1="3" y1="6" x2="21" y2="6"></line>
                         <path d="M16 10a4 4 0 0 1-8 0"></path>
@@ -94,6 +78,5 @@
             </div>
         </div>
     </nav>
-    <div id="mobileOverlay" class="mobile-overlay" onclick="toggleNav(false)"></div>
+    <div id="mobileOverlay" class="mobile-overlay" onclick="navigationManager.toggleNav(false)"></div>
 </header>
-<script src="/js/debug.js"></script>
