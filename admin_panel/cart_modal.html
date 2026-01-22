@@ -1,41 +1,251 @@
 <!-- Cart Drawer Modal -->
-<div id="cartModal" class="modal" style="display:none;">
-    <div class="modal-content cart-panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle" tabindex="-1">
+<!-- Cart Drawer Modal -->
+<style>
+    #cartModal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cart-panel {
+        background-color: #fff;
+        width: 90%;
+        max-width: 450px;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        position: relative;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .cart-header h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        color: #000000;
+    }
+
+    .close-cart {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #666;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cart-items {
+        flex: 1;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        padding-right: 5px;
+    }
+
+    /* Custom Scrollbar */
+    .cart-items::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .cart-items::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .cart-items::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 10px;
+    }
+
+    .cart-item {
+        display: flex;
+        gap: 15px;
+        padding: 15px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 15px;
+        align-items: center;
+    }
+
+    .cart-item-img {
+        width: 70px;
+        height: 85px;
+        object-fit: cover;
+        border-radius: 6px;
+        background: #f9f9f9;
+    }
+
+    .cart-item-details {
+        flex: 1;
+    }
+
+    .cart-item-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 4px;
+        color: #000000;
+    }
+
+    .cart-item-meta {
+        font-size: 0.8rem;
+        color: #888;
+        margin-bottom: 8px;
+    }
+
+    .cart-item-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .cart-qty-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #f5f5f5;
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
+
+    .qty-btn {
+        background: none;
+        border: none;
+        font-size: 1rem;
+        cursor: pointer;
+        color: #333;
+        padding: 0 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cart-item-price {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #000000;
+    }
+
+    .cart-summary {
+        border-top: 1px solid #eee;
+        padding-top: 20px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+        color: #555;
+    }
+
+    .summary-row.total {
+        margin-top: 10px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #000000;
+    }
+
+    .checkout-btn {
+        width: 100%;
+        background-color: #c49a84;
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-top: 20px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .checkout-btn:hover {
+        background-color: #b38973;
+    }
+
+    .checkout-btn:disabled {
+        background-color: #e0e0e0;
+        cursor: not-allowed;
+    }
+
+    .remove-btn {
+        background: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        padding: 4px;
+        transition: color 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .remove-btn:hover {
+        color: #ff4444;
+    }
+</style>
+
+<div id="cartModal">
+    <div class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
         <div class="cart-header">
             <h2 id="cartTitle">Your Cart</h2>
-            <button class="cancel-btn" onclick="closeModal('cartModal')">Close</button>
+            <button class="close-cart" onclick="closeModal('cartModal')" aria-label="Close cart">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
         </div>
-        <div id="cartItems" class="cart-items" aria-live="polite"></div>
-        <div class="cart-extra">
-            <div class="promo-row">
-                <input id="promoCode" type="text" placeholder="Promo code" aria-label="Promo code">
-                <button class="apply-btn" onclick="applyPromo()">Apply</button>
-            </div>
-            <div class="shipping-row">
-                <select id="shippingRegion" aria-label="Shipping region" onchange="renderCart()">
-                    <option value="sa">South Africa</option>
-                    <option value="intl">International</option>
-                </select>
-                <div id="shippingAmount" aria-label="Shipping amount">Shipping: R 0.00</div>
-            </div>
+
+        <div id="cartItems" class="cart-items" aria-live="polite">
+            <!-- Items injected by JS -->
         </div>
-        <div class="cart-footer" style="flex-direction: column; align-items: stretch; gap: 0.5rem;">
-            <div style="display:flex; justify-content: space-between;">
-                <div>Subtotal</div>
-                <div id="cartSubtotal">R 0.00</div>
+
+        <div class="cart-summary">
+            <div class="summary-row" id="shippingTextRow"
+                style="margin-bottom: 15px; font-weight: 600; color: #000000;">
+                <span id="shippingAmount">Shipping: R 60.00</span>
             </div>
-            <div style="display:flex; justify-content: space-between;">
-                <div>Discount</div>
-                <div id="cartDiscount">- R 0.00</div>
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="cartSubtotal">R 0.00</span>
             </div>
-            <div style="display:flex; justify-content: space-between;">
-                <div>Shipping</div>
-                <div id="cartShipping">R 0.00</div>
+            <div class="summary-row">
+                <span>Discount</span>
+                <span id="cartDiscount">- R 0.00</span>
             </div>
-            <div style="display:flex; justify-content: space-between; font-weight: 700;">
-                <div>Total</div>
-                <div id="cartTotal" aria-label="Cart total">R 0.00</div>
+            <div class="summary-row">
+                <span>Shipping</span>
+                <span id="cartShipping">R 60.00</span>
             </div>
+            <div class="summary-row total">
+                <span>Total</span>
+                <span id="cartTotal">R 60.00</span>
+            </div>
+
             <button id="checkoutBtn" class="checkout-btn" onclick="openCheckout()">Checkout</button>
         </div>
     </div>

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraFlex - Admin Panel</title>
+    <title>Beha - Admin Panel</title>
     <link rel="stylesheet" href="admin_styles.css">
 </head>
+
 <body>
     <!-- Login Screen -->
     <div id="loginScreen" class="login-screen">
@@ -24,7 +26,7 @@
     <div id="adminDashboard" class="admin-dashboard" style="display:none;">
         <header class="admin-header">
             <div class="header-content">
-                <h1>🌿 AuraFlex Admin</h1>
+                <h1>🌿 Beha Admin</h1>
                 <div class="header-actions">
                     <a href="../home_page/front_page.html" target="_blank" class="btn-view-site">View Site</a>
                     <button onclick="logout()" class="btn-logout">Logout</button>
@@ -61,7 +63,7 @@
                         <h2>Product Management</h2>
                         <button onclick="openModal('addProductModal')" class="btn-primary">➕ Add Product</button>
                     </div>
-                    
+
                     <div class="products-table-container">
                         <table class="products-table">
                             <thead>
@@ -89,4 +91,5 @@
 
     <script src="admin_script.js"></script>
 </body>
+
 </html>

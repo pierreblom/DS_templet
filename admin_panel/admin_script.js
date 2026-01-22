@@ -2,21 +2,21 @@
 const ADMIN_PASSWORD = 'admin123';
 
 // Storage keys
-const STORAGE_KEY = 'auraflex_products_v1';
-const AUTH_KEY = 'auraflex_admin_auth';
+const STORAGE_KEY = 'beha_products_v1';
+const AUTH_KEY = 'beha_admin_auth';
 
 // Products array
 let products = [];
 
 // Check authentication on load
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     checkAuth();
-    
+
     // Login form handler
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
         e.preventDefault();
         const password = document.getElementById('adminPassword').value;
-        
+
         if (password === ADMIN_PASSWORD) {
             localStorage.setItem(AUTH_KEY, 'authenticated');
             showDashboard();
@@ -134,7 +134,7 @@ function renderDashboard() {
 function updateStats() {
     const totalProducts = products.length;
     const trailFavorites = products.filter(p => p.isTrailFavorite).length;
-    
+
     document.getElementById('totalProducts').textContent = totalProducts;
     document.getElementById('trailFavoritesCount').textContent = trailFavorites;
 }
@@ -143,7 +143,7 @@ function updateStats() {
 function renderProductsTable() {
     const tbody = document.getElementById('productsTableBody');
     tbody.innerHTML = '';
-    
+
     products.forEach(product => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -210,25 +210,25 @@ function closeModal(modalId) {
 function populateProductLists() {
     const availableProductsList = document.getElementById('available-products');
     const trailFavoritesList = document.getElementById('trail-favorites-list');
-    
+
     if (!availableProductsList || !trailFavoritesList) return;
-    
+
     availableProductsList.innerHTML = '';
     trailFavoritesList.innerHTML = '';
-    
+
     products.forEach(product => {
         const productItem = document.createElement('div');
         productItem.className = 'product-list-item';
         productItem.innerHTML = `
             <span>${product.name} - R ${product.price.toFixed(2)}</span>
             <div class="product-list-actions">
-                ${product.isTrailFavorite ? 
-                    `<button class="btn-delete" onclick="removeFromTrailFavorites(${product.id})">Remove</button>` : 
-                    `<button class="btn-edit" onclick="addToTrailFavorites(${product.id})">Add</button>`
-                }
+                ${product.isTrailFavorite ?
+                `<button class="btn-delete" onclick="removeFromTrailFavorites(${product.id})">Remove</button>` :
+                `<button class="btn-edit" onclick="addToTrailFavorites(${product.id})">Add</button>`
+            }
             </div>
         `;
-        
+
         if (product.isTrailFavorite) {
             trailFavoritesList.appendChild(productItem);
         } else {
@@ -266,12 +266,12 @@ function saveTrailFavorites() {
 }
 
 // Handle add product form
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('addProductForm');
     if (form) {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const newProduct = {
                 id: products.length ? Math.max(...products.map(p => p.id)) + 1 : 1,
                 name: document.getElementById('productName').value,
@@ -280,14 +280,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 category: document.getElementById('productCategory').value,
                 isTrailFavorite: false
             };
-            
+
             products.push(newProduct);
             saveProducts();
             renderDashboard();
-            
+
             alert('Product added successfully!');
             closeModal('addProductModal');
-            
+
             // Reset form
             form.reset();
             const uploadedImages = document.getElementById('uploadedImages');
@@ -299,35 +299,35 @@ document.addEventListener('DOMContentLoaded', function() {
 // Image upload handling
 function handleImageUpload(input) {
     const uploadedImagesContainer = document.getElementById('uploadedImages');
-    
+
     Array.from(input.files).forEach(file => {
         const reader = new FileReader();
-        
-        reader.onload = function(e) {
+
+        reader.onload = function (e) {
             const imageDiv = document.createElement('div');
             imageDiv.className = 'uploaded-image';
-            
+
             const img = document.createElement('img');
             img.src = e.target.result;
-            
+
             const removeBtn = document.createElement('button');
             removeBtn.className = 'remove-image';
             removeBtn.innerHTML = '×';
-            removeBtn.onclick = function() {
+            removeBtn.onclick = function () {
                 imageDiv.remove();
             };
-            
+
             imageDiv.appendChild(img);
             imageDiv.appendChild(removeBtn);
             uploadedImagesContainer.appendChild(imageDiv);
         };
-        
+
         reader.readAsDataURL(file);
     });
 }
 
 // Close modal when clicking outside
-window.addEventListener('click', function(e) {
+window.addEventListener('click', function (e) {
     if (e.target.classList.contains('modal')) {
         e.target.style.display = 'none';
     }

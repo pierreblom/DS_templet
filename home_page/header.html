@@ -1,42 +1,81 @@
 <!-- Header -->
 <header>
     <nav>
-        <button class="hamburger" aria-label="Toggle navigation" onclick="toggleNav()">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-        </button>
-
-        <div class="logo">
-            shopbeha.com
-        </div>
-
-        <ul class="nav-links">
-            <li><a href="#shop">SHOP</a></li>
-            <li><a href="#maternity">MATERNITY</a></li>
-            <li><a href="../contact.html">CONTACT</a></li>
-        </ul>
-
-        <div class="nav-icons">
-            <button class="icon-btn" aria-label="Search" onclick="openSearch()">
+        <div class="nav-left">
+            <button class="hamburger" aria-label="Toggle navigation" onclick="toggleNav()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="../contact.html">Contact</a></li>
+            </ul>
+            <button class="icon-btn mobile-only" aria-label="Search" onclick="openSearch()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <path d="m21 21-4.35-4.35"></path>
                 </svg>
             </button>
-            <button class="cart-icon" aria-label="Shopping cart" onclick="openCart()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <path d="M16 10a4 4 0 0 1-8 0"></path>
-                </svg>
-                <span id="cartBadge" class="cart-badge" style="display:none;">0</span>
-            </button>
+        </div>
+
+        <div class="logo">
+            Beha
+        </div>
+
+        <div class="nav-right">
+            <div class="nav-icons">
+                <button class="icon-btn desktop-only" aria-label="Search" onclick="openSearch()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+                <button class="icon-btn" aria-label="User account" onclick="toggleAccountPopup(event)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </button>
+                <!-- Account Popup -->
+                <div id="accountPopup" class="account-popup">
+                    <h2>Account</h2>
+                    <button class="signin-btn" onclick="handleSignIn()">Sign in</button>
+                    <button class="signup-btn" onclick="handleSignUp()">Sign up</button>
+                    <div class="account-actions">
+                        <button class="action-btn" onclick="handleOrders()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                            Orders
+                        </button>
+                        <button class="action-btn" onclick="handleProfile()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            Profile
+                        </button>
+                    </div>
+                </div>
+                <button class="cart-icon" aria-label="Shopping cart" onclick="openCart()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                    <span id="cartBadge" class="cart-badge" style="display:none;">0</span>
+                </button>
+            </div>
         </div>
     </nav>
     <div id="mobileOverlay" class="mobile-overlay" onclick="toggleNav(false)"></div>

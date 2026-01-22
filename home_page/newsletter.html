@@ -1,10 +1,89 @@
 <!-- Newsletter -->
-<section class="newsletter" style="background: var(--text-color); color: white;">
-    <h2 style="color: white;">JOIN OUR COMMUNITY</h2>
-    <p style="color: #ccc;">Subscribe for the latest drops, exclusive offers, and fit tips.</p>
-    <form class="newsletter-form" aria-describedby="newsletterDesc">
-        <input type="email" placeholder="Enter your email address..." required style="border:none;">
-        <button type="submit" style="background: var(--accent-color); color: white;">SUBSCRIBE</button>
+<style>
+    .newsletter-section {
+        background-color: #44484d;
+        padding: 80px 5%;
+        text-align: center;
+        color: white;
+    }
+
+    .newsletter-section h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: white;
+        letter-spacing: 1px;
+    }
+
+    .newsletter-section p {
+        font-size: 1rem;
+        color: #ddd;
+        margin-bottom: 40px;
+    }
+
+    .newsletter-form-container {
+        max-width: 600px;
+        margin: 0 auto;
+        display: flex;
+        background: #f0f0f0;
+        border-radius: 50px;
+        padding: 5px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .newsletter-form-container input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1rem;
+        color: #333;
+        outline: none;
+    }
+
+    .newsletter-form-container button {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        text-transform: uppercase;
+    }
+
+    .newsletter-form-container button:hover {
+        background-color: #5a6268;
+    }
+
+    @media (max-width: 600px) {
+        .newsletter-form-container {
+            flex-direction: column;
+            background: transparent;
+            box-shadow: none;
+            padding: 0;
+            gap: 15px;
+        }
+
+        .newsletter-form-container input {
+            background: #f0f0f0;
+            border-radius: 50px;
+            width: 100%;
+        }
+
+        .newsletter-form-container button {
+            width: 100%;
+        }
+    }
+</style>
+
+<section class="newsletter-section">
+    <h2>JOIN OUR COMMUNITY</h2>
+    <p>Subscribe for exclusive insights and curated collections tailored for you.</p>
+    <form class="newsletter-form-container" onsubmit="event.preventDefault(); alert('Thank you for joining!');">
+        <input type="email" placeholder="Enter your email address" required>
+        <button type="submit">JOIN</button>
     </form>
-    <p id="newsletterDesc" class="sr-only">Subscribe to receive updates.</p>
 </section>

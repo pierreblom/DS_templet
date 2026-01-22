@@ -1,54 +1,81 @@
 <!-- Footer -->
-<footer>
+<style>
+    .site-footer {
+        background-color: #FFFFFF;
+        padding: 3rem 5% 2rem;
+        color: #333;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .footer-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        padding-top: 2rem;
+    }
+
+    .footer-left {
+        display: flex;
+        gap: 2rem;
+        font-size: 0.9rem;
+        color: #444;
+    }
+
+    .footer-left a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .footer-right {
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .footer-right a {
+        color: #333;
+        transition: opacity 0.3s;
+    }
+
+    .footer-right a:hover {
+        opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+        .footer-content {
+            flex-direction: column;
+            gap: 1.5rem;
+            text-align: center;
+        }
+
+        .footer-left {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+</style>
+
+<footer class="site-footer">
     <div class="footer-content">
-        <div class="footer-column">
-            <h4>SHOP</h4>
-            <ul>
-                <li><a href="#leggings">Leggings</a></li>
-                <li><a href="#bras">Sports Bras</a></li>
-                <li><a href="#tops">Tops</a></li>
-                <li><a href="#outerwear">Outerwear</a></li>
-                <li><a href="#sale">Sale</a></li>
-            </ul>
+        <div class="footer-left">
+            <span>&copy; 2026 Beha, Powered by BlueBloom</span>
+            <a href="#">Terms and Policies</a>
         </div>
-        <div class="footer-column">
-            <h4>SUPPORT</h4>
-            <ul>
-                <li><a href="#">Contact Us</a></li>
-                <li><a href="#">FAQ</a></li>
-                <li><a href="#">Shipping & Delivery</a></li>
-                <li><a href="#">Returns & Exchanges</a></li>
-                <li><a href="#">Size Guide</a></li>
-            </ul>
+        <div class="footer-right">
+            <a href="#" aria-label="Facebook">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
+            </a>
+            <a href="#" aria-label="Instagram">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M16.5,6.5A1.5,1.5 0 1,1 15,6.5A1.5,1.5 0 0,1 16.5,6.5" />
+                </svg>
+            </a>
         </div>
-        <div class="footer-column">
-            <h4>OUR ROOTS</h4>
-            <ul>
-                <li><a href="#">Our Story</a></li>
-                <li><a href="#">Sustainability Promise</a></li>
-                <li><a href="#">Tree Planting Initiative</a></li>
-                <li><a href="#">Materials & Ethics</a></li>
-            </ul>
-        </div>
-        <div class="footer-column">
-            <h4>CONNECT</h4>
-            <div class="social-icons">
-                <a href="#" aria-label="Facebook"><img src="../fb.jpg" alt="Facebook" class="social-icon"></a>
-                <a href="#" aria-label="Instagram"><img src="../instagram.jpg" alt="Instagram" class="social-icon"></a>
-                <a href="#" aria-label="TikTok"><img src="../tiktok.jpg" alt="TikTok" class="social-icon"></a>
-            </div>
-            <p style="margin-top: 1rem;">🌲 Carbon Neutral Shipping</p>
-        </div>
-    </div>
-    <div class="footer-payment">
-        <div class="payment-logos">
-            <img src="../1.png" alt="VISA" class="payment-logo">
-            <img src="../2.png" alt="Mastercard" class="payment-logo">
-            <img src="../3.jpeg" alt="VISA Electron" class="payment-logo">
-            <img src="../4.jpeg" alt="Mastercard" class="payment-logo">
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>© 2025, Aafiyah Ecommerce (PTY) LTD | All Rights Reserved</p>
     </div>
 </footer>
