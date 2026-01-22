@@ -28,10 +28,10 @@ app.use(express.static(path.join(__dirname)));
 
 // API Routes
 const productRoutes = require('./api/routes/products');
-const checkoutRoutes = require('./api/routes/checkout');
+const yocoRoutes = require('./api/routes/yoco');
 
 app.use('/api/products', productRoutes);
-app.use('/api/checkout', checkoutRoutes);
+app.use('/api/yoco', yocoRoutes);
 
 // Serve the main page
 app.get('/log', (req, res) => {
