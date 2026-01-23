@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping Policy - Beha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/home_page/css/front_page.css">
+    <link rel="stylesheet" href="/home_page/css/modals.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-init.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/home_page/js/account-popup.js"></script>
+    <script src="/home_page/js/modals.js"></script>
+    <script src="/home_page/js/ui.js"></script>
+    <script src="/home_page/js/cart.js"></script>
+    <script src="/home_page/js/search.js"></script>
+    <style>
+        main {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 0 20px;
+            min-height: 60vh;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        ul {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        /* Login Modal Styles */
+        #loginModal {
+            display: none;
+            position: fixed;
+            z-index: 2001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-panel {
+            background-color: #fff;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            position: relative;
+            text-align: center;
+            animation: modalSlideUp 0.3s ease-out;
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .login-header p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .close-login {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+        }
+
+        .close-login:hover {
+            color: #333;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #999;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .auth-tab.active {
+            color: #A0522D;
+        }
+
+        .auth-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #A0522D;
+        }
+
+        .auth-form {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .auth-form.active {
+            display: flex;
+        }
+
+        .input-group {
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .input-group input:focus {
+            border-color: #A0522D;
+            outline: none;
+        }
+
+        .auth-btn {
+            background-color: #000;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .auth-btn:hover {
+            background-color: #333;
+            transform: translateY(-1px);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: #eee;
+        }
+
+        .divider span {
+            padding: 0 10px;
+        }
+
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .google-btn:hover {
+            background-color: #f9f9f9;
+            border-color: #ccc;
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="nav-left">
+                <button class="hamburger" aria-label="Toggle navigation" onclick="toggleNav()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/contact.html">Contact</a></li>
+                </ul>
+                <button class="icon-btn mobile-only" aria-label="Search" onclick="openSearch()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="logo"><a href="/" style="text-decoration:none; color:inherit;">Beha</a></div>
+            <div class="nav-right">
+                <div class="nav-icons">
+                    <button class="icon-btn desktop-only" aria-label="Search" onclick="openSearch()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </button>
+                    <button class="icon-btn" aria-label="User account" onclick="toggleAccountPopup(event)">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </button>
+                    <div id="accountPopup" class="account-popup">
+                        <div id="loggedOutState">
+                            <h2
+                                style="font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 12px; color: #000;">
+                                Account</h2>
+                            <button class="signin-btn" onclick="handleSignIn()">Sign in</button>
+                            <button class="signup-btn" onclick="handleSignUp()">Sign up</button>
+                        </div>
+                        <div id="loggedInState" style="display: none;">
+                            <h2
+                                style="font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 5px; color: #000;">
+                                Hi,</h2>
+                            <p id="userEmail"
+                                style="font-size: 0.85rem; color: #666; margin-bottom: 15px; word-break: break-all;">
+                            </p>
+                            <button class="signout-btn" onclick="handleSignOut()">Sign out</button>
+                        </div>
+                        <div class="account-actions">
+                            <button class="action-btn" onclick="handleOrders()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                </svg> Orders
+                            </button>
+                            <button class="action-btn" onclick="handleProfile()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg> Profile
+                            </button>
+                        </div>
+                    </div>
+                    <button class="cart-icon" aria-label="Shopping cart" onclick="openCart()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <path d="M16 10a4 4 0 0 1-8 0"></path>
+                        </svg>
+                        <span id="cartBadge" class="cart-badge" style="display:none;">0</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div id="mobileOverlay" class="mobile-overlay" onclick="toggleNav(false)"></div>
+    </header>
+
+    <main>
+        <h1>Shipping Policy</h1>
+        <h2>Processing & Delivery Times</h2>
+        <p>We want to get your new yoga set to you as quickly as possible! Here's what to expect:</p>
+        <ul>
+            <li><strong>Standard Delivery:</strong> 7-14 business days from order placement</li>
+            <li><strong>Extended Delivery:</strong> In rare cases, delivery may take up to 60 business days depending on
+                your location and customs processing</li>
+        </ul>
+
+        <h2>Important Notes</h2>
+        <ul>
+            <li>Processing time is included in the delivery estimate</li>
+            <li>Business days are Monday-Friday, excluding public holidays</li>
+            <li>You'll receive a tracking number once your order ships</li>
+            <li>International orders may experience delays due to customs clearance</li>
+        </ul>
+
+        <h2>Tracking Your Order</h2>
+        <p>Once your order is dispatched, we'll send you a shipping confirmation email with tracking information so you
+            can follow your package's journey.</p>
+
+        <h2>Delays</h2>
+        <p>While we strive for timely delivery, factors beyond our control (such as customs, weather, or carrier delays)
+            may occasionally extend delivery times. We appreciate your patience and understanding.</p>
+
+        <h2>Questions?</h2>
+        <p>If your order hasn't arrived within the expected timeframe or you have concerns about your shipment, please
+            contact us at <a href="mailto:orders@shopbeha.com">orders@shopbeha.com</a> and we'll be happy to help.</p>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <span>&copy; 2026 Beha, Powered by BlueBloom</span>
+                <div class="footer-menu-container">
+                    <a href="#" class="footer-menu-trigger">Terms and Policies</a>
+                    <div class="footer-menu">
+                        <a href="/policies/privacy-policy.html">Privacy policy</a>
+                        <a href="/policies/refund-policy.html">Refund policy</a>
+                        <a href="/policies/terms-of-service.html">Terms of service</a>
+                        <a href="/policies/shipping-policy.html">Shipping policy</a>
+
+                    </div>
+                </div>
+            </div>
+            <div class="footer-right">
+                <a href="#" aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg></a>
+                <a href="#" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M16.5,6.5A1.5,1.5 0 1,1 15,6.5A1.5,1.5 0 0,1 16.5,6.5" />
+                    </svg></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="searchModal" class="modal" style="display:none;">
+        <div class="modal-content search-panel">
+            <div class="search-header" style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                <h2>Search Products</h2>
+                <button class="cancel-btn" onclick="closeModal('searchModal')"
+                    style="background:none; border:none; font-size:1.5rem; cursor:pointer;">×</button>
+            </div>
+            <div class="search-input-container"><input id="searchInput" type="text" placeholder="Search for products..."
+                    autocomplete="off"></div>
+            <div id="searchResults" class="search-results" style="margin-top:1rem;"></div>
+        </div>
+    </div>
+    <div id="cartModal" class="modal" style="display:none;">
+        <div class="cart-panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+            <div class="cart-header">
+                <h2 id="cartTitle">Your Cart</h2>
+                <button class="close-cart" onclick="closeModal('cartModal')" aria-label="Close cart"><svg width="20"
+                        height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg></button>
+            </div>
+            <div id="cartItems" class="cart-items" aria-live="polite"></div>
+            <div class="cart-summary">
+                <div class="summary-row" id="shippingTextRow"
+                    style="margin-bottom: 15px; font-weight: 600; color: #000000;"><span id="shippingAmount">Shipping: R
+                        60.00</span></div>
+                <div class="summary-row"><span>Subtotal</span><span id="cartSubtotal">R 0.00</span></div>
+                <div class="summary-row"><span>Discount</span><span id="cartDiscount">- R 0.00</span></div>
+                <div class="summary-row"><span>Shipping</span><span id="cartShipping">R 60.00</span></div>
+                <div class="summary-row total"><span>Total</span><span id="cartTotal">R 60.00</span></div>
+                <button id="checkoutBtn" class="checkout-btn" onclick="openCheckout()">Checkout</button>
+            </div>
+        </div>
+    </div>
+    <div id="loginModal">
+        <div class="login-panel">
+            <button class="close-login" onclick="closeModal('loginModal')">&times;</button>
+            <div class="login-header">
+                <h2>Welcome Back</h2>
+                <p>Sign in to access your saved cart and profile.</p>
+            </div>
+            <div class="auth-tabs"><button class="auth-tab active" onclick="switchAuthTab('signin')">Sign
+                    In</button><button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button></div>
+            <form id="signinForm" class="auth-form active" onsubmit="handleEmailSignIn(event)">
+                <div class="input-group"><label for="signinEmail">Email</label><input type="email" id="signinEmail"
+                        placeholder="name@example.com" required></div>
+                <div class="input-group"><label for="signinPassword">Password</label><input type="password"
+                        id="signinPassword" placeholder="••••••••" required></div>
+                <button type="submit" class="auth-btn">Sign In</button>
+            </form>
+            <form id="signupForm" class="auth-form" onsubmit="handleEmailSignUp(event)">
+                <div class="input-group"><label for="signupEmail">Email</label><input type="email" id="signupEmail"
+                        placeholder="name@example.com" required></div>
+                <div class="input-group"><label for="signupPassword">Password</label><input type="password"
+                        id="signupPassword" placeholder="Create a password" required></div>
+                <button type="submit" class="auth-btn">Create Account</button>
+            </form>
+            <div class="divider"><span>OR</span></div>
+            <button class="google-btn" onclick="handleGoogleSignIn()">
+                <svg class="google-icon" viewBox="0 0 24 24">
+                    <path
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                        fill="#4285F4" />
+                    <path
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                        fill="#34A853" />
+                    <path
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                        fill="#FBBC05" />
+                    <path
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                        fill="#EA4335" />
+                </svg> Continue with Google
+            </button>
+        </div>
+    </div>
+    <script>
+        function switchAuthTab(tab) {
+            const signinForm = document.getElementById('signinForm');
+            const signupForm = document.getElementById('signupForm');
+            const tabs = document.querySelectorAll('.auth-tab');
+            const headerTitle = document.querySelector('.login-header h2');
+            const headerText = document.querySelector('.login-header p');
+            tabs.forEach(t => t.classList.remove('active'));
+            if (tab === 'signin') {
+                signinForm.classList.add('active');
+                signupForm.classList.remove('active');
+                tabs[0].classList.add('active');
+                headerTitle.textContent = 'Welcome Back';
+                headerText.textContent = 'Sign in to access your saved cart and profile.';
+            } else {
+                signinForm.classList.remove('active');
+                signupForm.classList.add('active');
+                tabs[1].classList.add('active');
+                headerTitle.textContent = 'Create Account';
+                headerText.textContent = 'Join us for exclusive offers and faster checkout.';
+            }
+        }
+    </script>
+    <script>
+        window.openCart = () => window.UIModule.openCart();
+        window.closeModal = (id) => window.ModalModule.closeModal(id);
+        window.toggleNav = (state) => window.ModalModule.toggleNav(state);
+        window.openSearch = () => window.SearchModule.openSearch();
+        window.openCheckout = () => window.UIModule.openCheckout();
+        window.toggleAccountPopup = (e) => window.ModalModule.toggleAccountPopup(e);
+        window.handleSignUp = () => window.openLoginModal('signup');
+        window.handleSignIn = () => window.openLoginModal('signin');
+        window.handleProfile = () => handleProfileClick();
+        window.handleOrders = () => handleOrdersClick();
+        document.addEventListener('DOMContentLoaded', async function () {
+            window.ModalModule.init();
+            window.ModalModule.initAccountPopup();
+            await window.CartModule.updateCartBadge();
+        });
+    </script>
+</body>
+
+</html>
