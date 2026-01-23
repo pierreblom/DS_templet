@@ -86,12 +86,12 @@ async function handleSignOut() {
 window.handleSignIn = () => openLoginModal('signin');
 window.handleSignUp = () => openLoginModal('signup');
 
-window.handleOrders = function () {
-    alert("Orders feature coming soon!");
+window.handleOrdersClick = function () {
+    window.location.href = '/orders.html';
 }
 
-window.handleProfile = function () {
-    alert("Profile feature coming soon!");
+window.handleProfileClick = function () {
+    window.location.href = '/profile.html';
 }
 
 function updateAuthUI(user) {
@@ -118,6 +118,46 @@ function updateAuthUI(user) {
         if (signupBtn) {
             signupBtn.style.display = 'block';
             signupBtn.onclick = () => openLoginModal('signup');
+        }
+    }
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+
+function switchAuthTab(tab) {
+    const signinForm = document.getElementById('signinForm');
+    const signupForm = document.getElementById('signupForm');
+    const tabs = document.querySelectorAll('.auth-tab');
+
+    if (!signinForm || !signupForm) return;
+
+    if (tab === 'signin') {
+        signinForm.style.display = 'flex';
+        signupForm.style.display = 'none';
+        if (tabs[0]) {
+            tabs[0].style.color = '#A0522D';
+            tabs[0].style.borderBottom = '2px solid #A0522D';
+        }
+        if (tabs[1]) {
+            tabs[1].style.color = '#999';
+            tabs[1].style.borderBottom = 'none';
+        }
+    } else {
+        signinForm.style.display = 'none';
+        signupForm.style.display = 'flex';
+        if (tabs[1]) {
+            tabs[1].style.color = '#A0522D';
+            tabs[1].style.borderBottom = '2px solid #A0522D';
+        }
+        if (tabs[0]) {
+            tabs[0].style.color = '#999';
+            tabs[0].style.borderBottom = 'none';
         }
     }
 }

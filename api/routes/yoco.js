@@ -54,21 +54,45 @@ router.post('/create-checkout', async (req, res) => {
 // Webhook endpoint to handle Yoco payment notifications
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
     try {
-        const event = req.body;
+        const event = JSON.parse(req.body.toString());
 
         console.log('Yoco webhook received:', event);
+
+        // Initialize Supabase client for server-side
+        const { createClient } = require('@supabase/supabase-js');
+        const supabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY
+        );
 
         // Handle different event types
         switch (event.type) {
             case 'checkout.succeeded':
                 // Payment was successful
                 console.log('Payment succeeded:', event.payload);
-                // TODO: Update order status in database
+                const orderId = event.payload.metadata?.orderId;
+
+                if (orderId) {
+                    const { error } = await supabase
+                        .from('orders')
+                        .update({ status: 'paid' })
+                        .eq('id', orderId);
+
+                    if (error) console.error('Error updating order status:', error);
+                    else console.log(`Order ${orderId} marked as paid`);
+                }
                 break;
 
             case 'checkout.failed':
                 // Payment failed
                 console.log('Payment failed:', event.payload);
+                const failedOrderId = event.payload.metadata?.orderId;
+                if (failedOrderId) {
+                    await supabase
+                        .from('orders')
+                        .update({ status: 'cancelled' })
+                        .eq('id', failedOrderId);
+                }
                 break;
 
             default:

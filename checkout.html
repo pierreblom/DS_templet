@@ -13,6 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/js/supabase-init.js"></script>
     <script src="/js/auth.js"></script>
+    <script src="/home_page/js/cart.js"></script>
     <style>
         :root {
             --bg-color: #FFFFFF;
@@ -667,12 +668,15 @@
             }
         }
 
-        function loadCart() {
+        async function loadCart() {
+            if (window.CartModule) {
+                return await window.CartModule.loadCart();
+            }
             return JSON.parse(localStorage.getItem(CART_KEY) || '[]');
         }
 
-        function calculateTotal() {
-            const cart = loadCart();
+        async function calculateTotal() {
+            const cart = await loadCart();
             let subtotal = 0;
             cart.forEach(item => {
                 const product = products.find(p => p.id === item.productId);
@@ -692,19 +696,19 @@
             }, 5000);
         }
 
-        function renderCheckout() {
+        async function renderCheckout() {
             // Load latest products
             const storedProducts = loadProductsFromStorage();
             if (storedProducts) {
                 products = storedProducts;
             }
 
-            const cart = loadCart();
+            const cart = await loadCart();
             const orderItemsContainer = document.getElementById('orderItems');
             const subtotalEl = document.getElementById('subtotal');
             const totalEl = document.getElementById('total');
 
-            if (cart.length === 0) {
+            if (!cart || cart.length === 0) {
                 orderItemsContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#666;">Your cart is empty</div>';
                 subtotalEl.textContent = 'R 0.00';
                 totalEl.textContent = 'R 0.00';
@@ -756,6 +760,71 @@
             totalEl.textContent = `R ${(subtotal + shipping).toFixed(2)}`;
         }
 
+        async function createOrder() {
+            if (typeof supabaseClient === 'undefined') return null;
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            const cart = await loadCart();
+            const totalAmount = await calculateTotal();
+            const email = document.getElementById('email').value;
+
+            const shippingAddress = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                address: document.getElementById('address').value,
+                apartment: document.getElementById('apartment').value,
+                city: document.getElementById('city').value,
+                postalCode: document.getElementById('postalCode').value,
+                phone: document.getElementById('phone').value,
+                country: document.getElementById('country').value
+            };
+
+            // Create order
+            const { data: order, error: orderError } = await supabaseClient
+                .from('orders')
+                .insert({
+                    user_id: session?.user?.id || null,
+                    email: email,
+                    total_amount: totalAmount,
+                    status: 'pending',
+                    shipping_address: shippingAddress
+                })
+                .select()
+                .single();
+
+            if (orderError) {
+                console.error('Error creating order:', orderError);
+                return null;
+            }
+
+            // Create order items
+            const orderItems = cart.map(item => {
+                const product = products.find(p => p.id === item.productId);
+                return {
+                    order_id: order.id,
+                    product_id: item.productId,
+                    product_name: product ? product.name : (item.name || 'Unknown Product'),
+                    quantity: item.quantity || 1,
+                    price: product ? product.price : (item.price || 0),
+                    options: {
+                        size: item.size || 'M',
+                        color: item.color || 'Nude'
+                    }
+                };
+            });
+
+            const { error: itemsError } = await supabaseClient
+                .from('order_items')
+                .insert(orderItems);
+
+            if (itemsError) {
+                console.error('Error creating order items:', itemsError);
+                return null;
+            }
+
+            return order.id;
+        }
+
         async function proceedToPayment() {
             const payButton = document.getElementById('pay-button');
             payButton.disabled = true;
@@ -765,13 +834,21 @@
             await saveUserProfile();
 
             try {
-                const cart = loadCart();
-                if (cart.length === 0) {
+                const cart = await loadCart();
+                if (!cart || cart.length === 0) {
                     showError('Your cart is empty');
+                    payButton.disabled = false;
+                    payButton.textContent = 'Proceed to Payment';
                     return;
                 }
 
-                const totalAmount = calculateTotal();
+                // Create order in database first
+                const orderId = await createOrder();
+                if (!orderId) {
+                    throw new Error('Failed to create order. Please try again.');
+                }
+
+                const totalAmount = await calculateTotal();
                 const amountInCents = Math.round(totalAmount * 100);
 
                 // Collect customer info
@@ -788,10 +865,11 @@
                     body: JSON.stringify({
                         amount: amountInCents,
                         currency: 'ZAR',
-                        successUrl: `${window.location.origin}/success.html`,
+                        successUrl: `${window.location.origin}/success.html?orderId=${orderId}`,
                         cancelUrl: `${window.location.origin}/checkout.html`,
                         failureUrl: `${window.location.origin}/checkout.html?error=payment_failed`,
                         metadata: {
+                            orderId: orderId,
                             customerEmail: customerEmail,
                             customerName: `${firstName} ${lastName}`,
                             cartItems: JSON.stringify(cart)
@@ -914,38 +992,10 @@
             showError('Payment failed. Please try again.');
         }
 
-        function closeModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
-            }
-        }
 
-        function switchAuthTab(tab) {
-            const signinForm = document.getElementById('signinForm');
-            const signupForm = document.getElementById('signupForm');
-            const tabs = document.querySelectorAll('.auth-tab');
-
-            if (tab === 'signin') {
-                signinForm.style.display = 'flex';
-                signupForm.style.display = 'none';
-                tabs[0].style.color = '#A0522D';
-                tabs[0].style.borderBottom = '2px solid #A0522D';
-                tabs[1].style.color = '#999';
-                tabs[1].style.borderBottom = 'none';
-            } else {
-                signinForm.style.display = 'none';
-                signupForm.style.display = 'flex';
-                tabs[1].style.color = '#A0522D';
-                tabs[1].style.borderBottom = '2px solid #A0522D';
-                tabs[0].style.color = '#999';
-                tabs[0].style.borderBottom = 'none';
-            }
-        }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            renderCheckout();
+            await renderCheckout();
             validateForm();
             await loadUserProfile();
 
@@ -954,9 +1004,11 @@
                 supabaseClient.auth.onAuthStateChange(async (event, session) => {
                     if (event === 'SIGNED_IN') {
                         await loadUserProfile();
+                        await renderCheckout();
                         const loginLink = document.getElementById('loginLink');
                         if (loginLink) loginLink.textContent = 'Logged in';
                     } else if (event === 'SIGNED_OUT') {
+                        await renderCheckout();
                         const loginLink = document.getElementById('loginLink');
                         if (loginLink) loginLink.textContent = 'Log in';
                         // Clear fields if signed out? Maybe not, keep them for guest

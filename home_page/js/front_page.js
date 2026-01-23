@@ -46,6 +46,8 @@ window.openCheckout = () => window.UIModule.openCheckout();
 window.handleSignUp = () => window.openLoginModal('signup');
 window.handleSignIn = () => window.openLoginModal('signin');
 window.toggleAccountPopup = (e) => window.ModalModule.toggleAccountPopup(e);
+window.handleProfile = () => handleProfileClick();
+window.handleOrders = () => handleOrdersClick();
 
 // UIModule needs these for cart interactions
 window.decreaseCartQty = (id) => window.UIModule.decreaseQuantity(id);

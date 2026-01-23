@@ -49,11 +49,22 @@
         <a href="/" class="btn">Return to Home</a>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-init.js"></script>
+    <script src="/home_page/js/cart.js"></script>
     <script>
-        // Clear the cart after successful payment
-        const CART_KEY = 'beha_cart_v1';
-        localStorage.removeItem(CART_KEY);
-        console.log('Cart cleared after successful payment');
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Clear the cart after successful payment using CartModule
+            if (window.CartModule) {
+                await window.CartModule.clearCart();
+                console.log('Cart cleared successfully via CartModule');
+            } else {
+                // Fallback if CartModule is not loaded
+                const CART_KEY = 'beha_cart_v1';
+                localStorage.removeItem(CART_KEY);
+                console.log('Cart cleared via localStorage fallback');
+            }
+        });
     </script>
 </body>
 

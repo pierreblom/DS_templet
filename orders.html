@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Beha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/home_page/css/front_page.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-init.js"></script>
+    <script src="/js/auth.js"></script>
+    <style>
+        :root {
+            --primary-brown: #A0522D;
+            --accent-orange: #D28B47;
+            --bg-cream: #FFF9F0;
+            --text-dark: #333;
+            --text-light: #888;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+        }
+
+        .orders-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            min-height: 600px;
+        }
+
+        .orders-header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-brown);
+            margin-bottom: 30px;
+        }
+
+        /* Tabs Styling */
+        .tabs-container {
+            display: flex;
+            gap: 40px;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+        }
+
+        .tab {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-light);
+            cursor: pointer;
+            padding-bottom: 10px;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        .tab.active {
+            color: var(--accent-orange);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -11px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--accent-orange);
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* Order Card Styling */
+        .order-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        .order-main-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .order-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            background-color: #FFF0E0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .order-icon-wrapper svg {
+            width: 30px;
+            height: 30px;
+            color: var(--accent-orange);
+        }
+
+        .order-title-price h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .order-title-price p {
+            margin: 5px 0 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .details-btn {
+            background-color: var(--accent-orange);
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .details-btn:hover {
+            opacity: 0.9;
+        }
+
+        .cancel-link {
+            color: #FF4D4D;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        /* Status Tracker */
+        .status-tracker {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            position: relative;
+            padding: 0 10px;
+        }
+
+        .status-tracker::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background-color: #E0E0E0;
+            z-index: 1;
+        }
+
+        .tracker-progress {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            height: 2px;
+            background-color: var(--accent-orange);
+            z-index: 2;
+            transition: width 0.5s ease;
+        }
+
+        .status-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            z-index: 3;
+            width: 80px;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            background-color: #E0E0E0;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        .status-step.active .step-dot {
+            background-color: var(--accent-orange);
+            box-shadow: 0 0 0 4px rgba(210, 139, 71, 0.2);
+        }
+
+        .status-step.completed .step-dot {
+            background-color: var(--accent-orange);
+        }
+
+        .step-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .status-step.active .step-label {
+            color: var(--text-dark);
+        }
+
+        /* Item Level Tracking */
+        .order-items-list {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .order-item-row {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .item-thumbnail {
+            width: 80px;
+            height: 80px;
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .item-thumbnail img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        .item-tracking-info {
+            flex: 1;
+        }
+
+        .item-name-qty {
+            margin-bottom: 10px;
+        }
+
+        .item-name-qty h4 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .item-name-qty span {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .item-status-tracker {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            padding: 0 5px;
+            margin-top: 15px;
+        }
+
+        .item-status-tracker::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            height: 2px;
+            background-color: #E0E0E0;
+            z-index: 1;
+        }
+
+        .item-tracker-progress {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            height: 2px;
+            background-color: var(--accent-orange);
+            z-index: 2;
+            transition: width 0.5s ease;
+        }
+
+        .item-status-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 3;
+            width: 70px;
+        }
+
+        .item-step-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #E0E0E0;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        .item-status-step.active .item-step-dot {
+            background-color: var(--accent-orange);
+            box-shadow: 0 0 0 3px rgba(210, 139, 71, 0.2);
+        }
+
+        .item-status-step.completed .item-step-dot {
+            background-color: var(--accent-orange);
+        }
+
+        .item-step-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .item-status-step.active .item-step-label {
+            color: var(--text-dark);
+        }
+
+        /* Footer Info */
+        .order-footer-info {
+            display: flex;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            align-items: center;
+        }
+
+        .info-dot {
+            width: 4px;
+            height: 4px;
+            background-color: #CCC;
+            border-radius: 50%;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: #fff;
+            border-radius: 16px;
+        }
+
+        /* Email Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .email-modal {
+            background: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .email-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .lookup-btn {
+            width: 100%;
+            background: var(--primary-brown);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .order-card-header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .order-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .status-tracker {
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="nav-left">
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="logo">
+                <a href="/" style="text-decoration:none; color:inherit;">Beha</a>
+            </div>
+            <div class="nav-right">
+                <button class="icon-btn" onclick="window.location.href='/'">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="orders-container">
+            <div class="orders-header">
+                <h1>My Orders</h1>
+                <div id="userEmailDisplay" style="font-size: 0.9rem; color: #666; margin-bottom: 20px;"></div>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tab active" onclick="switchTab('upcoming', this)">Upcoming Orders (0)</div>
+                <div class="tab" onclick="switchTab('previous', this)">Previous Orders (0)</div>
+                <div class="tab" onclick="switchTab('scheduled', this)">Scheduled Orders (0)</div>
+            </div>
+
+            <div id="loading" class="loading-spinner"></div>
+            <div id="ordersList"></div>
+        </div>
+    </main>
+
+    <!-- Email Lookup Modal -->
+    <div id="emailModal" class="modal-overlay">
+        <div class="email-modal">
+            <h2>Find Your Orders</h2>
+            <p>Enter the email address you used during checkout to view your order history.</p>
+            <input type="email" id="lookupEmail" class="email-input" placeholder="name@example.com">
+            <button onclick="lookupOrders()" class="lookup-btn">View Orders</button>
+            <p style="margin-top: 20px; font-size: 0.85rem;">
+                Or <a href="#" onclick="openLoginModal('signin')" style="color: #000; font-weight: 600;">Sign in</a> to
+                see all orders.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'beha_products_v1';
+        let products = [
+            { id: 1, name: "The Snap & Go Bra", image: "images/product_1_The_Snap_&_Go_Bra/1.png" },
+            { id: 2, name: "The Ultimate Coverage Bra", image: "images/product_2_The_Ultimate_Coverage_Bra/1.png" },
+            { id: 3, name: "The Posture Perfect Shaper", image: "images/product_3_The_Posture_Perfect_Shaper/1.png" },
+            { id: 4, name: "The High Compression Bodysuit", image: "images/product_4_The_High_Compression_Bodysuit/1.png" },
+            { id: 5, name: "The Glimmer Bra", image: "images/product_5_The_Glimmer_Bra/1.png" },
+            { id: 6, name: "The Active Zip Bra", image: "images/product_6_The_Active_Zip_Bra/1.png" },
+            { id: 7, name: "The 24/7 Seamless Bra", image: "images/product_7_The_24.7 Seamless Bra/1.png" },
+            { id: 8, name: "The Seamless Soft Bra", image: "images/product_8_The_Seamless_Soft_Bra/1.png" }
+        ];
+
+        function loadProductsFromStorage() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed)) products = parsed;
+                }
+            } catch (_) { }
+        }
+
+        let currentEmail = null;
+        let allOrders = [];
+        let activeTab = 'upcoming';
+
+        async function initOrders() {
+            if (typeof supabaseClient === 'undefined') return;
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (session?.user) {
+                currentEmail = session.user.email;
+                document.getElementById('userEmailDisplay').textContent = currentEmail;
+                fetchOrders(currentEmail);
+            } else {
+                const savedEmail = sessionStorage.getItem('guest_order_email');
+                if (savedEmail) {
+                    currentEmail = savedEmail;
+                    document.getElementById('userEmailDisplay').textContent = currentEmail + ' (Guest)';
+                    fetchOrders(currentEmail);
+                } else {
+                    document.getElementById('emailModal').style.display = 'flex';
+                }
+            }
+        }
+
+        async function lookupOrders() {
+            const email = document.getElementById('lookupEmail').value.trim();
+            if (!email) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            currentEmail = email;
+            sessionStorage.setItem('guest_order_email', email);
+            document.getElementById('emailModal').style.display = 'none';
+            document.getElementById('userEmailDisplay').textContent = email + ' (Guest)';
+            fetchOrders(email);
+        }
+
+        function switchTab(type, el) {
+            activeTab = type;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            renderOrders();
+        }
+
+        function timeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+
+            if (diffInSeconds < 60) return 'Just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} mins ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+            return date.toLocaleDateString();
+        }
+
+        function getItemStatusTracker(status) {
+            const stages = ['Confirmed', 'Preparing', 'Picked up', 'Delivered'];
+            let currentStageIndex = 0;
+
+            if (status === 'paid') currentStageIndex = 1;
+            if (status === 'shipped') currentStageIndex = 2;
+            if (status === 'delivered') currentStageIndex = 3;
+            if (status === 'cancelled') return '<p style="color: #FF4D4D; font-size: 0.8rem; font-weight: 600; margin: 0;">Cancelled</p>';
+
+            const progressWidth = (currentStageIndex / (stages.length - 1)) * 100;
+
+            return `
+                <div class="item-status-tracker">
+                    <div class="item-tracker-progress" style="width: ${progressWidth}%"></div>
+                    ${stages.map((stage, index) => `
+                        <div class="item-status-step ${index <= currentStageIndex ? 'completed' : ''} ${index === currentStageIndex ? 'active' : ''}">
+                            <div class="item-step-dot"></div>
+                            <div class="item-step-label">${stage}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function fetchOrders(email) {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+
+            try {
+                const { data: orders, error } = await supabaseClient
+                    .from('orders')
+                    .select('*, order_items(*)')
+                    .eq('email', email)
+                    .order('created_at', { ascending: false });
+
+                loading.style.display = 'none';
+                if (error) throw error;
+
+                allOrders = orders || [];
+                updateTabCounts();
+                renderOrders();
+
+            } catch (error) {
+                console.error('Error fetching orders:', error);
+                loading.style.display = 'none';
+                document.getElementById('ordersList').innerHTML = `<div class="empty-state"><h3>Error loading orders</h3><p>${error.message}</p></div>`;
+            }
+        }
+
+        function updateTabCounts() {
+            const upcoming = allOrders.filter(o => ['pending', 'paid', 'shipped'].includes(o.status)).length;
+            const previous = allOrders.filter(o => o.status === 'delivered' || o.status === 'cancelled').length;
+
+            const tabs = document.querySelectorAll('.tab');
+            tabs[0].textContent = `Upcoming Orders (${upcoming})`;
+            tabs[1].textContent = `Previous Orders (${previous})`;
+            tabs[2].textContent = `Scheduled Orders (0)`;
+        }
+
+        function renderOrders() {
+            loadProductsFromStorage();
+            const ordersList = document.getElementById('ordersList');
+            ordersList.innerHTML = '';
+
+            let filteredOrders = [];
+            if (activeTab === 'upcoming') {
+                filteredOrders = allOrders.filter(o => ['pending', 'paid', 'shipped'].includes(o.status));
+            } else if (activeTab === 'previous') {
+                filteredOrders = allOrders.filter(o => o.status === 'delivered' || o.status === 'cancelled');
+            }
+
+            if (filteredOrders.length === 0) {
+                ordersList.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <path d="M16 10a4 4 0 0 1-8 0"></path>
+                        </svg>
+                        <h3>No ${activeTab} orders found</h3>
+                        <p>When you place an order, it will appear here.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredOrders.forEach(order => {
+                const itemsCount = order.order_items.reduce((acc, item) => acc + item.quantity, 0);
+
+                const itemsHtml = order.order_items.map(item => {
+                    const product = products.find(p => p.id === item.product_id);
+                    const image = product ? product.image : 'images/product_1_The_Snap_&_Go_Bra/1.png';
+                    return `
+                        <div class="order-item-row">
+                            <div class="item-thumbnail">
+                                <img src="${image}" alt="${item.product_name}">
+                            </div>
+                            <div class="item-tracking-info">
+                                <div class="item-name-qty">
+                                    <h4>${item.product_name}</h4>
+                                    <span>Qty: ${item.quantity} • ${item.options?.size || 'M'} / ${item.options?.color || 'Nude'}</span>
+                                </div>
+                                ${getItemStatusTracker(order.status)}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                const orderHtml = `
+                    <div class="order-card">
+                        <div class="order-card-header">
+                            <div class="order-main-info">
+                                <div class="order-icon-wrapper">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                        <path d="M3 6h18"></path>
+                                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                        <text x="8" y="18" font-family="Outfit" font-size="8" font-weight="bold" fill="currentColor">B</text>
+                                    </svg>
+                                </div>
+                                <div class="order-title-price">
+                                    <h3>Order no #${order.id.slice(0, 5).toUpperCase()}</h3>
+                                    <p>R ${parseFloat(order.total_amount).toFixed(2)}</p>
+                                </div>
+                            </div>
+                            <div class="order-actions">
+                                <button class="details-btn">Order Details</button>
+                                ${order.status === 'pending' ? '<a href="#" class="cancel-link" onclick="cancelOrder(\'' + order.id + '\')">Cancel Order</a>' : ''}
+                            </div>
+                        </div>
+
+                        <div class="order-items-list">
+                            ${itemsHtml}
+                        </div>
+
+                        <div class="order-footer-info" style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.05);">
+                            <span>${itemsCount} Items</span>
+                            <div class="info-dot"></div>
+                            <span>Online Payment</span>
+                            <div class="info-dot"></div>
+                            <span>Ordered ${timeAgo(order.created_at)}</span>
+                            <div class="info-dot"></div>
+                            <span>Delivery within 2-5 days</span>
+                        </div>
+                    </div>
+                `;
+                ordersList.innerHTML += orderHtml;
+            });
+        }
+
+        async function cancelOrder(orderId) {
+            if (!confirm('Are you sure you want to cancel this order?')) return;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('orders')
+                    .update({ status: 'cancelled' })
+                    .eq('id', orderId);
+
+                if (error) throw error;
+                alert('Order cancelled successfully.');
+                fetchOrders(currentEmail);
+            } catch (error) {
+                alert('Error cancelling order: ' + error.message);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initOrders);
+    </script>
+    <!-- Login/Signup Modal -->
+    <div id="loginModal" class="modal"
+        style="display: none; position: fixed; z-index: 2001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(5px); align-items: center; justify-content: center;">
+        <div
+            style="background-color: #fff; width: 90%; max-width: 400px; border-radius: 16px; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); position: relative; text-align: center;">
+            <button onclick="closeModal('loginModal')"
+                style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999;">&times;</button>
+
+            <div class="login-header">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 10px; color: #000;">
+                    Welcome Back</h2>
+                <p style="color: #666; margin-bottom: 30px; font-size: 0.95rem;">Sign in to access your saved profile.
+                </p>
+            </div>
+
+            <div style="display: flex; margin-bottom: 25px; border-bottom: 1px solid #eee;">
+                <button class="auth-tab active" onclick="switchAuthTab('signin')"
+                    style="flex: 1; padding: 15px; background: none; border: none; font-size: 1rem; font-weight: 600; color: #A0522D; cursor: pointer; border-bottom: 2px solid #A0522D;">Sign
+                    In</button>
+                <button class="auth-tab" onclick="switchAuthTab('signup')"
+                    style="flex: 1; padding: 15px; background: none; border: none; font-size: 1rem; font-weight: 600; color: #999; cursor: pointer;">Sign
+                    Up</button>
+            </div>
+
+            <form id="signinForm" onsubmit="handleEmailSignIn(event)"
+                style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="text-align: left;">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 5px;">Email</label>
+                    <input type="email" id="signinEmail" placeholder="name@example.com" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+                <div style="text-align: left;">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 5px;">Password</label>
+                    <input type="password" id="signinPassword" placeholder="••••••••" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+                <button type="submit"
+                    style="background: #000; color: #fff; border: none; padding: 14px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px;">Sign
+                    In</button>
+            </form>
+
+            <form id="signupForm" onsubmit="handleEmailSignUp(event)"
+                style="display: none; flex-direction: column; gap: 15px;">
+                <div style="text-align: left;">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 5px;">Email</label>
+                    <input type="email" id="signupEmail" placeholder="name@example.com" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+                <div style="text-align: left;">
+                    <label
+                        style="display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 5px;">Password</label>
+                    <input type="password" id="signupPassword" placeholder="Create a password" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                </div>
+                <button type="submit"
+                    style="background: #000; color: #fff; border: none; padding: 14px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px;">Create
+                    Account</button>
+            </form>
+
+            <div style="display: flex; align-items: center; margin: 25px 0; color: #999; font-size: 0.85rem;">
+                <div style="flex: 1; height: 1px; background: #eee;"></div>
+                <span style="padding: 0 10px;">OR</span>
+                <div style="flex: 1; height: 1px; background: #eee;"></div>
+            </div>
+
+            <button onclick="handleGoogleSignIn()"
+                style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: #fff; border: 1px solid #ddd; border-radius: 8px; cursor: pointer;">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18">
+                Continue with Google
+            </button>
+        </div>
+    </div>
+</body>
+
+</html>

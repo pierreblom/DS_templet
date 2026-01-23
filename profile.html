@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Beha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/home_page/css/front_page.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-init.js"></script>
+    <script src="/js/auth.js"></script>
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .profile-header {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .profile-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #000;
+        }
+
+        .profile-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Outfit', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--accent-color);
+            outline: none;
+        }
+
+        input:disabled {
+            background-color: #f9f9f9;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .save-btn {
+            grid-column: span 2;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .save-btn:hover {
+            background-color: #333;
+            transform: translateY(-1px);
+        }
+
+        .message {
+            grid-column: span 2;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .message.success {
+            display: block;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .message.error {
+            display: block;
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        @media (max-width: 600px) {
+            .profile-form {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+
+            .save-btn {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="nav-left">
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="logo">
+                <a href="/" style="text-decoration:none; color:inherit;">Beha</a>
+            </div>
+            <div class="nav-right">
+                <button class="icon-btn" onclick="window.location.href='/'">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="profile-container">
+            <div class="profile-header">
+                <h1>My Profile</h1>
+                <p>Manage your delivery information for faster checkout.</p>
+            </div>
+
+            <div id="message" class="message"></div>
+
+            <form id="profileForm" class="profile-form">
+                <div class="form-group full-width">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" placeholder="Your first name">
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" placeholder="Your last name">
+                </div>
+                <div class="form-group full-width">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" placeholder="Street address">
+                </div>
+                <div class="form-group">
+                    <label for="apartment">Apartment, suite, etc.</label>
+                    <input type="text" id="apartment" placeholder="Optional">
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" placeholder="City">
+                </div>
+                <div class="form-group">
+                    <label for="postalCode">Postal Code</label>
+                    <input type="text" id="postalCode" placeholder="Postal code">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" placeholder="Phone number">
+                </div>
+                <button type="submit" class="save-btn">Save Changes</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        async function loadProfile() {
+            if (typeof supabaseClient === 'undefined') return;
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session?.user) {
+                window.location.href = '/';
+                return;
+            }
+
+            document.getElementById('email').value = session.user.email;
+
+            const { data: profile, error } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .maybeSingle();
+
+            if (profile) {
+                if (profile.first_name) document.getElementById('firstName').value = profile.first_name;
+                if (profile.last_name) document.getElementById('lastName').value = profile.last_name;
+                if (profile.address) document.getElementById('address').value = profile.address;
+                if (profile.apartment) document.getElementById('apartment').value = profile.apartment;
+                if (profile.city) document.getElementById('city').value = profile.city;
+                if (profile.postal_code) document.getElementById('postalCode').value = profile.postal_code;
+                if (profile.phone) document.getElementById('phone').value = profile.phone;
+            }
+        }
+
+        async function saveProfile(e) {
+            e.preventDefault();
+            const messageEl = document.getElementById('message');
+            const saveBtn = e.target.querySelector('.save-btn');
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session?.user) return;
+
+            const profileData = {
+                id: session.user.id,
+                email: session.user.email,
+                first_name: document.getElementById('firstName').value,
+                last_name: document.getElementById('lastName').value,
+                address: document.getElementById('address').value,
+                apartment: document.getElementById('apartment').value,
+                city: document.getElementById('city').value,
+                postal_code: document.getElementById('postalCode').value,
+                phone: document.getElementById('phone').value,
+                updated_at: new Date().toISOString()
+            };
+
+            const { error } = await supabaseClient
+                .from('profiles')
+                .upsert(profileData);
+
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Save Changes';
+
+            if (error) {
+                messageEl.textContent = 'Error saving profile: ' + error.message;
+                messageEl.className = 'message error';
+            } else {
+                messageEl.textContent = 'Profile updated successfully!';
+                messageEl.className = 'message success';
+                setTimeout(() => {
+                    messageEl.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProfile();
+            document.getElementById('profileForm').addEventListener('submit', saveProfile);
+        });
+    </script>
+</body>
+
+</html>

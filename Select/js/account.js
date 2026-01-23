@@ -95,7 +95,7 @@ class AccountManager {
      * Handle orders action
      */
     handleOrders() {
-        alert('Orders feature coming soon!');
+        window.location.href = '/orders.html';
         this.closeAllPopups();
     }
 
@@ -103,7 +103,7 @@ class AccountManager {
      * Handle profile action
      */
     handleProfile() {
-        alert('Profile feature coming soon!');
+        window.location.href = '/profile.html';
         this.closeAllPopups();
     }
 }
