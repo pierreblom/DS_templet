@@ -26,6 +26,7 @@ app.set('view engine', 'html');
 
 // Serve static files
 app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, 'pages')));
 
 // API Routes
 const productRoutes = require('./api/routes/products');
