@@ -134,6 +134,7 @@ app.get(/^\/admin(?:\/.*)?$/, (req, res) => {
     res.sendFile(path.join(__dirname, 'admin', 'dist', 'index.html'));
 });
 
+app.use(express.static(path.join(__dirname, 'home_page')));
 app.use(express.static(path.join(__dirname)));
 
 // ===================
