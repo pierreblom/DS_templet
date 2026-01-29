@@ -143,7 +143,7 @@ app.use(express.static(path.join(__dirname)));
 const authRoutes = require('./api/routes/auth');
 const productRoutes = require('./api/routes/products');
 const yocoRoutes = require('./api/routes/yoco');
-const checkoutRoutes = require('./api/routes/checkout');
+
 const orderRoutes = require('./api/routes/orders');
 const userRoutes = require('./api/routes/users');
 const analyticsRoutes = require('./api/routes/analytics');
@@ -160,7 +160,7 @@ app.use('/api/v1/auth/register', authLimiter);
 // Mount API v1 routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/products', productRoutes);
-app.use('/api/v1/checkout', checkoutRoutes);
+
 app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/analytics', analyticsRoutes);
@@ -169,7 +169,7 @@ app.use('/api/webhooks', webhookRoutes);
 
 // Legacy routes (for backward compatibility during transition)
 app.use('/api/products', productRoutes);
-app.use('/api/checkout', checkoutRoutes);
+
 
 // ===================
 // Health Check
