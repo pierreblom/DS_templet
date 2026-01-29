@@ -2,6 +2,7 @@ const sequelize = require('./database');
 const Product = require('./models/Product');
 const User = require('./models/User');
 const { Order, OrderItem } = require('./models/Order');
+const AuditLog = require('./models/AuditLog');
 
 // Associations
 User.hasMany(Order);
@@ -18,5 +19,6 @@ module.exports = {
     Product,
     User,
     Order,
-    OrderItem
+    OrderItem,
+    AuditLog
 };

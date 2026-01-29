@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Bra Shop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #A0522D;
+            --primary-light: #C4754D;
+            --bg: #F9F5F0;
+            --text: #333;
+            --text-light: #666;
+            --white: #fff;
+            --border: #e5e5e5;
+            --success: #059669;
+            --error: #DC2626;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: var(--white);
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+        header .inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+        }
+        nav a:hover { color: var(--primary); }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+        }
+        .btn:hover { background: var(--primary-light); }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background: var(--white);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            background: var(--bg);
+        }
+        .btn-danger {
+            background: var(--error);
+        }
+        .btn-danger:hover {
+            background: #B91C1C;
+        }
+        .message {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .message.success {
+            background: #D1FAE5;
+            color: var(--success);
+        }
+        .message.error {
+            background: #FEE2E2;
+            color: var(--error);
+        }
+        .loading {
+            text-align: center;
+            padding: 60px;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .login-prompt {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="inner">
+            <a href="/" class="logo">Bra Shop</a>
+            <nav>
+                <a href="/">Shop</a>
+                <a href="/account/orders.html">Orders</a>
+                <a href="/account/profile.html">Profile</a>
+                <a href="#" id="logoutLink" style="display:none;">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>My Profile</h1>
+        <p class="subtitle">Manage your account settings</p>
+
+        <div id="content">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading profile...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/v1';
+        const TOKEN_KEY = 'access_token';
+
+        function getToken() {
+            return localStorage.getItem(TOKEN_KEY);
+        }
+
+        async function fetchProfile() {
+            const token = getToken();
+            if (!token) {
+                showLoginPrompt();
+                return;
+            }
+
+            document.getElementById('logoutLink').style.display = 'inline';
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.status === 401) {
+                    localStorage.removeItem(TOKEN_KEY);
+                    showLoginPrompt();
+                    return;
+                }
+
+                const data = await response.json();
+                displayProfile(data.user);
+            } catch (error) {
+                console.error('Failed to fetch profile:', error);
+                document.getElementById('content').innerHTML = `
+                    <div class="card">
+                        <p>Failed to load profile. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayProfile(user) {
+            document.getElementById('content').innerHTML = `
+                <div class="card">
+                    <h2>Profile Information</h2>
+                    <div id="profileMessage"></div>
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" value="${user.name || ''}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" value="${user.email}" required>
+                        </div>
+                        <button type="submit" class="btn">Update Profile</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>Change Password</h2>
+                    <div id="passwordMessage"></div>
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" name="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword" required minlength="8">
+                        </div>
+                        <button type="submit" class="btn">Change Password</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>Quick Links</h2>
+                    <div class="actions">
+                        <a href="/account/orders.html" class="btn btn-secondary">View Orders</a>
+                        <button id="logoutBtn" class="btn btn-danger">Logout</button>
+                    </div>
+                </div>
+            `;
+
+            // Profile form handler
+            document.getElementById('profileForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const btn = form.querySelector('button');
+                btn.disabled = true;
+                btn.textContent = 'Updating...';
+
+                try {
+                    const response = await fetch(`${API_BASE}/auth/me`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            name: document.getElementById('name').value,
+                            email: document.getElementById('email').value
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        showMessage('profileMessage', 'Profile updated successfully!', 'success');
+                    } else {
+                        showMessage('profileMessage', data.error?.message || 'Failed to update profile', 'error');
+                    }
+                } catch (error) {
+                    showMessage('profileMessage', 'An error occurred', 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Update Profile';
+                }
+            });
+
+            // Password form handler
+            document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const btn = form.querySelector('button');
+                btn.disabled = true;
+                btn.textContent = 'Changing...';
+
+                try {
+                    const response = await fetch(`${API_BASE}/auth/me/password`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            currentPassword: document.getElementById('currentPassword').value,
+                            newPassword: document.getElementById('newPassword').value
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        showMessage('passwordMessage', 'Password changed successfully!', 'success');
+                        form.reset();
+                    } else {
+                        showMessage('passwordMessage', data.error?.message || 'Failed to change password', 'error');
+                    }
+                } catch (error) {
+                    showMessage('passwordMessage', 'An error occurred', 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Change Password';
+                }
+            });
+
+            // Logout button handler
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem(TOKEN_KEY);
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            });
+        }
+
+        function showMessage(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.className = `message ${type}`;
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => {
+                el.style.display = 'none';
+            }, 5000);
+        }
+
+        function showLoginPrompt() {
+            document.getElementById('content').innerHTML = `
+                <div class="card login-prompt">
+                    <h2>Please log in to view your profile</h2>
+                    <p>You need to be logged in to access your account settings.</p>
+                    <a href="/" class="btn">Go to Home</a>
+                </div>
+            `;
+        }
+
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem('refresh_token');
+            window.location.href = '/';
+        });
+
+        // Load profile on page load
+        fetchProfile();
+    </script>
+</body>
+</html>

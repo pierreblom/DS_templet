@@ -1,29 +1,52 @@
 {
-  "name": "dropshiping_woman_bras",
+  "name": "bra-shop",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "logs": "node scripts/view_logs.js"
+    "dev": "nodemon server.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "jest",
+    "vercel-build": "npm run admin:install && npm run admin:build",
+    "admin:install": "cd admin && npm install",
+    "admin:dev": "cd admin && npm run dev",
+    "admin:build": "cd admin && npm run build",
+    "seed": "node scripts/seed.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "axios": "^1.13.2",
+    "axios": "^1.7.9",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "ejs": "^4.0.1",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
+    "joi": "^18.0.2",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
+    "nodemailer": "^7.0.12",
+    "pg": "^8.17.2",
+    "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7",
-    "sqlite3": "^5.1.7",
-    "stripe": "^20.0.0"
+    "stripe": "^20.0.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.5.5",
+    "globals": "^17.2.0",
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.11",
+    "prettier": "^3.8.1",
+    "supertest": "^7.2.2"
   }
 }

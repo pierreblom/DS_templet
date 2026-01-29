@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Bra Shop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #A0522D;
+            --primary-light: #C4754D;
+            --bg: #F9F5F0;
+            --text: #333;
+            --text-light: #666;
+            --white: #fff;
+            --border: #e5e5e5;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: var(--white);
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+        header .inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+        }
+        nav a:hover { color: var(--primary); }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        .order-id {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .order-date {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+        .status.pending { background: #FEF3C7; color: #92400E; }
+        .status.paid { background: #DBEAFE; color: #1E40AF; }
+        .status.shipped { background: #E9D5FF; color: #6B21A8; }
+        .status.delivered { background: #D1FAE5; color: #065F46; }
+        .status.cancelled { background: #FEE2E2; color: #991B1B; }
+        .order-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .order-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .item-details {
+            flex: 1;
+        }
+        .item-name {
+            font-weight: 500;
+        }
+        .item-qty {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        .item-price {
+            font-weight: 600;
+        }
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+            font-weight: 600;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            color: var(--border);
+            margin-bottom: 20px;
+        }
+        .empty-state h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .empty-state p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--primary);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: var(--primary-light); }
+        .loading {
+            text-align: center;
+            padding: 60px;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .login-prompt {
+            text-align: center;
+            padding: 60px 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="inner">
+            <a href="/" class="logo">Bra Shop</a>
+            <nav>
+                <a href="/">Shop</a>
+                <a href="/account/orders.html">Orders</a>
+                <a href="/account/profile.html">Profile</a>
+                <a href="#" id="logoutLink" style="display:none;">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>My Orders</h1>
+        <p class="subtitle">Track and view your order history</p>
+
+        <div id="content">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading orders...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/v1';
+        const TOKEN_KEY = 'access_token';
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-ZA', {
+                style: 'currency',
+                currency: 'ZAR'
+            }).format(amount);
+        }
+
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('en-ZA', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+
+        function getToken() {
+            return localStorage.getItem(TOKEN_KEY);
+        }
+
+        async function fetchOrders() {
+            const token = getToken();
+            if (!token) {
+                showLoginPrompt();
+                return;
+            }
+
+            document.getElementById('logoutLink').style.display = 'inline';
+
+            try {
+                const response = await fetch(`${API_BASE}/orders`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.status === 401) {
+                    localStorage.removeItem(TOKEN_KEY);
+                    showLoginPrompt();
+                    return;
+                }
+
+                const data = await response.json();
+                displayOrders(data.orders || []);
+            } catch (error) {
+                console.error('Failed to fetch orders:', error);
+                document.getElementById('content').innerHTML = `
+                    <div class="card">
+                        <p>Failed to load orders. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayOrders(orders) {
+            const content = document.getElementById('content');
+
+            if (orders.length === 0) {
+                content.innerHTML = `
+                    <div class="card empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        <h2>No orders yet</h2>
+                        <p>When you place an order, it will appear here.</p>
+                        <a href="/" class="btn">Start Shopping</a>
+                    </div>
+                `;
+                return;
+            }
+
+            content.innerHTML = orders.map(order => `
+                <div class="card">
+                    <div class="order-header">
+                        <div>
+                            <span class="order-id">Order #${order.id}</span>
+                            <span class="order-date"> - ${formatDate(order.created_at)}</span>
+                        </div>
+                        <span class="status ${order.status}">${order.status}</span>
+                    </div>
+                    <div class="order-items">
+                        ${(order.OrderItems || []).map(item => `
+                            <div class="order-item">
+                                <img src="${item.Product?.image_url || '/images/placeholder.jpg'}" alt="${item.Product?.name || 'Product'}">
+                                <div class="item-details">
+                                    <div class="item-name">${item.Product?.name || 'Product'}</div>
+                                    <div class="item-qty">Qty: ${item.quantity}</div>
+                                </div>
+                                <div class="item-price">${formatCurrency(item.price_at_purchase * item.quantity)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="order-total">
+                        <span>Total</span>
+                        <span>${formatCurrency(order.total_amount)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showLoginPrompt() {
+            document.getElementById('content').innerHTML = `
+                <div class="card login-prompt">
+                    <h2>Please log in to view your orders</h2>
+                    <p>You need to be logged in to access your order history.</p>
+                    <a href="/" class="btn">Go to Home</a>
+                </div>
+            `;
+        }
+
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem('refresh_token');
+            window.location.href = '/';
+        });
+
+        // Load orders on page load
+        fetchOrders();
+    </script>
+</body>
+</html>

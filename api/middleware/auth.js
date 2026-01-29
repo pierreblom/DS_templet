@@ -1,0 +1,132 @@
+/**
+ * JWT Authentication Middleware
+ * Following xneelo security guidelines
+ */
+const jwt = require('jsonwebtoken');
+const { AuthenticationError } = require('../../utils/errors');
+const { User } = require('../../database/index');
+
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
+const ACCESS_TOKEN_EXPIRY = '15m';
+const REFRESH_TOKEN_EXPIRY = '7d';
+
+/**
+ * Generate access and refresh tokens
+ */
+function generateTokens(user) {
+    const payload = {
+        userId: user.id,
+        email: user.email,
+        role: user.role
+    };
+
+    const accessToken = jwt.sign(payload, JWT_SECRET, {
+        expiresIn: ACCESS_TOKEN_EXPIRY
+    });
+
+    const refreshToken = jwt.sign({ userId: user.id }, JWT_REFRESH_SECRET, {
+        expiresIn: REFRESH_TOKEN_EXPIRY
+    });
+
+    return { accessToken, refreshToken };
+}
+
+/**
+ * Verify JWT access token
+ */
+function verifyAccessToken(token) {
+    try {
+        return jwt.verify(token, JWT_SECRET);
+    } catch (_error) {
+        return null;
+    }
+}
+
+/**
+ * Verify JWT refresh token
+ */
+function verifyRefreshToken(token) {
+    try {
+        return jwt.verify(token, JWT_REFRESH_SECRET);
+    } catch (_error) {
+        return null;
+    }
+}
+
+/**
+ * Authentication middleware - requires valid JWT
+ */
+async function authenticate(req, res, next) {
+    try {
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            throw new AuthenticationError('No token provided');
+        }
+
+        const token = authHeader.substring(7);
+        const decoded = verifyAccessToken(token);
+
+        if (!decoded) {
+            throw new AuthenticationError('Invalid or expired token');
+        }
+
+        // Fetch user from database to ensure they still exist
+        const user = await User.findByPk(decoded.userId, {
+            attributes: ['id', 'email', 'name', 'role']
+        });
+
+        if (!user) {
+            throw new AuthenticationError('User not found');
+        }
+
+        // Attach user to request
+        req.user = user;
+        req.userId = user.id;
+
+        next();
+    } catch (error) {
+        next(error);
+    }
+}
+
+/**
+ * Optional authentication - attaches user if token present but doesn't fail
+ */
+async function optionalAuth(req, res, next) {
+    try {
+        const authHeader = req.headers.authorization;
+
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            const token = authHeader.substring(7);
+            const decoded = verifyAccessToken(token);
+
+            if (decoded) {
+                const user = await User.findByPk(decoded.userId, {
+                    attributes: ['id', 'email', 'name', 'role']
+                });
+
+                if (user) {
+                    req.user = user;
+                    req.userId = user.id;
+                }
+            }
+        }
+
+        next();
+    } catch (_error) {
+        // Don't fail on optional auth, just continue without user
+        next();
+    }
+}
+
+module.exports = {
+    authenticate,
+    optionalAuth,
+    generateTokens,
+    verifyAccessToken,
+    verifyRefreshToken,
+    ACCESS_TOKEN_EXPIRY,
+    REFRESH_TOKEN_EXPIRY
+};
