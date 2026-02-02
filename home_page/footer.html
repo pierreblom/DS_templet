@@ -1,61 +1,33 @@
 <!-- Footer -->
 <footer class="site-footer">
-    <div class="footer-content">
-        <div class="footer-column">
-            <h4>SHOP</h4>
-            <ul>
-                <li><a href="#leggings">Leggings</a></li>
-                <li><a href="#bras">Sports Bras</a></li>
-                <li><a href="#tops">Tops</a></li>
-                <li><a href="#outerwear">Outerwear</a></li>
-                <li><a href="#sale">Sale</a></li>
-            </ul>
-        </div>
-        <div class="footer-column">
-            <h4>SUPPORT</h4>
-            <ul>
-                <li><a href="../contact.html">Contact Us</a></li>
-                <li><a href="#">FAQ</a></li>
-                <li><a href="../legal/shipping-policy.html">Shipping & Delivery</a></li>
-                <li><a href="../legal/return-refund-policy.html">Returns & Exchanges</a></li>
-                <li><a href="#">Size Guide</a></li>
-            </ul>
-        </div>
-        <div class="footer-column">
-            <h4>LEGAL</h4>
-            <ul>
-                <li><a href="../legal/privacy-policy.html">Privacy Policy</a></li>
-                <li><a href="../legal/terms-and-conditions.html">Terms & Conditions</a></li>
-                <li><a href="../legal/cookie-policy.html">Cookie Policy</a></li>
-                <li><a href="../legal/ecta-disclosure.html">ECTA Disclosure</a></li>
-            </ul>
-        </div>
-        <div class="footer-column">
-            <h4>CONNECT</h4>
-            <div class="social-icons">
-                <a href="#" aria-label="Facebook"><img src="images/unused_or_temp/fb.jpg" alt="Facebook"
-                        class="social-icon"></a>
-                <a href="#" aria-label="Instagram"><img src="images/unused_or_temp/instagram.jpg" alt="Instagram"
-                        class="social-icon"></a>
-                <a href="#" aria-label="TikTok"><img src="images/unused_or_temp/tiktok.jpg" alt="TikTok"
-                        class="social-icon"></a>
+
+    <!-- New Footer Bar -->
+    <div class="sticky-footer-bar">
+        <div class="sticky-separator"></div>
+        <div class="sticky-content">
+            <div class="sticky-left">
+                <span class="copyright-text">© 2026 Beha, Powered by ShopBeha</span>
+                <button class="terms-text-btn" onclick="toggleTermsMenu()">Terms and Policies</button>
             </div>
-            <p style="margin-top: 1rem;">🌲 Carbon Neutral Shipping</p>
+            <div class="sticky-right">
+                <a href="#" aria-label="Facebook"><img src="images/unused_or_temp/fb.jpg" alt="Facebook"
+                        class="sticky-social-icon"></a>
+                <a href="#" aria-label="Instagram"><img src="images/unused_or_temp/instagram.jpg" alt="Instagram"
+                        class="sticky-social-icon"></a>
+            </div>
         </div>
-    </div>
-    <div class="footer-payment">
-        <div class="payment-logos">
-            <img src="images/unused_or_temp/1.png" alt="VISA" class="payment-logo">
-            <img src="images/unused_or_temp/2.png" alt="Mastercard" class="payment-logo">
-            <img src="images/unused_or_temp/3.jpeg" alt="VISA Electron" class="payment-logo">
-            <img src="images/unused_or_temp/4.jpeg" alt="Mastercard" class="payment-logo">
+
+        <!-- Terms & Policies Popup Menu (Inside footer for relative positioning) -->
+        <div id="terms-menu" class="terms-menu-popup">
+            <a href="../legal/shipping-policy.html">Shipping & Delivery</a>
+            <a href="../legal/return-refund-policy.html">Returns & Exchanges</a>
+            <a href="../legal/privacy-policy.html">Privacy Policy</a>
+            <a href="../legal/terms-and-conditions.html">Terms & Conditions</a>
+            <a href="../legal/cookie-policy.html">Cookie Policy</a>
+            <a href="../legal/ecta-disclosure.html">ECTA Disclosure</a>
+            <a href="../contact.html">Contact Us</a>
         </div>
-    </div>
-    <div class="footer-bottom">
-        <p style="margin-bottom: 0.5rem;"><strong>ShopBeha (Pty) Ltd</strong></p>
-        <p><a href="mailto:info@shopbeha.com" style="color: #888; text-decoration: none;">info@shopbeha.com</a> |
-            <a href="../legal/ecta-disclosure.html" style="color: #888; text-decoration: none;">Legal Information</a>
-        </p>
-        <p>© 2026, ShopBeha (Pty) Ltd | All Rights Reserved</p>
     </div>
 </footer>
+
+<div id="terms-overlay" class="terms-overlay" onclick="toggleTermsMenu()"></div>

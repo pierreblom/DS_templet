@@ -1,52 +1,83 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 
 // Create a Yoco checkout session
 router.post('/create-checkout', async (req, res) => {
     try {
-        const { amount, currency, successUrl, cancelUrl, failureUrl, metadata } = req.body;
+        const { amount, successUrl, cancelUrl } = req.body;
 
-        // Validate required fields
-        if (!amount || !currency) {
+        const safeAmount = Math.round(Number(amount));
+
+        if (isNaN(safeAmount) || safeAmount < 200) {
             return res.status(400).json({
-                error: 'Missing required fields: amount and currency are required'
+                success: false,
+                error: { message: 'Invalid amount. Minimum is 200 cents (R 2.00)' }
             });
         }
 
         const checkoutData = {
-            amount: amount,
-            currency: currency,
-            successUrl: successUrl || `${req.protocol}://${req.get('host')}/success.html`,
-            cancelUrl: cancelUrl || `${req.protocol}://${req.get('host')}/checkout.html`,
-            failureUrl: failureUrl || `${req.protocol}://${req.get('host')}/checkout.html?error=payment_failed`,
-            metadata: metadata || {}
+            amount: safeAmount,
+            currency: 'ZAR',
+            successUrl: successUrl || `${req.protocol}://${req.get('host')}/orders?status=success`,
+            cancelUrl: cancelUrl || `${req.protocol}://${req.get('host')}/checkout`
         };
 
-        // Call Yoco Checkouts API
-        const response = await axios.post(
-            'https://payments.yoco.com/api/checkouts',
-            checkoutData,
-            {
-                headers: {
-                    'Authorization': `Bearer ${process.env.Secret_Key}`,
-                    'Content-Type': 'application/json'
+        const secretKey = (process.env.Secret_Key || '').trim();
+
+        const debugLogPath = path.join(__dirname, '../../../yoco_debug.log');
+        const logData = `
+--- REQUEST ${new Date().toISOString()} ---
+Amount: ${safeAmount}
+SecretKey (first 10): ${secretKey ? secretKey.substring(0, 10) : 'MISSING'}
+Payload: ${JSON.stringify(checkoutData, null, 2)}
+-------------------------------------------
+`;
+        fs.appendFileSync(debugLogPath, logData);
+
+        try {
+            const response = await axios.post(
+                'https://payments.yoco.com/api/checkouts',
+                checkoutData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${secretKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    timeout: 10000 // 10s timeout
                 }
-            }
-        );
+            );
 
-        // Return the checkout URL to the frontend
-        res.json({
-            success: true,
-            checkoutUrl: response.data.redirectUrl,
-            checkoutId: response.data.id
-        });
+            fs.appendFileSync(debugLogPath, `SUCCESS: ${JSON.stringify(response.data)}\n`);
 
-    } catch (error) {
-        console.error('Yoco checkout creation error:', error.response?.data || error.message);
+            return res.json({
+                success: true,
+                checkoutUrl: response.data.redirectUrl,
+                checkoutId: response.data.id
+            });
+        } catch (apiError) {
+            const status = apiError.response?.status || 500;
+            const data = apiError.response?.data;
+
+            const errorDetails = {
+                status: apiError.response?.status,
+                data: apiError.response?.data,
+                message: apiError.message
+            };
+            fs.appendFileSync(debugLogPath, `ERROR: ${JSON.stringify(errorDetails, null, 2)}\n`);
+
+            return res.status(status).json({
+                success: false,
+                error: data || { message: apiError.message }
+            });
+        }
+    } catch (outerError) {
+        console.error('Outer Yoco Error:', outerError);
         res.status(500).json({
             success: false,
-            error: error.response?.data?.message || 'Failed to create checkout session'
+            error: { message: outerError.message }
         });
     }
 });

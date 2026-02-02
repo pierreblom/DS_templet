@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Beha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="home_page/css/front_page.css">
+    <style>
+        .profile-container {
+            max-width: 900px;
+            margin: 4rem auto;
+            padding: 0 5%;
+        }
+
+        .profile-header {
+            margin-bottom: 3rem;
+        }
+
+        .profile-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .profile-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .auth-prompt {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: var(--soft-shadow);
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .auth-prompt h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .auth-prompt p {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .auth-prompt button {
+            background-color: var(--text-color);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 0.5rem;
+        }
+
+        .auth-prompt button:hover {
+            background-color: var(--accent-color);
+        }
+
+        .profile-content {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .profile-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--soft-shadow);
+        }
+
+        .profile-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .profile-card h2 svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .profile-info {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Outfit', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .btn-primary {
+            background-color: var(--text-color);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: #dc3545;
+            padding: 1rem 2rem;
+            border: 2px solid #dc3545;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-card {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .provider-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f0f0f0;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .provider-badge svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('header.html') %>
+
+        <div class="profile-container">
+            <div class="profile-header">
+                <h1>My Profile</h1>
+                <p>Manage your account information</p>
+            </div>
+
+            <!-- Auth Prompt (shown when not logged in) -->
+            <div id="authPrompt" class="auth-prompt" style="display: none;">
+                <h2>Sign in to view your profile</h2>
+                <p>Please sign in to manage your account settings and personal information.</p>
+                <button onclick="handleSignIn()">Sign In</button>
+                <button onclick="handleSignUp()"
+                    style="background-color: transparent; color: var(--text-color); border: 2px solid var(--text-color);">Sign
+                    Up</button>
+            </div>
+
+            <!-- Profile Content (shown when logged in) -->
+            <div id="profileContent" class="profile-content" style="display: none;">
+                <!-- Personal Details -->
+                <div class="profile-card">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                        Personal & Shipping Details
+                    </h2>
+                    <form id="profileForm">
+                        <div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-top: 0;">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" placeholder="Jane">
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" placeholder="Doe">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" placeholder="012 345 6789">
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Shipping Address</label>
+                            <input type="text" id="address" placeholder="123 Fashion Ave">
+                        </div>
+                        <div class="stats-grid" style="grid-template-columns: 1.5fr 1fr; margin-top: 0;">
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" id="city" placeholder="Cape Town">
+                            </div>
+                            <div class="form-group">
+                                <label for="postalCode">Postal Code</label>
+                                <input type="text" id="postalCode" placeholder="8001">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary" id="saveProfileBtn">Save Personal Details</button>
+                    </form>
+                </div>
+
+                <!-- Account Information -->
+                <div class="profile-card">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Account Information
+                    </h2>
+                    <div class="profile-info">
+                        <div class="info-row">
+                            <span class="info-label">Email</span>
+                            <span class="info-value" id="profileEmail">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Account Created</span>
+                            <span class="info-value" id="accountCreated">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Sign-in Method</span>
+                            <span class="info-value" id="signInMethod">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Statistics -->
+                <div class="profile-card">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                        Your Activity
+                    </h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalOrders">0</div>
+                            <div class="stat-label">Total Orders</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalSpent">R 0</div>
+                            <div class="stat-label">Total Spent</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="cartItems">0</div>
+                            <div class="stat-label">Cart Items</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Update Password (only for email users) -->
+                <div class="profile-card" id="passwordSection" style="display: none;">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Update Password
+                    </h2>
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" placeholder="Enter new password" required
+                                minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" placeholder="Confirm new password" required
+                                minlength="6">
+                        </div>
+                        <button type="submit" class="btn-primary">Update Password</button>
+                    </form>
+                </div>
+
+                <!-- Account Actions -->
+                <div class="profile-card">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M12 1v6m0 6v6m8.66-9l-5.2 3M8.54 14l-5.2 3m13.32 0l-5.2-3M8.54 10l-5.2-3"></path>
+                        </svg>
+                        Account Actions
+                    </h2>
+                    <button class="btn-primary" onclick="window.location.href='/orders.html'">View My Orders</button>
+                    <button class="btn-secondary" onclick="handleSignOut()">Sign Out</button>
+                </div>
+            </div>
+        </div>
+
+        <%- include('footer.html') %>
+
+            <!-- Include necessary modals -->
+            <%- include('../admin_panel/cart_modal.html') %>
+                <%- include('login_modal.html') %>
+
+                    <!-- Scripts -->
+                    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+                    <script src="/js/supabase-init.js"></script>
+                    <script src="/js/auth.js"></script>
+                    <script src="js/account-popup.js"></script>
+                    <script src="js/cart.js"></script>
+                    <script src="js/shopbeha.js"></script>
+
+                    <script>
+                        // Check authentication and load profile
+                        async function initProfilePage() {
+                            if (typeof window.supabaseClient === 'undefined') {
+                                console.error('Supabase client not initialized');
+                                showAuthPrompt();
+                                return;
+                            }
+
+                            const { data: { session } } = await window.supabaseClient.auth.getSession();
+
+                            if (!session?.user) {
+                                showAuthPrompt();
+                                return;
+                            }
+
+                            // User is logged in, load their profile
+                            await loadProfile(session.user);
+                        }
+
+                        function showAuthPrompt() {
+                            document.getElementById('authPrompt').style.display = 'block';
+                            document.getElementById('profileContent').style.display = 'none';
+                        }
+
+                        async function loadProfile(user) {
+                            document.getElementById('authPrompt').style.display = 'none';
+                            document.getElementById('profileContent').style.display = 'grid';
+
+                            // Display user email
+                            document.getElementById('profileEmail').textContent = user.email;
+
+                            // Fetch profile from table
+                            const { data: profile } = await window.supabaseClient
+                                .from('profiles')
+                                .select('*')
+                                .eq('id', user.id)
+                                .maybeSingle();
+
+                            if (profile) {
+                                document.getElementById('firstName').value = profile.first_name || '';
+                                document.getElementById('lastName').value = profile.last_name || '';
+                                document.getElementById('phone').value = profile.phone || '';
+                                document.getElementById('address').value = profile.address || '';
+                                document.getElementById('city').value = profile.city || '';
+                                document.getElementById('postalCode').value = profile.postal_code || '';
+                            }
+
+                            // Display account creation date
+                            const createdDate = new Date(user.created_at).toLocaleDateString('en-ZA', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            });
+                            document.getElementById('accountCreated').textContent = createdDate;
+
+                            // Display sign-in method
+                            const provider = user.app_metadata?.provider || 'email';
+                            const methodEl = document.getElementById('signInMethod');
+
+                            if (provider === 'google') {
+                                methodEl.innerHTML = `
+                    <span class="provider-badge">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        Google
+                    </span>
+                `;
+                                // Hide password section for Google users
+                                document.getElementById('passwordSection').style.display = 'none';
+                            } else {
+                                methodEl.innerHTML = `
+                    <span class="provider-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        Email
+                    </span>
+                `;
+                                // Show password section for email users
+                                document.getElementById('passwordSection').style.display = 'block';
+                            }
+
+                            // Load statistics
+                            await loadStatistics(user.id);
+                        }
+
+                        // Handle profile update
+                        document.getElementById('profileForm')?.addEventListener('submit', async (e) => {
+                            e.preventDefault();
+                            const btn = document.getElementById('saveProfileBtn');
+                            btn.disabled = true;
+                            btn.textContent = 'Saving...';
+
+                            try {
+                                const { data: { session } } = await window.supabaseClient.auth.getSession();
+                                if (!session?.user) throw new Error('Not logged in');
+
+                                const updates = {
+                                    id: session.user.id,
+                                    first_name: document.getElementById('firstName').value,
+                                    last_name: document.getElementById('lastName').value,
+                                    phone: document.getElementById('phone').value,
+                                    address: document.getElementById('address').value,
+                                    city: document.getElementById('city').value,
+                                    postal_code: document.getElementById('postalCode').value,
+                                    updated_at: new Date()
+                                };
+
+                                const { error } = await window.supabaseClient
+                                    .from('profiles')
+                                    .upsert(updates);
+
+                                if (error) throw error;
+                                alert('Profile updated successfully!');
+                            } catch (error) {
+                                console.error('Error saving profile:', error);
+                                alert('Error saving profile: ' + error.message);
+                            } finally {
+                                btn.disabled = false;
+                                btn.textContent = 'Save Personal Details';
+                            }
+                        });
+
+                        async function loadStatistics(userId) {
+                            try {
+                                // Load total orders and spending
+                                const { data: orders, error: ordersError } = await window.supabaseClient
+                                    .from('orders')
+                                    .select('total_amount')
+                                    .eq('user_id', userId);
+
+                                if (!ordersError && orders) {
+                                    document.getElementById('totalOrders').textContent = orders.length;
+                                    const totalSpent = orders.reduce((sum, order) => sum + parseFloat(order.total_amount), 0);
+                                    document.getElementById('totalSpent').textContent = `R ${totalSpent.toFixed(2)}`;
+                                }
+
+                                // Load cart items count
+                                const cart = await window.CartModule.loadCart();
+                                const cartCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+                                document.getElementById('cartItems').textContent = cartCount;
+
+                            } catch (error) {
+                                console.error('Error loading statistics:', error);
+                            }
+                        }
+
+                        // Handle password update
+                        document.getElementById('passwordForm')?.addEventListener('submit', async (e) => {
+                            e.preventDefault();
+
+                            const newPassword = document.getElementById('newPassword').value;
+                            const confirmPassword = document.getElementById('confirmPassword').value;
+
+                            if (newPassword !== confirmPassword) {
+                                alert('Passwords do not match!');
+                                return;
+                            }
+
+                            if (newPassword.length < 6) {
+                                alert('Password must be at least 6 characters long!');
+                                return;
+                            }
+
+                            try {
+                                const { error } = await window.supabaseClient.auth.updateUser({
+                                    password: newPassword
+                                });
+
+                                if (error) throw error;
+
+                                alert('Password updated successfully!');
+                                document.getElementById('passwordForm').reset();
+                            } catch (error) {
+                                console.error('Error updating password:', error);
+                                alert('Error updating password: ' + error.message);
+                            }
+                        });
+
+                        // Initialize on page load
+                        document.addEventListener('DOMContentLoaded', initProfilePage);
+
+                        // Listen for auth state changes
+                        if (typeof window.supabaseClient !== 'undefined') {
+                            window.supabaseClient.auth.onAuthStateChange((event, session) => {
+                                if (event === 'SIGNED_IN') {
+                                    initProfilePage();
+                                } else if (event === 'SIGNED_OUT') {
+                                    showAuthPrompt();
+                                }
+                            });
+                        }
+                    </script>
+</body>
+
+</html>

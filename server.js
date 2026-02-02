@@ -30,11 +30,20 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',')
     : ['http://localhost:3000', 'http://127.0.0.1:3000'];
 
-if (process.env.NODE_ENV !== 'production' && !allowedOrigins.includes('http://localhost:3000')) {
-    allowedOrigins.push('http://localhost:3000');
-}
-if (process.env.NODE_ENV !== 'production' && !allowedOrigins.includes('http://127.0.0.1:3000')) {
-    allowedOrigins.push('http://127.0.0.1:3000');
+if (process.env.NODE_ENV !== 'production') {
+    const port = process.env.PORT || 3000;
+    const localOrigins = [
+        `http://localhost:${port}`,
+        `http://127.0.0.1:${port}`,
+        'http://localhost:3000',
+        'http://127.0.0.1:3000'
+    ];
+
+    localOrigins.forEach(origin => {
+        if (!allowedOrigins.includes(origin)) {
+            allowedOrigins.push(origin);
+        }
+    });
 }
 
 app.use(
@@ -123,6 +132,30 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
 // ===================
+// Page Routes (Must be before static files to enable EJS rendering)
+// ===================
+
+app.get(['/contact', '/contact.html'], (req, res) => {
+    res.render('contact.html');
+});
+
+app.get(['/orders', '/orders.html'], (req, res) => {
+    res.render('orders.html');
+});
+
+app.get(['/profile', '/profile.html'], (req, res) => {
+    res.render('profile.html');
+});
+
+app.get(['/checkout', '/checkout.html'], (req, res) => {
+    res.render('checkout.html');
+});
+
+app.get('/success', (req, res) => {
+    res.redirect('/orders');
+});
+
+// ===================
 // Static Files
 // ===================
 
@@ -166,6 +199,7 @@ app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/analytics', analyticsRoutes);
 app.use('/api/v1/contact', contactRoutes);
+app.use('/api/v1/yoco', yocoRoutes);
 app.use('/api/webhooks', webhookRoutes);
 
 // Legacy routes (for backward compatibility during transition)

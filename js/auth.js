@@ -1,6 +1,7 @@
 
+
 // Auth Functions
-function openLoginModal(tab = 'signin') {
+window.openLoginModal = function (tab = 'signin') {
     const modal = document.getElementById('loginModal');
     if (modal) {
         modal.style.display = 'flex';
@@ -16,10 +17,16 @@ function openLoginModal(tab = 'signin') {
 
 async function handleEmailSignIn(e) {
     e.preventDefault();
+
+    if (!window.supabaseClient) {
+        alert("Authentication system not ready. Please refresh the page.");
+        return;
+    }
+
     const email = document.getElementById('signinEmail').value;
     const password = document.getElementById('signinPassword').value;
 
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
+    const { data, error } = await window.supabaseClient.auth.signInWithPassword({
         email,
         password
     });
@@ -40,10 +47,16 @@ async function handleEmailSignIn(e) {
 
 async function handleEmailSignUp(e) {
     e.preventDefault();
+
+    if (!window.supabaseClient) {
+        alert("Authentication system not ready. Please refresh the page.");
+        return;
+    }
+
     const email = document.getElementById('signupEmail').value;
     const password = document.getElementById('signupPassword').value;
 
-    const { data, error } = await supabaseClient.auth.signUp({
+    const { data, error } = await window.supabaseClient.auth.signUp({
         email,
         password
     });
@@ -57,21 +70,37 @@ async function handleEmailSignUp(e) {
     }
 }
 
-async function handleGoogleSignIn() {
-    const { data, error } = await supabaseClient.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-            redirectTo: window.location.origin
+window.handleGoogleSignIn = async function () {
+    try {
+        if (!window.supabaseClient) {
+            alert("Supabase client not authenticated. Please refresh the page.");
+            return;
         }
-    });
 
-    if (error) {
-        alert("Error with Google Sign In: " + error.message);
+        const { data, error } = await window.supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin
+            }
+        });
+
+        if (error) {
+            console.error("Google Sign In Error:", error);
+            alert("Error with Google Sign In: " + error.message);
+        }
+    } catch (err) {
+        console.error("Unexpected error during Google Sign In:", err);
+        alert("An unexpected error occurred: " + err.message);
     }
 }
 
 async function handleSignOut() {
-    const { error } = await supabaseClient.auth.signOut();
+    if (!window.supabaseClient) {
+        alert("Authentication system not ready. Please refresh the page.");
+        return;
+    }
+
+    const { error } = await window.supabaseClient.auth.signOut();
     if (error) {
         alert("Error signing out: " + error.message);
     } else {
@@ -82,17 +111,35 @@ async function handleSignOut() {
     }
 }
 
-// Override the global handleSignIn from front_page.html
-window.handleSignIn = () => openLoginModal('signin');
+// Export functions to window for global access
+window.handleEmailSignIn = handleEmailSignIn;
+window.handleEmailSignUp = handleEmailSignUp;
+window.handleSignOut = handleSignOut;
 window.handleSignUp = () => openLoginModal('signup');
+window.handleSignIn = () => openLoginModal('signin');
 
 window.handleOrdersClick = function () {
+    // Close the account popup
+    const popup = document.getElementById('accountPopup');
+    if (popup) popup.classList.remove('show');
+
+    // Navigate to orders page
     window.location.href = '/orders.html';
 }
 
 window.handleProfileClick = function () {
+    // Close the account popup
+    const popup = document.getElementById('accountPopup');
+    if (popup) popup.classList.remove('show');
+
+    // Navigate to profile page
     window.location.href = '/profile.html';
 }
+
+// Aliases for HTML onclick handlers
+window.handleOrders = window.handleOrdersClick;
+window.handleProfile = window.handleProfileClick;
+
 
 function updateAuthUI(user) {
     const signinBtn = document.querySelector('.signin-btn');
@@ -122,7 +169,7 @@ function updateAuthUI(user) {
     }
 }
 
-function closeModal(id) {
+window.closeModal = function (id) {
     const modal = document.getElementById(id);
     if (modal) {
         modal.style.display = 'none';
@@ -164,15 +211,15 @@ function switchAuthTab(tab) {
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Wait for supabaseClient to be available
-    if (typeof supabaseClient === 'undefined') {
+    if (typeof window.supabaseClient === 'undefined') {
         console.error('Supabase client not initialized');
         return;
     }
 
-    const { data: { session } } = await supabaseClient.auth.getSession();
+    const { data: { session } } = await window.supabaseClient.auth.getSession();
     updateAuthUI(session?.user);
 
-    supabaseClient.auth.onAuthStateChange((event, session) => {
+    window.supabaseClient.auth.onAuthStateChange((event, session) => {
         updateAuthUI(session?.user);
         if (typeof updateCartBadge === 'function') {
             updateCartBadge();

@@ -57,638 +57,175 @@
                         <%- include('../admin_panel/checkout_modal.html') %>
                             <%- include('../admin_panel/edit_trail_favorites_modal.html') %>
                                 <%- include('../admin_panel/add_product_modal.html') %>
+                                    <%- include('login_modal.html') %>
 
-                                    <script>
-                                        // Sample product data (fallback if no saved state)
-                                        let products = [
-                                            {
-                                                id: 1,
-                                                name: "The Snap & Go Bra",
-                                                price: 359.00,
-                                                rating: 4.8,
-                                                category: "bras",
-                                                isTrailFavorite: true,
-                                                image: "images/product_1_The_Snap_&_Go_Bra/1.png",
-                                                hoverImage: "images/product_1_The_Snap_&_Go_Bra/2.png"
-                                            },
-                                            {
-                                                id: 2,
-                                                name: "The Ultimate Coverage Bra",
-                                                price: 459.00,
-                                                rating: 5.0,
-                                                category: "bras",
-                                                isTrailFavorite: true,
-                                                image: "images/product_2_The_Ultimate_Coverage_Bra/1.png",
-                                                hoverImage: "images/product_2_The_Ultimate_Coverage_Bra/2.png"
-                                            },
-                                            {
-                                                id: 3,
-                                                name: "The Posture Perfect Shaper",
-                                                price: 520.00,
-                                                rating: 4.9,
-                                                category: "shapewear",
-                                                isTrailFavorite: true,
-                                                image: "images/product_3_The_Posture_Perfect_Shaper/1.png",
-                                                hoverImage: "images/product_3_The_Posture_Perfect_Shaper/2.png"
-                                            },
-                                            {
-                                                id: 4,
-                                                name: "The High Compression Bodysuit",
-                                                price: 899.00,
-                                                rating: 4.7,
-                                                category: "shapewear",
-                                                isTrailFavorite: true,
-                                                image: "images/product_4_The_High_Compression_Bodysuit/1.png",
-                                                hoverImage: "images/product_4_The_High_Compression_Bodysuit/2.png"
-                                            },
-                                            {
-                                                id: 5,
-                                                name: "The Glimmer Bra",
-                                                price: 450.00,
-                                                rating: 4.6,
-                                                category: "bras",
-                                                isTrailFavorite: true,
-                                                image: "images/product_5_The_Glimmer_Bra/1.png",
-                                                hoverImage: "images/product_5_The_Glimmer_Bra/2.png"
-                                            },
-                                            {
-                                                id: 6,
-                                                name: "The Active Zip Bra",
-                                                price: 399.00,
-                                                rating: 4.5,
-                                                category: "bras",
-                                                isTrailFavorite: true,
-                                                image: "images/product_6_The_Active_Zip_Bra/1.png",
-                                                hoverImage: "images/product_6_The_Active_Zip_Bra/2.png"
-                                            },
-                                            {
-                                                id: 7,
-                                                name: "The 24/7 Seamless Bra",
-                                                price: 350.00,
-                                                rating: 4.9,
-                                                category: "bras",
-                                                isTrailFavorite: true,
-                                                image: "images/product_7_The_24.7 Seamless Bra/1.png",
-                                                hoverImage: "images/product_7_The_24.7 Seamless Bra/2.png"
-                                            },
-                                            {
-                                                id: 8,
-                                                name: "The Seamless Soft Bra",
-                                                price: 299.00,
-                                                rating: 5.0,
-                                                category: "bras",
-                                                isTrailFavorite: true,
-                                                image: "images/product_8_The_Seamless_Soft_Bra/1.png",
-                                                hoverImage: "images/product_8_The_Seamless_Soft_Bra/2.png"
-                                            }
-                                        ];
+                                        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+                                        <script src="js/supabase-init.js"></script>
+                                        <script src="js/auth.js"></script>
+                                        <script src="home_page/js/account-popup.js"></script>
+                                        <script src="js/cart.js"></script>
+                                        <script src="js/shopbeha.js"></script>
 
-                                        // Persistence helpers
-                                        const STORAGE_KEY = 'auraflex_products_v1';
-                                        function loadProductsFromStorage() {
-                                            try {
-                                                const raw = localStorage.getItem(STORAGE_KEY);
-                                                if (!raw) return null;
-                                                const parsed = JSON.parse(raw);
-                                                if (!Array.isArray(parsed)) return null;
-                                                return parsed;
-                                            } catch (_) {
-                                                return null;
-                                            }
-                                        }
-                                        function saveProductsToStorage() {
-                                            try {
-                                                localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-                                            } catch (_) {
-                                                // ignore storage errors
-                                            }
-                                        }
+                                        <script>
+                                            // Page-specific logic for Home Page
 
-                                        // Debug logging to terminal
-                                        function debugLog(message) {
-                                            console.log(message);
-                                            fetch(`/log?msg=${encodeURIComponent(message)}`).catch(() => { });
-                                        }
-
-                                        // Initialize the page
-                                        document.addEventListener('DOMContentLoaded', function () {
-                                            debugLog('🚀 ShopBeha: Page loaded, initializing...');
-                                            const stored = loadProductsFromStorage();
-                                            if (stored) {
-                                                debugLog(`📦 ShopBeha: Loaded products from localStorage: ${stored.length} items`);
-                                                products = stored;
-                                            } else {
-                                                debugLog(`📦 ShopBeha: Using default products: ${products.length} items`);
-                                            }
-                                            renderTrailFavorites();
-                                            populateProductLists();
-                                            updateCartBadge();
-                                            // Initialize promo field if present
-                                            const promo = (function () { try { return JSON.parse(localStorage.getItem('auraflex_promo_v1')) || {}; } catch (_) { return {}; } })();
-                                            const promoInput = document.getElementById('promoCode');
-                                            if (promoInput && promo.code) promoInput.value = promo.code;
-                                            debugLog('✅ ShopBeha: Initialization complete');
-                                        });
-
-                                        // Render Trail Favorites on the homepage
-                                        function renderTrailFavorites() {
-                                            const container = document.getElementById('trail-favorites-container');
-                                            if (!container) return;
-                                            container.innerHTML = '';
-
-                                            const trailFavorites = products.filter(product => product.isTrailFavorite);
-
-                                            trailFavorites.forEach(product => {
-                                                const productCard = document.createElement('div');
-                                                productCard.className = 'product-card';
-
-                                                // Generate star rating
-                                                const fullStars = Math.floor(product.rating);
-                                                const halfStar = product.rating % 1 >= 0.5;
-                                                let stars = '';
-
-                                                for (let i = 0; i < fullStars; i++) {
-                                                    stars += '★';
-                                                }
-
-                                                if (halfStar) {
-                                                    stars += '½';
-                                                }
-
-                                                // Fill remaining stars with empty stars
-                                                const emptyStars = 5 - Math.ceil(product.rating);
-                                                for (let i = 0; i < emptyStars; i++) {
-                                                    stars += '☆';
-                                                }
-
-                                                productCard.innerHTML = `
-                    <div class="product-image" onclick="openProductPage(${product.id}, '${product.name}', ${product.price})">
-                        <img src="${product.image}" alt="${product.name}" class="main-img">
-                        ${product.hoverImage ? `<img src="${product.hoverImage}" alt="${product.name} hover" class="hover-img">` : ''}
-                    </div>
-                    <div class="product-info">
-                        <h3>${product.name}</h3>
-                        <div class="rating" aria-label="Rated ${product.rating} out of 5">${stars} (${product.rating}/5)</div>
-                        <div class="price">R ${product.price.toFixed(2)}</div>
-                        <button class="add-button" aria-label="Quick add ${product.name} to cart" onclick="quickAdd(${product.id})">ADD TO CART</button>
-                    </div>
-                `;
-
-                                                container.appendChild(productCard);
+                                            // Initialize the page
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                                renderTrailFavorites();
+                                                populateProductLists();
                                             });
-                                        }
 
-                                        // Get appropriate icon for product category
-                                        function getCategoryIcon(category) {
-                                            // Using emojis as placeholders, but ideally these would be images
-                                            switch (category) {
-                                                case 'bras': return '👙';
-                                                case 'bottoms': return '🩲';
-                                                case 'maternity': return '🤰';
-                                                case 'shapewear': return '⏳';
-                                                default: return '🛍️';
-                                            }
-                                        }
+                                            // Render Trail Favorites on the homepage
+                                            function renderTrailFavorites() {
+                                                const container = document.getElementById('trail-favorites-container');
+                                                if (!container) return;
+                                                container.innerHTML = '';
 
-                                        // Populate product lists in the admin modal
-                                        function populateProductLists() {
-                                            const availableProductsList = document.getElementById('available-products');
-                                            const trailFavoritesList = document.getElementById('trail-favorites-list');
+                                                const trailFavorites = products.filter(product => product.isTrailFavorite);
 
-                                            if (!availableProductsList || !trailFavoritesList) return;
+                                                trailFavorites.forEach(product => {
+                                                    const productCard = document.createElement('div');
+                                                    productCard.className = 'product-card';
 
-                                            availableProductsList.innerHTML = '';
-                                            trailFavoritesList.innerHTML = '';
+                                                    // Generate star rating
+                                                    const fullStars = Math.floor(product.rating);
+                                                    const halfStar = product.rating % 1 >= 0.5;
+                                                    let stars = '';
 
-                                            products.forEach(product => {
-                                                const productItem = document.createElement('div');
-                                                productItem.className = 'product-list-item';
-                                                productItem.innerHTML = `
-                    <span>${product.name} - R ${product.price.toFixed(2)}</span>
-                    <div class="product-list-actions">
-                        ${product.isTrailFavorite ?
-                                                        `<button class="delete-btn" onclick="removeFromTrailFavorites(${product.id})">Remove</button>` :
-                                                        `<button class="edit-btn" onclick="addToTrailFavorites(${product.id})">Add</button>`
+                                                    for (let i = 0; i < fullStars; i++) {
+                                                        stars += '★';
                                                     }
-                    </div>
-                `;
 
-                                                if (product.isTrailFavorite) {
-                                                    trailFavoritesList.appendChild(productItem);
-                                                } else {
-                                                    availableProductsList.appendChild(productItem);
-                                                }
-                                            });
-                                        }
+                                                    if (halfStar) {
+                                                        stars += '½';
+                                                    }
 
-                                        // Add product to Trail Favorites
-                                        function addToTrailFavorites(productId) {
-                                            const product = products.find(p => p.id === productId);
-                                            if (product) {
-                                                product.isTrailFavorite = true;
-                                                saveProductsToStorage();
-                                                populateProductLists();
-                                                renderTrailFavorites();
+                                                    const emptyStars = 5 - Math.ceil(product.rating);
+                                                    for (let i = 0; i < emptyStars; i++) {
+                                                        stars += '☆';
+                                                    }
+
+                                                    productCard.innerHTML = `
+                <div class="product-image" onclick="openProductPage(${product.id}, '${product.name}', ${product.price})">
+                    <img src="${product.image}" alt="${product.name}" class="main-img">
+                    ${product.hoverImage ? `<img src="${product.hoverImage}" alt="${product.name} hover" class="hover-img">` : ''}
+                    <button class="edit-product-btn" onclick="event.stopPropagation(); openEditProductModal(${product.id})">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    </button>
+                </div>
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <div class="rating" aria-label="Rated ${product.rating} out of 5">${stars} (${product.rating}/5)</div>
+                    <div class="price">R ${product.price.toFixed(2)}</div>
+                    <button class="add-button" aria-label="Quick add ${product.name} to cart" onclick="quickAdd(${product.id})">ADD TO CART</button>
+                </div>
+            `;
+
+                                                    container.appendChild(productCard);
+                                                });
                                             }
-                                        }
 
-                                        // Remove product from Trail Favorites
-                                        function removeFromTrailFavorites(productId) {
-                                            const product = products.find(p => p.id === productId);
-                                            if (product) {
-                                                product.isTrailFavorite = false;
-                                                saveProductsToStorage();
-                                                populateProductLists();
-                                                renderTrailFavorites();
+                                            // Populate product lists in the admin modal
+                                            function populateProductLists() {
+                                                const availableProductsList = document.getElementById('available-products');
+                                                const trailFavoritesList = document.getElementById('trail-favorites-list');
+
+                                                if (!availableProductsList || !trailFavoritesList) return;
+
+                                                availableProductsList.innerHTML = '';
+                                                trailFavoritesList.innerHTML = '';
+
+                                                products.forEach(product => {
+                                                    const productItem = document.createElement('div');
+                                                    productItem.className = 'product-list-item';
+                                                    productItem.innerHTML = `
+                <span>${product.name} - R ${product.price.toFixed(2)}</span>
+                <div class="product-list-actions">
+                    ${product.isTrailFavorite ?
+                                                            `<button class="delete-btn" onclick="removeFromTrailFavorites(${product.id})">Remove</button>` :
+                                                            `<button class="edit-btn" onclick="addToTrailFavorites(${product.id})">Add</button>`
+                                                        }
+                </div>
+            `;
+
+                                                    if (product.isTrailFavorite) {
+                                                        trailFavoritesList.appendChild(productItem);
+                                                    } else {
+                                                        availableProductsList.appendChild(productItem);
+                                                    }
+                                                });
                                             }
-                                        }
 
-                                        // Save Trail Favorites changes
-                                        function saveTrailFavorites() {
-                                            saveProductsToStorage();
-                                            renderTrailFavorites();
-                                            closeModal('editTrailFavoritesModal');
-                                            alert('Favorites updated successfully!');
-                                        }
-
-
-                                        // Simple Cart
-                                        const CART_KEY = 'auraflex_cart_v1';
-                                        function loadCart() {
-                                            try {
-                                                const raw = localStorage.getItem(CART_KEY);
-                                                if (!raw) return [];
-                                                const parsed = JSON.parse(raw);
-                                                return Array.isArray(parsed) ? parsed : [];
-                                            } catch (_) {
-                                                return [];
-                                            }
-                                        }
-                                        function saveCart(cart) {
-                                            try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (_) { }
-                                        }
-                                        function getCartCount(cart) {
-                                            return cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-                                        }
-                                        function updateCartBadge() {
-                                            const badge = document.getElementById('cartBadge');
-                                            if (!badge) return;
-                                            const cart = loadCart();
-                                            const count = getCartCount(cart);
-                                            if (count > 0) {
-                                                badge.textContent = String(count);
-                                                badge.style.display = 'flex';
-                                            } else {
-                                                badge.style.display = 'none';
-                                            }
-                                        }
-                                        // Promo + Shipping
-                                        const PROMO_KEY = 'auraflex_promo_v1';
-                                        function loadPromo() {
-                                            try { return JSON.parse(localStorage.getItem(PROMO_KEY)) || { code: '', discountRate: 0 }; } catch (_) { return { code: '', discountRate: 0 }; }
-                                        }
-                                        function savePromo(state) {
-                                            try { localStorage.setItem(PROMO_KEY, JSON.stringify(state)); } catch (_) { }
-                                        }
-                                        function applyPromo() {
-                                            const input = document.getElementById('promoCode');
-                                            if (!input) return;
-                                            const code = (input.value || '').trim().toUpperCase();
-                                            if (code === 'ROOTED15') {
-                                                savePromo({ code, discountRate: 0.15 });
-                                                alert('Promo code applied: 15% off');
-                                            } else if (code === '') {
-                                                savePromo({ code: '', discountRate: 0 });
-                                            } else {
-                                                alert('Invalid promo code');
-                                            }
-                                            renderCart();
-                                        }
-                                        function computeShipping(subtotal) {
-                                            const regionEl = document.getElementById('shippingRegion');
-                                            const region = regionEl ? regionEl.value : 'sa';
-                                            if (region === 'intl') return 300;
-                                            return subtotal >= 1000 ? 0 : 60;
-                                        }
-                                        function renderCart() {
-                                            const container = document.getElementById('cartItems');
-                                            const totalEl = document.getElementById('cartTotal');
-                                            const shippingEl = document.getElementById('shippingAmount');
-                                            const shippingLineEl = document.getElementById('cartShipping');
-                                            const subtotalEl = document.getElementById('cartSubtotal');
-                                            const discountEl = document.getElementById('cartDiscount');
-                                            const checkoutBtn = document.getElementById('checkoutBtn');
-                                            const promoInput = document.getElementById('promoCode');
-                                            if (!container || !totalEl) return;
-                                            const cart = loadCart();
-                                            container.innerHTML = '';
-                                            let subtotal = 0;
-                                            cart.forEach(line => {
-                                                const product = products.find(p => p.id === line.productId);
-                                                if (!product) return;
-                                                const lineTotal = product.price * (line.quantity || 1);
-                                                subtotal += lineTotal;
-                                                const row = document.createElement('div');
-                                                row.className = 'cart-item';
-                                                row.innerHTML = `
-                    <div class=\"cart-item-title\">${product.name}</div>
-                    <div style=\"text-align:right;\">R ${lineTotal.toFixed(2)}</div>
-                    <div class=\"cart-qty-controls\" style="display:flex; gap:0.5rem; align-items:center;">
-                        <button class=\"qty-btn\" onclick=\"decreaseQty(${product.id})\">-</button>
-                        <span>${line.quantity || 1}</span>
-                        <button class=\"qty-btn\" onclick=\"increaseQty(${product.id})\">+</button>
-                    </div>
-                    <div style=\"text-align:right;\">
-                        <button class=\"remove-line\" onclick=\"removeLine(${product.id})\" style="color:red; background:none; border:none; cursor:pointer;">Remove</button>
-                    </div>
-                `;
-                                                container.appendChild(row);
-                                            });
-                                            const promo = loadPromo();
-                                            if (promoInput) promoInput.value = promo.code || '';
-                                            const discount = promo.discountRate ? subtotal * promo.discountRate : 0;
-                                            const shipping = computeShipping(subtotal - discount);
-                                            if (shippingEl) shippingEl.textContent = `Shipping: R ${shipping.toFixed(2)}`;
-                                            if (shippingLineEl) shippingLineEl.textContent = `R ${shipping.toFixed(2)}`;
-                                            if (subtotalEl) subtotalEl.textContent = `R ${subtotal.toFixed(2)}`;
-                                            if (discountEl) discountEl.textContent = `- R ${discount.toFixed(2)}`;
-                                            const total = Math.max(0, subtotal - discount) + shipping;
-                                            totalEl.textContent = `R ${total.toFixed(2)}`;
-                                            if (checkoutBtn) {
-                                                const isEmpty = subtotal <= 0;
-                                                checkoutBtn.disabled = isEmpty;
-                                                checkoutBtn.style.opacity = isEmpty ? '0.6' : '1';
-                                                checkoutBtn.style.cursor = isEmpty ? 'not-allowed' : 'pointer';
-                                            }
-                                        }
-                                        function increaseQty(productId) {
-                                            const cart = loadCart();
-                                            const line = cart.find(l => l.productId === productId);
-                                            if (!line) return;
-                                            line.quantity = (line.quantity || 1) + 1;
-                                            saveCart(cart);
-                                            updateCartBadge();
-                                            renderCart();
-                                        }
-                                        function decreaseQty(productId) {
-                                            const cart = loadCart();
-                                            const line = cart.find(l => l.productId === productId);
-                                            if (!line) return;
-                                            line.quantity = Math.max(1, (line.quantity || 1) - 1);
-                                            saveCart(cart);
-                                            updateCartBadge();
-                                            renderCart();
-                                        }
-                                        function removeLine(productId) {
-                                            let cart = loadCart();
-                                            cart = cart.filter(l => l.productId !== productId);
-                                            saveCart(cart);
-                                            updateCartBadge();
-                                            renderCart();
-                                        }
-                                        function quickAdd(productId) {
-                                            const product = products.find(p => p.id === productId);
-                                            if (!product) return;
-                                            const cart = loadCart();
-                                            const existing = cart.find(i => i.productId === productId);
-                                            if (existing) {
-                                                existing.quantity = (existing.quantity || 1) + 1;
-                                            } else {
-                                                cart.push({ productId, quantity: 1 });
-                                            }
-                                            saveCart(cart);
-                                            updateCartBadge();
-                                            openCart(); // Open cart to show feedback
-                                        }
-
-                                        function openProductPage(productId, productName, productPrice) {
-                                            const encodedName = encodeURIComponent(productName);
-                                            const url = `../Select/select.html?id=${productId}&name=${encodedName}&price=${productPrice}`;
-                                            window.location.href = url;
-                                        }
-
-                                        function openCategoryPage(category) {
-                                            const url = `../category_page.html?category=${category}`;
-                                            window.location.href = url;
-                                        }
-                                        function openCart() {
-                                            openModal('cartModal');
-                                            renderCart();
-                                        }
-
-                                        function openCheckout() {
-                                            const cart = loadCart();
-                                            if (!cart || cart.length === 0) return;
-                                            closeModal('cartModal');
-                                            setTimeout(() => {
-                                                openModal('checkoutModal');
-                                            }, 50);
-                                        }
-
-                                        // Modal Functions
-                                        function openModal(modalId) {
-                                            const modal = document.getElementById(modalId);
-                                            if (!modal) return;
-                                            modal.style.display = 'flex';
-                                            if (modalId === 'cartModal') {
-                                                modal.classList.add('show-right');
-                                                document.body.style.overflow = 'hidden';
-                                            }
-                                        }
-
-                                        function closeModal(modalId) {
-                                            const modal = document.getElementById(modalId);
-                                            if (!modal) return;
-                                            modal.style.display = 'none';
-                                            if (modalId === 'cartModal') {
-                                                modal.classList.remove('show-right');
-                                                document.body.style.overflow = '';
-                                            }
-                                        }
-
-                                        // Header mobile menu toggle
-                                        function toggleNav(forceState) {
-                                            const nav = document.querySelector('.nav-links');
-                                            const overlay = document.getElementById('mobileOverlay');
-                                            if (!nav || !overlay) return;
-                                            const isOpen = typeof forceState === 'boolean' ? forceState : !nav.classList.contains('open');
-                                            if (isOpen) {
-                                                nav.classList.add('open');
-                                                overlay.classList.add('show');
-                                                document.body.style.overflow = 'hidden';
-                                            } else {
-                                                nav.classList.remove('open');
-                                                overlay.classList.remove('show');
-                                                document.body.style.overflow = '';
-                                            }
-                                        }
-
-                                        // Image Upload Handling
-                                        function handleImageUpload(input) {
-                                            const uploadedImagesContainer = document.getElementById('uploadedImages');
-                                            if (!uploadedImagesContainer) return;
-
-                                            Array.from(input.files).forEach(file => {
-                                                const reader = new FileReader();
-                                                reader.onload = function (e) {
-                                                    const imageDiv = document.createElement('div');
-                                                    imageDiv.className = 'uploaded-image';
-                                                    imageDiv.innerHTML = `<img src="${e.target.result}" style="width:100px; height:100px; object-fit:cover;">`;
-                                                    uploadedImagesContainer.appendChild(imageDiv);
-                                                };
-                                                reader.readAsDataURL(file);
-                                            });
-                                        }
-
-                                        // Form Handling
-                                        const addProductForm = document.getElementById('addProductForm');
-                                        if (addProductForm) {
-                                            addProductForm.addEventListener('submit', function (e) {
-                                                e.preventDefault();
-                                                const newProduct = {
-                                                    id: products.length ? Math.max(...products.map(p => p.id)) + 1 : 1,
-                                                    name: document.getElementById('productName').value,
-                                                    price: parseFloat(document.getElementById('productPrice').value),
-                                                    rating: Math.max(1, Math.min(5, parseFloat(document.getElementById('productRating').value))),
-                                                    category: document.getElementById('productCategory').value,
-                                                    isTrailFavorite: false
-                                                };
-                                                products.push(newProduct);
-                                                saveProductsToStorage();
-                                                alert('Product added successfully!');
-                                                closeModal('addProductModal');
-                                                populateProductLists();
-                                                addProductForm.reset();
-                                            });
-                                        }
-
-                                        // Close modal when clicking outside
-                                        window.addEventListener('click', function (e) {
-                                            if (e.target.classList.contains('modal')) {
-                                                e.target.style.display = 'none';
-                                                if (e.target.id === 'cartModal') {
-                                                    e.target.classList.remove('show-right');
-                                                    document.body.style.overflow = '';
+                                            // Add product to Trail Favorites
+                                            function addToTrailFavorites(productId) {
+                                                const product = products.find(p => p.id === productId);
+                                                if (product) {
+                                                    product.isTrailFavorite = true;
+                                                    saveProductsToStorage();
+                                                    populateProductLists();
+                                                    renderTrailFavorites();
                                                 }
                                             }
-                                        });
 
-                                        // Checkout submit handler
-                                        const checkoutForm = document.getElementById('checkoutForm');
-                                        if (checkoutForm) {
-                                            checkoutForm.addEventListener('submit', function (e) {
-                                                e.preventDefault();
-                                                alert('Order placed! A confirmation has been sent to your email.');
-                                                saveCart([]);
-                                                updateCartBadge();
-                                                closeModal('checkoutModal');
-                                            });
-                                        }
-
-                                        // Search Modal Functions
-                                        function openSearch() {
-                                            openModal('searchModal');
-                                            const searchInput = document.getElementById('searchInput');
-                                            if (searchInput) {
-                                                setTimeout(() => searchInput.focus(), 100);
-                                                searchInput.value = '';
-                                                const results = document.getElementById('searchResults');
-                                                if (results) results.innerHTML = '';
-
-                                                searchInput.oninput = performSearch;
-                                            }
-                                        }
-
-                                        function performSearch() {
-                                            const searchInput = document.getElementById('searchInput');
-                                            const searchResults = document.getElementById('searchResults');
-                                            if (!searchInput || !searchResults) return;
-
-                                            const query = searchInput.value.trim().toLowerCase();
-                                            if (query.length === 0) {
-                                                searchResults.innerHTML = '';
-                                                return;
+                                            // Remove product from Trail Favorites
+                                            function removeFromTrailFavorites(productId) {
+                                                const product = products.find(p => p.id === productId);
+                                                if (product) {
+                                                    product.isTrailFavorite = false;
+                                                    saveProductsToStorage();
+                                                    populateProductLists();
+                                                    renderTrailFavorites();
+                                                }
                                             }
 
-                                            const filteredProducts = products.filter(product =>
-                                                product.name.toLowerCase().includes(query) ||
-                                                product.category.toLowerCase().includes(query)
-                                            );
-
-                                            searchResults.innerHTML = '';
-                                            if (filteredProducts.length === 0) {
-                                                searchResults.innerHTML = '<div style="padding:1rem; text-align:center; color:#666;">No products found.</div>';
-                                                return;
+                                            // Save Trail Favorites changes
+                                            function saveTrailFavorites() {
+                                                saveProductsToStorage();
+                                                renderTrailFavorites();
+                                                closeModal('editTrailFavoritesModal');
+                                                alert('Favorites updated successfully!');
                                             }
 
-                                            filteredProducts.forEach(product => {
-                                                const resultItem = document.createElement('div');
-                                                resultItem.className = 'search-result-item';
-                                                resultItem.onclick = () => {
-                                                    closeModal('searchModal');
-                                                    openProductPage(product.id, product.name, product.price);
-                                                };
-                                                resultItem.innerHTML = `
-                    <div style="font-size:1.5rem;">${getCategoryIcon(product.category)}</div>
-                    <div>
-                        <div style="font-weight:600;">${product.name}</div>
-                        <div style="color:#888;">R ${product.price.toFixed(2)}</div>
-                    </div>
-                `;
-                                                searchResults.appendChild(resultItem);
-                                            });
-                                        }
+                                            // Form Handling for Add Product
+                                            const addProductForm = document.getElementById('addProductForm');
+                                            if (addProductForm) {
+                                                addProductForm.addEventListener('submit', function (e) {
+                                                    e.preventDefault();
+                                                    const newProduct = {
+                                                        id: products.length ? Math.max(...products.map(p => p.id)) + 1 : 1,
+                                                        name: document.getElementById('productName').value,
+                                                        price: parseFloat(document.getElementById('productPrice').value),
+                                                        rating: Math.max(1, Math.min(5, parseFloat(document.getElementById('productRating').value))),
+                                                        category: document.getElementById('productCategory').value,
+                                                        isTrailFavorite: false
+                                                    };
+                                                    products.push(newProduct);
+                                                    saveProductsToStorage();
+                                                    alert('Product added successfully!');
+                                                    closeModal('addProductModal');
+                                                    populateProductLists();
+                                                    addProductForm.reset();
+                                                });
+                                            }
+                                        </script>
 
-                                        // Account Modal Functions
-                                        function openAccount() {
-                                            openModal('accountModal');
-                                        }
-                                        function handleSignIn() { closeModal('accountModal'); alert('Sign in functionality would be implemented here'); }
-                                        function handleOrders() { closeModal('accountModal'); alert('Orders page would be implemented here'); }
-                                        function handleProfile() { closeModal('accountModal'); alert('Profile page would be implemented here'); }
-                                    </script>
-
-                                    <!-- Search Modal -->
-                                    <div id="searchModal" class="modal" style="display:none;">
-                                        <div class="modal-content search-panel">
-                                            <div class="search-header"
-                                                style="display:flex; justify-content:space-between; margin-bottom:1rem;">
-                                                <h2>Search Products</h2>
-                                                <button class="cancel-btn" onclick="closeModal('searchModal')"
-                                                    style="background:none; border:none; font-size:1.5rem; cursor:pointer;">×</button>
-                                            </div>
-                                            <div class="search-input-container">
-                                                <input id="searchInput" type="text" placeholder="Search for products..."
-                                                    autocomplete="off">
-                                            </div>
-                                            <div id="searchResults" class="search-results" style="margin-top:1rem;">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Account Modal -->
-                                    <div id="accountModal" class="modal" style="display:none;">
-                                        <div class="modal-content account-panel" style="max-width:400px;">
-                                            <div class="account-header"
-                                                style="display:flex; justify-content:space-between; margin-bottom:2rem;">
-                                                <h2>Account</h2>
-                                                <button class="cancel-btn" onclick="closeModal('accountModal')"
-                                                    style="background:none; border:none; font-size:1.5rem; cursor:pointer;">×</button>
-                                            </div>
-                                            <div class="account-content"
-                                                style="display:flex; flex-direction:column; gap:1rem;">
-                                                <button onclick="handleSignIn()"
-                                                    style="background:var(--text-color); color:white; padding:1rem; border:none; border-radius:6px; font-weight:600; cursor:pointer;">Sign
-                                                    in</button>
-                                                <div style="display:flex; gap:1rem;">
-                                                    <button onclick="handleOrders()"
-                                                        style="flex:1; padding:0.8rem; border:1px solid #ddd; background:white; border-radius:6px; cursor:pointer;">Orders</button>
-                                                    <button onclick="handleProfile()"
-                                                        style="flex:1; padding:0.8rem; border:1px solid #ddd; background:white; border-radius:6px; cursor:pointer;">Profile</button>
+                                        <!-- Search Modal -->
+                                        <div id="searchModal" class="modal" style="display:none;">
+                                            <div class="modal-content search-panel">
+                                                <div class="search-header"
+                                                    style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+                                                    <h2>Search Products</h2>
+                                                    <button class="cancel-btn" onclick="closeModal('searchModal')"
+                                                        style="background:none; border:none; font-size:1.5rem; cursor:pointer;">×</button>
+                                                </div>
+                                                <div class="search-input-container">
+                                                    <input id="searchInput" type="text"
+                                                        placeholder="Search for products..." autocomplete="off">
+                                                </div>
+                                                <div id="searchResults" class="search-results" style="margin-top:1rem;">
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 </body>
 
 </html>

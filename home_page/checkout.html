@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Beha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/front_page.css">
+    <style>
+        :root {
+            --primary: #A0522D;
+            --primary-light: #D2B48C;
+            --secondary: #F5E6D3;
+            --bg: #FDFBF8;
+            --text-main: #2D241E;
+            --text-muted: #6D5D55;
+            --white: #FFFFFF;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .checkout-container {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 5%;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 3rem;
+        }
+
+        @media (max-width: 968px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .checkout-section {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .checkout-section h2 {
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            color: var(--text-main);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #E2E2E2;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            background: #FAFAFA;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+        }
+
+        /* Order Summary Sidebar */
+        .order-summary {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+
+        .summary-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #F5F5F5;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-main);
+        }
+
+        .checkout-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #F5F5F5;
+        }
+
+        .checkout-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #F9F9F9;
+        }
+
+        .checkout-item-info h4 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+        }
+
+        .checkout-item-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: var(--text-main);
+            color: white;
+            padding: 1.2rem;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        .checkout-btn:hover {
+            background: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .checkout-btn:active {
+            transform: translateY(0);
+        }
+
+        .checkout-btn img.yoco-logo {
+            height: 20px;
+            filter: brightness(0) invert(1);
+        }
+
+        .badge-secure {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        #yoco-loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Yoco specific hint */
+        .payment-hint {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f0f7ff;
+            border-radius: 8px;
+            border-left: 4px solid #0056b3;
+            font-size: 0.85rem;
+            color: #004085;
+            display: flex;
+            gap: 0.5rem;
+            align-items: flex-start;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('header.html') %>
+
+        <main class="checkout-container">
+            <!-- Left: Forms -->
+            <div class="checkout-main">
+                <div class="checkout-section">
+                    <h2>Shipping & Contact</h2>
+                    <form id="checkoutForm">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" placeholder="you@example.com" required>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" placeholder="Jane" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" placeholder="Doe" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" placeholder="012 345 6789" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address">Shipping Address</label>
+                            <input type="text" id="address" placeholder="123 Fashion Ave" required>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" id="city" placeholder="Cape Town" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="postalCode">Postal Code</label>
+                                <input type="text" id="postalCode" placeholder="8001" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="country">Country</label>
+                            <select id="country" required>
+                                <option value="ZA" selected>South Africa</option>
+                                <option value="US">United States</option>
+                                <option value="UK">United Kingdom</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="checkout-section">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="margin-bottom: 0; border: none; padding: 0;">Payment Method</h2>
+                        <span
+                            style="background: #FFF4E5; color: #B45309; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid #FDE68A;">
+                            TEST MODE
+                        </span>
+                    </div>
+
+                    <div
+                        style="display: flex; align-items: center; gap: 1rem; padding: 1.2rem; border: 2px solid var(--primary); border-radius: var(--radius); background: #fffaf5; position: relative; overflow: hidden;">
+                        <div
+                            style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; background: #fff;">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--primary);">
+                            </div>
+                        </div>
+                        <div style="flex-grow: 1;">
+                            <div style="font-weight: 600; font-size: 1.1rem;">Secure Credit/Debit Card</div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">Pay safely via
+                                Yoco Secure Checkout</div>
+                        </div>
+                        <div style="display: flex; gap: 0.6rem; align-items: center;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg"
+                                height="15" alt="Visa">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
+                                height="20" alt="Mastercard">
+                        </div>
+                    </div>
+
+                    <div class="payment-hint">
+                        <div
+                            style="background: #0056b3; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; font-weight: bold;">
+                            i</div>
+                        <p>Clicking <strong>"Pay Now"</strong> will securely redirect you to Yoco's official payment
+                            gateway. Your card details are never stored on our servers.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Summary -->
+            <div class="order-summary">
+                <div class="summary-card">
+                    <h2 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 1.5rem;">Order
+                        Summary</h2>
+
+                    <div id="checkout-items-list">
+                        <!-- Items will be injected here -->
+                    </div>
+
+                    <div class="summary-item">
+                        <span>Subtotal</span>
+                        <span id="summary-subtotal">R 0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Shipping</span>
+                        <span id="summary-shipping">R 0.00</span>
+                    </div>
+                    <div id="summary-discount-row" class="summary-item" style="display: none; color: #27ae60;">
+                        <span>Discount</span>
+                        <span id="summary-discount">- R 0.00</span>
+                    </div>
+                    <div class="summary-total">
+                        <span>Total</span>
+                        <span id="summary-total">R 0.00</span>
+                    </div>
+
+                    <button type="submit" form="checkoutForm" class="checkout-btn" id="pay-button">
+                        <span id="btn-text">Pay Now</span>
+                        <div id="yoco-loader"></div>
+                    </button>
+
+                    <div class="badge-secure">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        100% Secure SSL encrypted payment
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <%- include('footer.html') %>
+
+            <!-- Scripts -->
+            <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+            <script src="js/supabase-init.js"></script>
+            <script src="js/products.js"></script>
+            <script src="js/cart.js"></script>
+            <script src="js/checkout.js"></script>
+            <script src="js/shopbeha.js"></script>
+</body>
+
+</html>
