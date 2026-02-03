@@ -207,6 +207,83 @@
     color: #666;
 }
 
+.product-description h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+}
+
+.product-description h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 1.5rem 0 0.75rem;
+}
+
+.product-description ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.product-description ul li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    color: #666;
+}
+
+.product-description ul li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.product-description ul li strong {
+    color: var(--text-color);
+}
+
+/* Size Guide Table */
+.product-description .size-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.product-description .size-table th,
+.product-description .size-table td {
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.product-description .size-table thead {
+    background: var(--accent-color);
+    color: white;
+}
+
+.product-description .size-table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.product-description .size-table tbody tr:nth-child(even) {
+    background: #faf9f7;
+}
+
+.product-description .size-table tbody tr:hover {
+    background: #f5f3f0;
+}
+
+.product-description .size-table td {
+    color: #555;
+}
+
 @media (max-width: 768px) {
     .product-container {
         grid-template-columns: 1fr;
