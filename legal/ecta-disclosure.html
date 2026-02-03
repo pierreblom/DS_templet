@@ -8,73 +8,8 @@
     <meta name="description"
         content="ShopBeha ECTA Disclosure - Electronic Communications and Transactions Act Compliance">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/home_page/css/front_page.css">
     <style>
-        :root {
-            --bg-color: #F9F5F0;
-            --text-color: #1A1A1A;
-            --accent-color: #A0522D;
-            --header-bg: #FFF;
-            --card-bg: #FFF;
-            --border-color: #E5E5E5
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box
-        }
-
-        body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.7
-        }
-
-        header {
-            background: var(--header-bg);
-            padding: 1rem 5%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05)
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-color);
-            text-decoration: none
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2.5rem;
-            list-style: none
-        }
-
-        .nav-links a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-            transition: color 0.3s;
-            text-transform: uppercase
-        }
-
-        .nav-links a:hover {
-            color: var(--accent-color)
-        }
-
         .policy-container {
             max-width: 900px;
             margin: 2rem auto 4rem;
@@ -175,64 +110,7 @@
             border-radius: 4px
         }
 
-        footer {
-            background-color: #F2EFE9;
-            padding: 4rem 5% 2rem;
-            margin-top: 4rem
-        }
 
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 3rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding-bottom: 3rem;
-            border-bottom: 1px solid #DDD
-        }
-
-        .footer-column h4 {
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px
-        }
-
-        .footer-column ul {
-            list-style: none
-        }
-
-        .footer-column ul li {
-            margin-bottom: 0.8rem
-        }
-
-        .footer-column a {
-            color: #666;
-            text-decoration: none;
-            transition: color 0.3s;
-            font-size: 0.95rem
-        }
-
-        .footer-column a:hover {
-            color: var(--accent-color)
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            color: #888;
-            font-size: 0.9rem
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 1rem
-        }
-
-        .social-icon {
-            width: 24px;
-            height: 24px
-        }
 
         @media (max-width:768px) {
             .policy-container {
@@ -252,299 +130,267 @@
                 font-size: 1.2rem
             }
 
-            .nav-links {
-                display: none
-            }
+
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <nav>
-            <a href="../home_page/front_page.html" class="logo">shopbeha.com</a>
-            <ul class="nav-links">
-                <li><a href="../home_page/front_page.html#shop">SHOP</a></li>
-                <li><a href="../home_page/front_page.html#maternity">MATERNITY</a></li>
-                <li><a href="../contact.html">CONTACT</a></li>
-            </ul>
-        </nav>
-    </header>
+    <%- include('../home_page/header.html') %>
 
-    <div class="policy-container">
-        <div class="policy-header">
-            <h1>ECTA Disclosure and Compliance</h1>
-            <div class="policy-meta"><strong>Effective Date:</strong> 26 January 2026<br><strong>Last Updated:</strong>
-                26 January 2026</div>
-            <div style="margin-top:1rem"><span class="compliance-badge">✓ ECTA Compliant</span></div>
-        </div>
-
-        <div class="policy-content">
-            <p><strong>Legal Notice:</strong> This document provides legally required disclosures in accordance with the
-                <strong>Electronic Communications and Transactions Act 25 of 2002 (ECTA)</strong> for electronic
-                transactions conducted on www.shopbeha.com.</p>
-
-            <h2>1. Website Owner and Operator Information (ECTA Section 43(1))</h2>
-            <div class="info-box">
-                <strong>Full Legal Name:</strong> ShopBeha (Pty) Ltd<br>
-                <strong>Trading Name:</strong> ShopBeha<br>
-                <strong>Business Type:</strong> Private Company
+        <div class="policy-container">
+            <div class="policy-header">
+                <h1>ECTA Disclosure and Compliance</h1>
+                <div class="policy-meta"><strong>Effective Date:</strong> 26 January 2026<br><strong>Last
+                        Updated:</strong>
+                    26 January 2026</div>
+                <div style="margin-top:1rem"><span class="compliance-badge">✓ ECTA Compliant</span></div>
             </div>
 
-            <h3>1.2 Business Location</h3>
-            <div class="info-box">
-                ShopBeha operates as an online business based in South Africa.
-            </div>
+            <div class="policy-content">
+                <p><strong>Legal Notice:</strong> This document provides legally required disclosures in accordance with
+                    the
+                    <strong>Electronic Communications and Transactions Act 25 of 2002 (ECTA)</strong> for electronic
+                    transactions conducted on www.shopbeha.com.
+                </p>
 
-            <h3>1.3 Contact Details</h3>
-            <div class="info-box">
-                <strong>General Enquiries & Support:</strong><br>
-                <strong>Email:</strong> info@shopbeha.com<br>
-                <strong>Operating Hours:</strong> Monday - Friday, 09:00 - 17:00 SAST (Excluding South African public
-                holidays)<br><br>
-                <strong>Website:</strong> www.shopbeha.com
-            </div>
+                <h2>1. Website Owner and Operator Information (ECTA Section 43(1))</h2>
+                <div class="info-box">
+                    <strong>Full Legal Name:</strong> ShopBeha (Pty) Ltd<br>
+                    <strong>Trading Name:</strong> ShopBeha<br>
+                    <strong>Business Type:</strong> Private Company
+                </div>
 
-            <h2>2. Nature of Business (ECTA Section 43(1))</h2>
-            <h3>2.1 Business Description</h3>
-            <p>ShopBeha operates as an <strong>online retail business</strong> specialising in:</p>
-            <ul>
-                <li>Women's bras and intimate apparel</li>
-                <li>Shapewear and body shaping garments</li>
-                <li>Support and posture products</li>
-                <li>Sports and active bras</li>
-                <li>Related accessories</li>
-            </ul>
+                <h3>1.2 Business Location</h3>
+                <div class="info-box">
+                    ShopBeha operates as an online business based in South Africa.
+                </div>
 
-            <h3>2.2 Geographic Scope</h3>
-            <ul>
-                <li><strong>Primary Market:</strong> South Africa</li>
-                <li><strong>Delivery Area:</strong> All regions within South Africa</li>
-                <li><strong>Currency:</strong> South African Rand (ZAR)</li>
-                <li><strong>International Sales:</strong> Not currently available</li>
-            </ul>
+                <h3>1.3 Contact Details</h3>
+                <div class="info-box">
+                    <strong>General Enquiries & Support:</strong><br>
+                    <strong>Email:</strong> info@shopbeha.com<br>
+                    <strong>Operating Hours:</strong> Monday - Friday, 09:00 - 17:00 SAST (Excluding South African
+                    public
+                    holidays)<br><br>
+                    <strong>Website:</strong> www.shopbeha.com
+                </div>
 
-            <h2>3. Electronic Transactions Process (ECTA Section 43(1))</h2>
-            <h3>3.1 How Electronic Transactions Work</h3>
-            <p>When you purchase from ShopBeha:</p>
-            <div class="process-step"><strong>Step 1: Browse and Select</strong><br>You view products, select
-                size/colour/quantity, and add to cart</div>
-            <div class="process-step"><strong>Step 2: Checkout Initiation</strong><br>You proceed to checkout and review
-                cart contents</div>
-            <div class="process-step"><strong>Step 3: Information Provision</strong><br>You provide delivery address,
-                contact information, and select delivery method</div>
-            <div class="process-step"><strong>Step 4: Order Review</strong><br>You review complete order summary
-                including total amount payable</div>
-            <div class="process-step"><strong>Step 5: Payment</strong><br>You select payment method and authorise
-                payment via Stripe</div>
-            <div class="process-step"><strong>Step 6: Order Confirmation</strong><br>You receive on-screen and email
-                confirmation with order details</div>
-            <div class="process-step"><strong>Step 7: Fulfilment</strong><br>We process, dispatch, and deliver your
-                order with tracking information</div>
-
-            <h3>3.2 When Is the Contract Formed?</h3>
-            <p>The contract is formed when:</p>
-            <ul>
-                <li>You submit your order ("Place Order" button)</li>
-                <li>We accept your order (via email confirmation)</li>
-                <li>Payment is successfully authorised</li>
-            </ul>
-            <p><strong>Important:</strong> Order submission constitutes an offer. We reserve the right to decline
-                orders. The contract is only binding upon our acceptance.</p>
-
-            <h3>3.3 Cooling-Off Period (ECTA Section 44(1)(g))</h3>
-            <div class="info-box" style="background:#E8F5E9;border-left-color:#2E7D32">
-                <strong>You have a 7 (seven) day cooling-off period from the date you receive the goods, during which
-                    you may return products without providing a reason.</strong>
-            </div>
-            <p><strong>Conditions Apply:</strong> See our <a href="./return-refund-policy.html">Return and Refund
-                    Policy</a></p>
-
-            <h2>4. Pricing and Payment Terms (ECTA Section 43(1))</h2>
-            <h3>4.1 Pricing</h3>
-            <p><strong>All prices displayed on our website:</strong></p>
-            <ul>
-                <li>Are in South African Rand (ZAR)</li>
-                <li>Include Value-Added Tax (VAT) at 15%</li>
-                <li>Are subject to change without prior notice</li>
-                <li>Are valid at the time of order confirmation</li>
-                <li>Are clearly displayed on product pages and at checkout</li>
-            </ul>
-
-            <h3>4.2 Payment Methods Accepted</h3>
-            <p>We accept the following payment methods through our secure payment processor, Stripe:</p>
-            <ul>
-                <li><strong>Credit Cards:</strong> Visa, Mastercard</li>
-                <li><strong>Debit Cards:</strong> Visa Debit, Mastercard Debit</li>
-                <li><strong>Instant EFT:</strong> Where available</li>
-            </ul>
-
-            <h3>4.3 Payment Processing</h3>
-            <ul>
-                <li><strong>Processor:</strong> Stripe, Inc.</li>
-                <li><strong>Security:</strong> PCI-DSS Level 1 compliant</li>
-                <li><strong>Encryption:</strong> TLS 1.3 (minimum TLS 1.2)</li>
-                <li><strong>Data Storage:</strong> We do not store full card details</li>
-                <li><strong>Payment Timing:</strong> Payment is authorised immediately; charged upon dispatch</li>
-            </ul>
-
-            <h2>5. Delivery and Performance (ECTA Section 43(1)(f))</h2>
-            <h3>5.1 Delivery Areas</h3>
-            <p>We deliver to all physical addresses within South Africa. We do not deliver to international addresses,
-                P.O. Boxes (except Pargo collection points), or restricted areas.</p>
-
-            <h3>5.2 Delivery Timeframes</h3>
-            <table>
-                <tr>
-                    <th>Region</th>
-                    <th>Standard Delivery</th>
-                </tr>
-                <tr>
-                    <td>Major centres</td>
-                    <td>3-5 business days</td>
-                </tr>
-                <tr>
-                    <td>Secondary cities</td>
-                    <td>5-7 business days</td>
-                </tr>
-                <tr>
-                    <td>Remote areas</td>
-                    <td>7-10 business days</td>
-                </tr>
-            </table>
-            <p><strong>Note:</strong> Timeframes are estimates. Actual delivery may vary.</p>
-
-            <h3>5.3 Delivery Costs</h3>
-            <ul>
-                <li>Calculated at checkout based on location</li>
-                <li>Orders over R500: <strong>FREE standard delivery</strong></li>
-                <li>Displayed before order confirmation</li>
-            </ul>
-
-            <h2>6. Security Measures (ECTA Section 43(1)(h))</h2>
-            <h3>6.1 Website Security</h3>
-            <p>We implement industry-standard security measures:</p>
-            <ul>
-                <li><strong>SSL/TLS Encryption:</strong> All data transmitted is encrypted using TLS 1.3</li>
-                <li><strong>Secure Payment Gateway:</strong> PCI-DSS compliant payment processing</li>
-                <li><strong>Firewall Protection:</strong> Network-level security controls</li>
-                <li><strong>Access Controls:</strong> Strict authentication and authorisation</li>
-                <li><strong>Regular Security Audits:</strong> Vulnerability assessments</li>
-            </ul>
-
-            <h3>6.2 Data Protection</h3>
-            <p>Your personal information is protected in accordance with the Protection of Personal Information Act
-                (POPIA) and our comprehensive <a href="./privacy-policy.html">Privacy Policy</a>.</p>
-
-            <h2>7. Return and Refund Rights (ECTA Section 44)</h2>
-            <h3>7.1 Statutory Right (Section 44(1)(f))</h3>
-            <p>You may <strong>cancel an electronic transaction within 7 (seven) days</strong> of receiving goods
-                without reason or penalty, except for reasonable costs of returning the goods.</p>
-            <p><strong>Full details:</strong> <a href="./return-refund-policy.html">Return and Refund Policy</a></p>
-
-            <h2>8. Dispute Resolution (ECTA Section 43(1)(j))</h2>
-            <h3>8.1 Internal Complaints Procedure</h3>
-            <div class="process-step"><strong>Step 1:</strong> Contact Customer Service at info@shopbeha.com<br>Response
-                time: Within 5 business days</div>
-            <div class="process-step"><strong>Step 2:</strong> Escalation to management if unresolved<br>Response time:
-                Within 10 business days</div>
-
-            <h3>8.2 External Dispute Resolution</h3>
-            <p>If internal resolution is unsuccessful, you may approach:</p>
-            <div class="info-box">
-                <strong>Consumer Commission:</strong><br>
-                Website: www.theconsumercommission.org.za<br>
-                Email: complaints@theconsumercommission.org.za<br>
-                Phone: 012 428 7000<br><br>
-                <strong>National Consumer Tribunal:</strong><br>
-                Website: www.thenct.org.za<br>
-                Email: info@thenct.org.za<br><br>
-                <strong>Information Regulator (for privacy complaints):</strong><br>
-                Website: justice.gov.za/inforeg<br>
-                Email: inforeg@justice.gov.za<br>
-                Phone: 010 023 5200
-            </div>
-
-            <h2>9. Limitation of Liability (ECTA Section 43(1)(k))</h2>
-            <p>To the maximum extent permitted by law:</p>
-            <ul>
-                <li>Our liability is limited to the purchase price of the specific product</li>
-                <li>We are not liable for indirect, incidental, or consequential damages</li>
-                <li>We are not liable for loss of profits, data, or business opportunities</li>
-            </ul>
-            <p><strong>Non-Excludable Liability:</strong> Nothing limits our liability for death or personal injury
-                caused by our negligence, fraud, or any liability that cannot be excluded by South African law.</p>
-
-            <h2>10. Contact and Further Information</h2>
-            <h3>10.1 Support & Enquiries</h3>
-            <div class="info-box">
-                <strong>Email:</strong> info@shopbeha.com<br>
-                <strong>Hours:</strong> Monday - Friday, 09:00 - 17:00 SAST
-            </div>
-
-            <hr style="margin:3rem 0;border:none;border-top:2px solid var(--border-color)">
-            <h2>ECTA Compliance Checklist</h2>
-            <p>This disclosure satisfies requirements of <strong>ECTA Section 43(1)</strong>:</p>
-            <ul style="list-style:none;padding-left:0">
-                <li>✅ (a) Full name and legal status disclosed</li>
-                <li>✅ (b) Physical address provided</li>
-                <li>✅ (c) Contact details (email, phone) provided</li>
-                <li>✅ (d) Website address provided</li>
-                <li>✅ (e) Registration details disclosed</li>
-                <li>✅ (f) Performance timeframes disclosed</li>
-                <li>✅ (g) Cooling-off rights explained</li>
-                <li>✅ (h) Security measures described</li>
-                <li>✅ (i) Payment methods disclosed</li>
-                <li>✅ (j) Complaint mechanisms provided</li>
-                <li>✅ (k) Limitation of liability disclosed</li>
-            </ul>
-            <p style="margin-top:2rem;text-align:center;font-weight:600">This document complies with the Electronic
-                Communications and Transactions Act 25 of 2002 (ECTA).</p>
-        </div>
-    </div>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-column">
-                <h4>SHOP</h4>
+                <h2>2. Nature of Business (ECTA Section 43(1))</h2>
+                <h3>2.1 Business Description</h3>
+                <p>ShopBeha operates as an <strong>online retail business</strong> specialising in:</p>
                 <ul>
-                    <li><a href="../home_page/front_page.html#shop">All Products</a></li>
-                    <li><a href="../home_page/front_page.html#bras">Bras</a></li>
-                    <li><a href="../home_page/front_page.html#shapewear">Shapewear</a></li>
+                    <li>Women's bras and intimate apparel</li>
+                    <li>Shapewear and body shaping garments</li>
+                    <li>Support and posture products</li>
+                    <li>Sports and active bras</li>
+                    <li>Related accessories</li>
                 </ul>
-            </div>
-            <div class="footer-column">
-                <h4>SUPPORT</h4>
+
+                <h3>2.2 Geographic Scope</h3>
                 <ul>
-                    <li><a href="../contact.html">Contact Us</a></li>
-                    <li><a href="./shipping-policy.html">Shipping & Delivery</a></li>
-                    <li><a href="./return-refund-policy.html">Returns & Refunds</a></li>
-                    <li><a href="#">Size Guide</a></li>
+                    <li><strong>Primary Market:</strong> South Africa</li>
+                    <li><strong>Delivery Area:</strong> All regions within South Africa</li>
+                    <li><strong>Currency:</strong> South African Rand (ZAR)</li>
+                    <li><strong>International Sales:</strong> Not currently available</li>
                 </ul>
-            </div>
-            <div class="footer-column">
-                <h4>LEGAL</h4>
+
+                <h2>3. Electronic Transactions Process (ECTA Section 43(1))</h2>
+                <h3>3.1 How Electronic Transactions Work</h3>
+                <p>When you purchase from ShopBeha:</p>
+                <div class="process-step"><strong>Step 1: Browse and Select</strong><br>You view products, select
+                    size/colour/quantity, and add to cart</div>
+                <div class="process-step"><strong>Step 2: Checkout Initiation</strong><br>You proceed to checkout and
+                    review
+                    cart contents</div>
+                <div class="process-step"><strong>Step 3: Information Provision</strong><br>You provide delivery
+                    address,
+                    contact information, and select delivery method</div>
+                <div class="process-step"><strong>Step 4: Order Review</strong><br>You review complete order summary
+                    including total amount payable</div>
+                <div class="process-step"><strong>Step 5: Payment</strong><br>You select payment method and authorise
+                    payment via Stripe</div>
+                <div class="process-step"><strong>Step 6: Order Confirmation</strong><br>You receive on-screen and email
+                    confirmation with order details</div>
+                <div class="process-step"><strong>Step 7: Fulfilment</strong><br>We process, dispatch, and deliver your
+                    order with tracking information</div>
+
+                <h3>3.2 When Is the Contract Formed?</h3>
+                <p>The contract is formed when:</p>
                 <ul>
-                    <li><a href="./privacy-policy.html">Privacy Policy</a></li>
-                    <li><a href="./terms-and-conditions.html">Terms & Conditions</a></li>
-                    <li><a href="./cookie-policy.html">Cookie Policy</a></li>
-                    <li><a href="./ecta-disclosure.html">ECTA Disclosure</a></li>
+                    <li>You submit your order ("Place Order" button)</li>
+                    <li>We accept your order (via email confirmation)</li>
+                    <li>Payment is successfully authorised</li>
                 </ul>
-            </div>
-            <div class="footer-column">
-                <h4>CONNECT</h4>
-                <div class="social-icons"><a href="#"><img src="../fb.jpg" alt="Facebook" class="social-icon"></a><a
-                        href="../instagram.jpg" alt="Instagram" class="social-icon"></a><a href="../tiktok.jpg"
-                        alt="TikTok" class="social-icon"></a></div>
+                <p><strong>Important:</strong> Order submission constitutes an offer. We reserve the right to decline
+                    orders. The contract is only binding upon our acceptance.</p>
+
+                <h3>3.3 Cooling-Off Period (ECTA Section 44(1)(g))</h3>
+                <div class="info-box" style="background:#E8F5E9;border-left-color:#2E7D32">
+                    <strong>You have a 7 (seven) day cooling-off period from the date you receive the goods, during
+                        which
+                        you may return products without providing a reason.</strong>
+                </div>
+                <p><strong>Conditions Apply:</strong> See our <a href="./return-refund-policy.html">Return and Refund
+                        Policy</a></p>
+
+                <h2>4. Pricing and Payment Terms (ECTA Section 43(1))</h2>
+                <h3>4.1 Pricing</h3>
+                <p><strong>All prices displayed on our website:</strong></p>
+                <ul>
+                    <li>Are in South African Rand (ZAR)</li>
+                    <li>Include Value-Added Tax (VAT) at 15%</li>
+                    <li>Are subject to change without prior notice</li>
+                    <li>Are valid at the time of order confirmation</li>
+                    <li>Are clearly displayed on product pages and at checkout</li>
+                </ul>
+
+                <h3>4.2 Payment Methods Accepted</h3>
+                <p>We accept the following payment methods through our secure payment processor, Stripe:</p>
+                <ul>
+                    <li><strong>Credit Cards:</strong> Visa, Mastercard</li>
+                    <li><strong>Debit Cards:</strong> Visa Debit, Mastercard Debit</li>
+                    <li><strong>Instant EFT:</strong> Where available</li>
+                </ul>
+
+                <h3>4.3 Payment Processing</h3>
+                <ul>
+                    <li><strong>Processor:</strong> Stripe, Inc.</li>
+                    <li><strong>Security:</strong> PCI-DSS Level 1 compliant</li>
+                    <li><strong>Encryption:</strong> TLS 1.3 (minimum TLS 1.2)</li>
+                    <li><strong>Data Storage:</strong> We do not store full card details</li>
+                    <li><strong>Payment Timing:</strong> Payment is authorised immediately; charged upon dispatch</li>
+                </ul>
+
+                <h2>5. Delivery and Performance (ECTA Section 43(1)(f))</h2>
+                <h3>5.1 Delivery Areas</h3>
+                <p>We deliver to all physical addresses within South Africa. We do not deliver to international
+                    addresses,
+                    P.O. Boxes (except Pargo collection points), or restricted areas.</p>
+
+                <h3>5.2 Delivery Timeframes</h3>
+                <table>
+                    <tr>
+                        <th>Region</th>
+                        <th>Standard Delivery</th>
+                    </tr>
+                    <tr>
+                        <td>Major centres</td>
+                        <td>3-5 business days</td>
+                    </tr>
+                    <tr>
+                        <td>Secondary cities</td>
+                        <td>5-7 business days</td>
+                    </tr>
+                    <tr>
+                        <td>Remote areas</td>
+                        <td>7-10 business days</td>
+                    </tr>
+                </table>
+                <p><strong>Note:</strong> Timeframes are estimates. Actual delivery may vary.</p>
+
+                <h3>5.3 Delivery Costs</h3>
+                <ul>
+                    <li>Calculated at checkout based on location</li>
+                    <li>Orders over R500: <strong>FREE standard delivery</strong></li>
+                    <li>Displayed before order confirmation</li>
+                </ul>
+
+                <h2>6. Security Measures (ECTA Section 43(1)(h))</h2>
+                <h3>6.1 Website Security</h3>
+                <p>We implement industry-standard security measures:</p>
+                <ul>
+                    <li><strong>SSL/TLS Encryption:</strong> All data transmitted is encrypted using TLS 1.3</li>
+                    <li><strong>Secure Payment Gateway:</strong> PCI-DSS compliant payment processing</li>
+                    <li><strong>Firewall Protection:</strong> Network-level security controls</li>
+                    <li><strong>Access Controls:</strong> Strict authentication and authorisation</li>
+                    <li><strong>Regular Security Audits:</strong> Vulnerability assessments</li>
+                </ul>
+
+                <h3>6.2 Data Protection</h3>
+                <p>Your personal information is protected in accordance with the Protection of Personal Information Act
+                    (POPIA) and our comprehensive <a href="./privacy-policy.html">Privacy Policy</a>.</p>
+
+                <h2>7. Return and Refund Rights (ECTA Section 44)</h2>
+                <h3>7.1 Statutory Right (Section 44(1)(f))</h3>
+                <p>You may <strong>cancel an electronic transaction within 7 (seven) days</strong> of receiving goods
+                    without reason or penalty, except for reasonable costs of returning the goods.</p>
+                <p><strong>Full details:</strong> <a href="./return-refund-policy.html">Return and Refund Policy</a></p>
+
+                <h2>8. Dispute Resolution (ECTA Section 43(1)(j))</h2>
+                <h3>8.1 Internal Complaints Procedure</h3>
+                <div class="process-step"><strong>Step 1:</strong> Contact Customer Service at
+                    info@shopbeha.com<br>Response
+                    time: Within 5 business days</div>
+                <div class="process-step"><strong>Step 2:</strong> Escalation to management if unresolved<br>Response
+                    time:
+                    Within 10 business days</div>
+
+                <h3>8.2 External Dispute Resolution</h3>
+                <p>If internal resolution is unsuccessful, you may approach:</p>
+                <div class="info-box">
+                    <strong>Consumer Commission:</strong><br>
+                    Website: www.theconsumercommission.org.za<br>
+                    Email: complaints@theconsumercommission.org.za<br>
+                    Phone: 012 428 7000<br><br>
+                    <strong>National Consumer Tribunal:</strong><br>
+                    Website: www.thenct.org.za<br>
+                    Email: info@thenct.org.za<br><br>
+                    <strong>Information Regulator (for privacy complaints):</strong><br>
+                    Website: justice.gov.za/inforeg<br>
+                    Email: inforeg@justice.gov.za<br>
+                    Phone: 010 023 5200
+                </div>
+
+                <h2>9. Limitation of Liability (ECTA Section 43(1)(k))</h2>
+                <p>To the maximum extent permitted by law:</p>
+                <ul>
+                    <li>Our liability is limited to the purchase price of the specific product</li>
+                    <li>We are not liable for indirect, incidental, or consequential damages</li>
+                    <li>We are not liable for loss of profits, data, or business opportunities</li>
+                </ul>
+                <p><strong>Non-Excludable Liability:</strong> Nothing limits our liability for death or personal injury
+                    caused by our negligence, fraud, or any liability that cannot be excluded by South African law.</p>
+
+                <h2>10. Contact and Further Information</h2>
+                <h3>10.1 Support & Enquiries</h3>
+                <div class="info-box">
+                    <strong>Email:</strong> info@shopbeha.com<br>
+                    <strong>Hours:</strong> Monday - Friday, 09:00 - 17:00 SAST
+                </div>
+
+                <hr style="margin:3rem 0;border:none;border-top:2px solid var(--border-color)">
+                <h2>ECTA Compliance Checklist</h2>
+                <p>This disclosure satisfies requirements of <strong>ECTA Section 43(1)</strong>:</p>
+                <ul style="list-style:none;padding-left:0">
+                    <li>✅ (a) Full name and legal status disclosed</li>
+                    <li>✅ (b) Physical address provided</li>
+                    <li>✅ (c) Contact details (email, phone) provided</li>
+                    <li>✅ (d) Website address provided</li>
+                    <li>✅ (e) Registration details disclosed</li>
+                    <li>✅ (f) Performance timeframes disclosed</li>
+                    <li>✅ (g) Cooling-off rights explained</li>
+                    <li>✅ (h) Security measures described</li>
+                    <li>✅ (i) Payment methods disclosed</li>
+                    <li>✅ (j) Complaint mechanisms provided</li>
+                    <li>✅ (k) Limitation of liability disclosed</li>
+                </ul>
+                <p style="margin-top:2rem;text-align:center;font-weight:600">This document complies with the Electronic
+                    Communications and Transactions Act 25 of 2002 (ECTA).</p>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p style="margin-bottom:0.5rem"><strong>ShopBeha (Pty) Ltd</strong></p>
-            <p><a href="mailto:info@shopbeha.com" style="color:#666">info@shopbeha.com</a> | <a
-                    href="./ecta-disclosure.html" style="color:#666">Legal Information</a></p>
-            <p>© 2026 ShopBeha (Pty) Ltd. All Rights Reserved.</p>
-        </div>
-    </footer>
+
+        <%- include('../home_page/footer.html') %>
+
+            <%- include('../admin_panel/cart_modal.html') %>
+                <%- include('../home_page/login_modal.html') %>
+
+                    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+                    <script src="/js/supabase-init.js"></script>
+                    <script src="/js/auth.js"></script>
+                    <script src="/home_page/js/account-popup.js"></script>
+                    <script src="/js/cart.js"></script>
+                    <script src="/js/shopbeha.js"></script>
 </body>
 
 </html>

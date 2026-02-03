@@ -102,6 +102,35 @@
     border-color: var(--accent-color);
 }
 
+.option-button.color-swatch {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid #e5e5e5;
+    position: relative;
+    /* Hide text content if we are showing just color */
+    color: transparent;
+    overflow: hidden;
+}
+
+.option-button.color-swatch.selected {
+    /* Add a ring for selection instead of changing background */
+    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent-color);
+    border-color: transparent;
+    /* Ensure background color from inline style is preserved */
+}
+
+/* Ensure hovered swatch doesn't lose its color */
+.option-button.color-swatch:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px white, 0 0 0 4px #ddd;
+}
+
+.option-button.color-swatch.selected:hover {
+    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--accent-color);
+}
+
 .quantity-selector {
     display: flex;
     align-items: center;
@@ -287,7 +316,7 @@ footer {
 
 /* Related Products Section */
 .related-products {
-    background-color: #E6C0B0;
+    background-color: var(--bg-color);
     /* Light terracotta/pink from image */
     padding: 4rem 5%;
     margin-top: 4rem;

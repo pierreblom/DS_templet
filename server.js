@@ -155,6 +155,16 @@ app.get('/success', (req, res) => {
     res.redirect('/orders');
 });
 
+app.get('/legal/:page', (req, res) => {
+    // Prevent directory traversal
+    const safePage = path.basename(req.params.page);
+    res.render(path.join(__dirname, 'legal', safePage));
+});
+
+app.get('/legal', (req, res) => {
+    res.redirect('/legal/terms-and-conditions.html');
+});
+
 // ===================
 // Static Files
 // ===================

@@ -1000,10 +1000,13 @@ h2 {
 
 /* Footer Styles (Moved from footer.html) */
 .site-footer {
-    background-color: #FFFFFF;
-    padding: 3rem 5% 2rem;
+    background-color: transparent;
+    /* Changed from white to transparent to blend with page or new footer bar */
+    padding: 0;
+    /* Removed padding so inner bar can be full width */
     color: #333;
     font-family: 'Outfit', sans-serif;
+    margin-top: 0;
 }
 
 .footer-content {
@@ -1228,12 +1231,13 @@ h2 {
 }
 
 /* Sticky Footer Bar (Terms & Policies) - Now Static Footer */
+/* Sticky Footer Bar (Terms & Policies) - Now Static Footer */
 .sticky-footer-bar {
     position: relative;
     /* Changed from fixed to relative for document flow */
     width: 100%;
-    background-color: #E6C2B0;
-    /* Matches the beige/tan color */
+    background-color: var(--bg-color);
+    /* Matches the page background */
     padding: 15px 20px 10px;
     z-index: 99;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
@@ -1311,7 +1315,7 @@ h2 {
     bottom: 100%;
     /* Sit right on top of the footer */
     left: 20px;
-    background-color: #E6C2B0;
+    background-color: var(--bg-color);
     width: 250px;
     border-radius: 10px 10px 0 0;
     box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.15);

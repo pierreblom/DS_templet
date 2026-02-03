@@ -7,73 +7,8 @@
     <title>Cookie Policy | ShopBeha</title>
     <meta name="description" content="ShopBeha Cookie Policy - POPIA Compliant cookie and tracking information">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/home_page/css/front_page.css">
     <style>
-        :root {
-            --bg-color: #F9F5F0;
-            --text-color: #1A1A1A;
-            --accent-color: #A0522D;
-            --header-bg: #FFF;
-            --card-bg: #FFF;
-            --border-color: #E5E5E5
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box
-        }
-
-        body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.7
-        }
-
-        header {
-            background: var(--header-bg);
-            padding: 1rem 5%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05)
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-color);
-            text-decoration: none
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2.5rem;
-            list-style: none
-        }
-
-        .nav-links a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-            transition: color 0.3s;
-            text-transform: uppercase
-        }
-
-        .nav-links a:hover {
-            color: var(--accent-color)
-        }
-
         .policy-container {
             max-width: 900px;
             margin: 2rem auto 4rem;
@@ -166,64 +101,7 @@
             margin: 0.5rem 0
         }
 
-        footer {
-            background-color: #F2EFE9;
-            padding: 4rem 5% 2rem;
-            margin-top: 4rem
-        }
 
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 3rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding-bottom: 3rem;
-            border-bottom: 1px solid #DDD
-        }
-
-        .footer-column h4 {
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px
-        }
-
-        .footer-column ul {
-            list-style: none
-        }
-
-        .footer-column ul li {
-            margin-bottom: 0.8rem
-        }
-
-        .footer-column a {
-            color: #666;
-            text-decoration: none;
-            transition: color 0.3s;
-            font-size: 0.95rem
-        }
-
-        .footer-column a:hover {
-            color: var(--accent-color)
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            color: #888;
-            font-size: 0.9rem
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 1rem
-        }
-
-        .social-icon {
-            width: 24px;
-            height: 24px
-        }
 
         @media (max-width:768px) {
             .policy-container {
@@ -243,373 +121,338 @@
                 font-size: 1.2rem
             }
 
-            .nav-links {
-                display: none
-            }
+
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <nav>
-            <a href="../home_page/front_page.html" class="logo">shopbeha.com</a>
-            <ul class="nav-links">
-                <li><a href="../home_page/front_page.html#shop">SHOP</a></li>
-                <li><a href="../home_page/front_page.html#maternity">MATERNITY</a></li>
-                <li><a href="../contact.html">CONTACT</a></li>
-            </ul>
-        </nav>
-    </header>
+    <%- include('../home_page/header.html') %>
 
-    <div class="policy-container">
-        <div class="policy-header">
-            <h1>Cookie Policy</h1>
-            <div class="policy-meta"><strong>Effective Date:</strong> 26 January 2026<br><strong>Last Updated:</strong>
-                26 January 2026</div>
-            <div style="margin-top:1rem"><span class="compliance-badge">✓ POPIA Compliant</span><span
-                    class="compliance-badge">✓ ECTA Compliant</span></div>
-        </div>
+        <div class="policy-container">
+            <div class="policy-header">
+                <h1>Cookie Policy</h1>
+                <div class="policy-meta"><strong>Effective Date:</strong> 26 January 2026<br><strong>Last
+                        Updated:</strong>
+                    26 January 2026</div>
+                <div style="margin-top:1rem"><span class="compliance-badge">✓ POPIA Compliant</span><span
+                        class="compliance-badge">✓ ECTA Compliant</span></div>
+            </div>
 
-        <div class="policy-content">
-            <h2>1. Introduction</h2>
-            <p>This Cookie Policy explains how ShopBeha ("we", "us", "our") uses cookies and similar tracking
-                technologies on our website (www.shopbeha.com) in compliance with the Protection of Personal Information
-                Act (POPIA) and the Electronic Communications and Transactions Act (ECTA).</p>
-            <div class="info-box"><strong>Contact Details:</strong><br><strong>Email:</strong>
-                info@shopbeha.com<br><strong>Website:</strong> www.shopbeha.com</div>
+            <div class="policy-content">
+                <h2>1. Introduction</h2>
+                <p>This Cookie Policy explains how ShopBeha ("we", "us", "our") uses cookies and similar tracking
+                    technologies on our website (www.shopbeha.com) in compliance with the Protection of Personal
+                    Information
+                    Act (POPIA) and the Electronic Communications and Transactions Act (ECTA).</p>
+                <div class="info-box"><strong>Contact Details:</strong><br><strong>Email:</strong>
+                    info@shopbeha.com<br><strong>Website:</strong> www.shopbeha.com</div>
 
-            <h2>2. What Are Cookies?</h2>
-            <p>Cookies are small text files that are placed on your device (computer, smartphone, tablet) when you visit
-                a website. They help the website:</p>
-            <ul>
-                <li>Remember your preferences</li>
-                <li>Understand how you use the site</li>
-                <li>Improve your experience</li>
-                <li>Provide personalised content</li>
-            </ul>
-
-            <h3>2.1 Types of Cookies</h3>
-            <ul>
-                <li><strong>First-Party Cookies:</strong> Set by ShopBeha directly</li>
-                <li><strong>Third-Party Cookies:</strong> Set by external services we use (e.g., payment processors,
-                    analytics)</li>
-                <li><strong>Session Cookies:</strong> Temporary cookies that expire when you close your browser</li>
-                <li><strong>Persistent Cookies:</strong> Remain on your device for a set period or until you delete them
-                </li>
-            </ul>
-
-            <h2>3. Why We Use Cookies</h2>
-            <h3>3.1 Essential Website Functionality</h3>
-            <p>To enable core features that make the website work properly:</p>
-            <ul>
-                <li>Shopping cart functionality</li>
-                <li>Secure login and authentication</li>
-                <li>Payment processing</li>
-                <li>Form submission</li>
-                <li>Security and fraud prevention</li>
-            </ul>
-            <p><strong>These cookies are necessary and cannot be disabled without affecting website
-                    functionality.</strong></p>
-
-            <h3>3.2 Performance and Analytics</h3>
-            <p>To understand how visitors use our website:</p>
-            <ul>
-                <li>Pages visited</li>
-                <li>Time spent on site</li>
-                <li>Navigation paths</li>
-                <li>Error messages encountered</li>
-                <li>Device and browser information</li>
-            </ul>
-
-            <h3>3.3 Functionality and Personalisation</h3>
-            <p>To remember your preferences:</p>
-            <ul>
-                <li>Currency selection</li>
-                <li>Recent products viewed</li>
-                <li>Size preferences</li>
-                <li>Wishlist items</li>
-            </ul>
-
-            <h3>3.4 Marketing and Advertising</h3>
-            <p>To show relevant product recommendations:</p>
-            <ul>
-                <li>Products you've viewed</li>
-                <li>Items in your cart</li>
-                <li>Personalised product suggestions</li>
-                <li>Retargeting advertisements on other websites</li>
-            </ul>
-            <p><strong>You can opt out of marketing cookies without affecting core functionality.</strong></p>
-
-            <h2>4. Types of Cookies We Use</h2>
-            <h3>4.1 Strictly Necessary Cookies</h3>
-            <table>
-                <tr>
-                    <th>Cookie Name</th>
-                    <th>Purpose</th>
-                    <th>Duration</th>
-                </tr>
-                <tr>
-                    <td>session_id</td>
-                    <td>Maintains your shopping session</td>
-                    <td>Session</td>
-                </tr>
-                <tr>
-                    <td>csrf_token</td>
-                    <td>Security protection against attacks</td>
-                    <td>Session</td>
-                </tr>
-                <tr>
-                    <td>auth_token</td>
-                    <td>Keeps you logged in</td>
-                    <td>24 hours</td>
-                </tr>
-                <tr>
-                    <td>cart_id</td>
-                    <td>Remembers items in shopping cart</td>
-                    <td>7 days</td>
-                </tr>
-            </table>
-            <p><strong>Can be disabled:</strong> No (required for website operation)</p>
-
-            <h3>4.2 Performance Cookies</h3>
-            <table>
-                <tr>
-                    <th>Cookie Name</th>
-                    <th>Purpose</th>
-                    <th>Duration</th>
-                    <th>Third-Party</th>
-                </tr>
-                <tr>
-                    <td>_ga</td>
-                    <td>Google Analytics - tracks visits</td>
-                    <td>2 years</td>
-                    <td>Yes (Google)</td>
-                </tr>
-                <tr>
-                    <td>_gid</td>
-                    <td>Google Analytics - tracks sessions</td>
-                    <td>24 hours</td>
-                    <td>Yes (Google)</td>
-                </tr>
-            </table>
-            <p><strong>Can be disabled:</strong> Yes</p>
-
-            <h3>4.3 Functionality Cookies</h3>
-            <table>
-                <tr>
-                    <th>Cookie Name</th>
-                    <th>Purpose</th>
-                    <th>Duration</th>
-                </tr>
-                <tr>
-                    <td>currency</td>
-                    <td>Remembers currency preference (ZAR)</td>
-                    <td>90 days</td>
-                </tr>
-                <tr>
-                    <td>recently_viewed</td>
-                    <td>Tracks recently viewed products</td>
-                    <td>30 days</td>
-                </tr>
-                <tr>
-                    <td>size_preference</td>
-                    <td>Remembers your size preferences</td>
-                    <td>90 days</td>
-                </tr>
-                <tr>
-                    <td>wishlist</td>
-                    <td>Stores wishlist items</td>
-                    <td>1 year</td>
-                </tr>
-            </table>
-            <p><strong>Can be disabled:</strong> Yes</p>
-
-            <h2>5. Third-Party Cookies and Services</h2>
-            <h3>5.1 Payment Processing - Stripe</h3>
-            <p><strong>Purpose:</strong> Secure payment processing<br><strong>Cookies:</strong> Stripe sets cookies for
-                fraud prevention<br><strong>Privacy Policy:</strong> <a href="https://stripe.com/privacy"
-                    target="_blank">stripe.com/privacy</a></p>
-
-            <h3>5.2 Google Analytics</h3>
-            <p><strong>Purpose:</strong> Website analytics<br><strong>Data Collected:</strong> Anonymous usage
-                statistics<br><strong>Opt-Out:</strong> <a href="https://tools.google.com/dlpage/gaoptout"
-                    target="_blank">Google Analytics Opt-Out</a></p>
-
-            <h2>6. Managing Your Cookie Preferences</h2>
-            <h3>6.1 Cookie Consent Banner</h3>
-            <p>When you first visit our website, you'll see a cookie consent banner offering choices:</p>
-            <ul>
-                <li><strong>Accept All Cookies:</strong> Enables all cookies for optimal experience</li>
-                <li><strong>Reject Non-Essential:</strong> Only essential cookies are enabled</li>
-                <li><strong>Customise Settings:</strong> Choose specific cookie categories</li>
-            </ul>
-
-            <h3>6.2 Changing Your Preferences</h3>
-            <p>You can change your cookie preferences at any time:</p>
-            <ul>
-                <li><strong>Option 1:</strong> Click "Cookie Settings" in the footer</li>
-                <li><strong>Option 2:</strong> Use your browser's cookie management tools</li>
-                <li><strong>Option 3:</strong> Email info@shopbeha.com</li>
-            </ul>
-
-            <h3>6.3 Browser Cookie Controls</h3>
-            <p><strong>Google Chrome:</strong> Settings → Privacy and Security → Cookies and other site data<br>
-                <strong>Safari:</strong> Preferences → Privacy → Cookies and website data<br>
-                <strong>Firefox:</strong> Options → Privacy & Security → Cookies and Site Data<br>
-                <strong>Microsoft Edge:</strong> Settings → Cookies and site permissions
-            </p>
-
-            <h2>7. Impact of Disabling Cookies</h2>
-            <table>
-                <tr>
-                    <th>Cookie Type</th>
-                    <th>Impact if Disabled</th>
-                </tr>
-                <tr>
-                    <td>Essential</td>
-                    <td>Website may not function properly; shopping cart, checkout, and login will not work</td>
-                </tr>
-                <tr>
-                    <td>Performance</td>
-                    <td>We cannot improve website based on usage data; no impact on functionality</td>
-                </tr>
-                <tr>
-                    <td>Functionality</td>
-                    <td>Preferences not saved; need to re-select settings each visit</td>
-                </tr>
-                <tr>
-                    <td>Marketing</td>
-                    <td>No personalised recommendations; fewer relevant ads; no impact on core shopping</td>
-                </tr>
-            </table>
-
-            <h2>8. POPIA Compliance</h2>
-            <h3>8.1 Lawful Processing</h3>
-            <p>We process cookie data based on:</p>
-            <ul>
-                <li><strong>Consent:</strong> You explicitly consent to non-essential cookies</li>
-                <li><strong>Legitimate Interest:</strong> Essential cookies for website functionality</li>
-                <li><strong>Contractual Necessity:</strong> Cookies required to fulfil your order</li>
-            </ul>
-
-            <h3>8.2 Your Rights</h3>
-            <p>Under POPIA, you have the right to:</p>
-            <ul>
-                <li><strong>Access:</strong> Know what cookie data we collect</li>
-                <li><strong>Deletion:</strong> Request deletion of non-essential cookies</li>
-                <li><strong>Objection:</strong> Object to processing of non-essential cookies</li>
-                <li><strong>Restriction:</strong> Limit processing to essential cookies only</li>
-            </ul>
-
-            <h3>8.3 Data Retention</h3>
-            <table>
-                <tr>
-                    <th>Cookie Type</th>
-                    <th>Retention Period</th>
-                </tr>
-                <tr>
-                    <td>Essential</td>
-                    <td>Session to 7 days</td>
-                </tr>
-                <tr>
-                    <td>Performance</td>
-                    <td>Up to 2 years</td>
-                </tr>
-                <tr>
-                    <td>Functionality</td>
-                    <td>Up to 1 year</td>
-                </tr>
-                <tr>
-                    <td>Marketing</td>
-                    <td>Up to 1 year</td>
-                </tr>
-            </table>
-
-            <h2>9. Children's Privacy</h2>
-            <p>Our website is not directed at children under 18. We do not knowingly collect data from minors through
-                cookies.</p>
-
-            <h2>10. Changes to Cookie Policy</h2>
-            <p>We may update this Cookie Policy to reflect new cookies or tracking technologies, changes in legal
-                requirements, or improvements to privacy practices.</p>
-            <p><strong>How You'll Be Notified:</strong></p>
-            <ul>
-                <li>Updated "Last Updated" date on this page</li>
-                <li>Cookie consent banner (for material changes)</li>
-                <li>Email notification (for significant changes)</li>
-            </ul>
-
-            <h2>11. Contact Us</h2>
-            <div class="info-box"><strong>Cookie and Privacy Enquiries:</strong><br><strong>Email:</strong>
-                info@shopbeha.com<br><strong>Subject:</strong> "Cookie Policy Enquiry"<br><strong>Response
-                    Time:</strong> 2-3 business days</div>
-
-            <h3>POPIA Complaints</h3>
-            <p>If you have concerns about our cookie practices, contact the Information Regulator:</p>
-            <ul>
-                <li><strong>Website:</strong> <a href="https://www.justice.gov.za/inforeg/"
-                        target="_blank">justice.gov.za/inforeg</a></li>
-                <li><strong>Email:</strong> inforeg@justice.gov.za</li>
-                <li><strong>Telephone:</strong> 010 023 5200</li>
-            </ul>
-
-            <hr style="margin:3rem 0;border:none;border-top:2px solid var(--border-color)">
-            <h2>Summary</h2>
-            <p><strong>In Plain Language:</strong></p>
-            <p>We use cookies to make our website work, understand how you use it, and show you relevant products.</p>
-            <ul>
-                <li>Some cookies are essential and can't be turned off</li>
-                <li>Others are optional and you can choose whether to enable them</li>
-                <li>You can change your mind anytime through cookie settings</li>
-                <li>Your data is protected in accordance with South African law (POPIA)</li>
-            </ul>
-            <p><strong>Questions?</strong> Contact info@shopbeha.com</p>
-        </div>
-    </div>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-column">
-                <h4>SHOP</h4>
+                <h2>2. What Are Cookies?</h2>
+                <p>Cookies are small text files that are placed on your device (computer, smartphone, tablet) when you
+                    visit
+                    a website. They help the website:</p>
                 <ul>
-                    <li><a href="../home_page/front_page.html#shop">All Products</a></li>
-                    <li><a href="../home_page/front_page.html#bras">Bras</a></li>
-                    <li><a href="../home_page/front_page.html#shapewear">Shapewear</a></li>
+                    <li>Remember your preferences</li>
+                    <li>Understand how you use the site</li>
+                    <li>Improve your experience</li>
+                    <li>Provide personalised content</li>
                 </ul>
-            </div>
-            <div class="footer-column">
-                <h4>SUPPORT</h4>
+
+                <h3>2.1 Types of Cookies</h3>
                 <ul>
-                    <li><a href="../contact.html">Contact Us</a></li>
-                    <li><a href="./shipping-policy.html">Shipping & Delivery</a></li>
-                    <li><a href="./return-refund-policy.html">Returns & Refunds</a></li>
-                    <li><a href="#">Size Guide</a></li>
+                    <li><strong>First-Party Cookies:</strong> Set by ShopBeha directly</li>
+                    <li><strong>Third-Party Cookies:</strong> Set by external services we use (e.g., payment processors,
+                        analytics)</li>
+                    <li><strong>Session Cookies:</strong> Temporary cookies that expire when you close your browser</li>
+                    <li><strong>Persistent Cookies:</strong> Remain on your device for a set period or until you delete
+                        them
+                    </li>
                 </ul>
-            </div>
-            <div class="footer-column">
-                <h4>LEGAL</h4>
+
+                <h2>3. Why We Use Cookies</h2>
+                <h3>3.1 Essential Website Functionality</h3>
+                <p>To enable core features that make the website work properly:</p>
                 <ul>
-                    <li><a href="./privacy-policy.html">Privacy Policy</a></li>
-                    <li><a href="./terms-and-conditions.html">Terms & Conditions</a></li>
-                    <li><a href="./cookie-policy.html">Cookie Policy</a></li>
-                    <li><a href="./ecta-disclosure.html">ECTA Disclosure</a></li>
+                    <li>Shopping cart functionality</li>
+                    <li>Secure login and authentication</li>
+                    <li>Payment processing</li>
+                    <li>Form submission</li>
+                    <li>Security and fraud prevention</li>
                 </ul>
-            </div>
-            <div class="footer-column">
-                <h4>CONNECT</h4>
-                <div class="social-icons"><a href="#"><img src="../fb.jpg" alt="Facebook" class="social-icon"></a><a
-                        href="#"><img src="../instagram.jpg" alt="Instagram" class="social-icon"></a><a href="#"><img
-                            src="../tiktok.jpg" alt="TikTok" class="social-icon"></a></div>
+                <p><strong>These cookies are necessary and cannot be disabled without affecting website
+                        functionality.</strong></p>
+
+                <h3>3.2 Performance and Analytics</h3>
+                <p>To understand how visitors use our website:</p>
+                <ul>
+                    <li>Pages visited</li>
+                    <li>Time spent on site</li>
+                    <li>Navigation paths</li>
+                    <li>Error messages encountered</li>
+                    <li>Device and browser information</li>
+                </ul>
+
+                <h3>3.3 Functionality and Personalisation</h3>
+                <p>To remember your preferences:</p>
+                <ul>
+                    <li>Currency selection</li>
+                    <li>Recent products viewed</li>
+                    <li>Size preferences</li>
+                    <li>Wishlist items</li>
+                </ul>
+
+                <h3>3.4 Marketing and Advertising</h3>
+                <p>To show relevant product recommendations:</p>
+                <ul>
+                    <li>Products you've viewed</li>
+                    <li>Items in your cart</li>
+                    <li>Personalised product suggestions</li>
+                    <li>Retargeting advertisements on other websites</li>
+                </ul>
+                <p><strong>You can opt out of marketing cookies without affecting core functionality.</strong></p>
+
+                <h2>4. Types of Cookies We Use</h2>
+                <h3>4.1 Strictly Necessary Cookies</h3>
+                <table>
+                    <tr>
+                        <th>Cookie Name</th>
+                        <th>Purpose</th>
+                        <th>Duration</th>
+                    </tr>
+                    <tr>
+                        <td>session_id</td>
+                        <td>Maintains your shopping session</td>
+                        <td>Session</td>
+                    </tr>
+                    <tr>
+                        <td>csrf_token</td>
+                        <td>Security protection against attacks</td>
+                        <td>Session</td>
+                    </tr>
+                    <tr>
+                        <td>auth_token</td>
+                        <td>Keeps you logged in</td>
+                        <td>24 hours</td>
+                    </tr>
+                    <tr>
+                        <td>cart_id</td>
+                        <td>Remembers items in shopping cart</td>
+                        <td>7 days</td>
+                    </tr>
+                </table>
+                <p><strong>Can be disabled:</strong> No (required for website operation)</p>
+
+                <h3>4.2 Performance Cookies</h3>
+                <table>
+                    <tr>
+                        <th>Cookie Name</th>
+                        <th>Purpose</th>
+                        <th>Duration</th>
+                        <th>Third-Party</th>
+                    </tr>
+                    <tr>
+                        <td>_ga</td>
+                        <td>Google Analytics - tracks visits</td>
+                        <td>2 years</td>
+                        <td>Yes (Google)</td>
+                    </tr>
+                    <tr>
+                        <td>_gid</td>
+                        <td>Google Analytics - tracks sessions</td>
+                        <td>24 hours</td>
+                        <td>Yes (Google)</td>
+                    </tr>
+                </table>
+                <p><strong>Can be disabled:</strong> Yes</p>
+
+                <h3>4.3 Functionality Cookies</h3>
+                <table>
+                    <tr>
+                        <th>Cookie Name</th>
+                        <th>Purpose</th>
+                        <th>Duration</th>
+                    </tr>
+                    <tr>
+                        <td>currency</td>
+                        <td>Remembers currency preference (ZAR)</td>
+                        <td>90 days</td>
+                    </tr>
+                    <tr>
+                        <td>recently_viewed</td>
+                        <td>Tracks recently viewed products</td>
+                        <td>30 days</td>
+                    </tr>
+                    <tr>
+                        <td>size_preference</td>
+                        <td>Remembers your size preferences</td>
+                        <td>90 days</td>
+                    </tr>
+                    <tr>
+                        <td>wishlist</td>
+                        <td>Stores wishlist items</td>
+                        <td>1 year</td>
+                    </tr>
+                </table>
+                <p><strong>Can be disabled:</strong> Yes</p>
+
+                <h2>5. Third-Party Cookies and Services</h2>
+                <h3>5.1 Payment Processing - Stripe</h3>
+                <p><strong>Purpose:</strong> Secure payment processing<br><strong>Cookies:</strong> Stripe sets cookies
+                    for
+                    fraud prevention<br><strong>Privacy Policy:</strong> <a href="https://stripe.com/privacy"
+                        target="_blank">stripe.com/privacy</a></p>
+
+                <h3>5.2 Google Analytics</h3>
+                <p><strong>Purpose:</strong> Website analytics<br><strong>Data Collected:</strong> Anonymous usage
+                    statistics<br><strong>Opt-Out:</strong> <a href="https://tools.google.com/dlpage/gaoptout"
+                        target="_blank">Google Analytics Opt-Out</a></p>
+
+                <h2>6. Managing Your Cookie Preferences</h2>
+                <h3>6.1 Cookie Consent Banner</h3>
+                <p>When you first visit our website, you'll see a cookie consent banner offering choices:</p>
+                <ul>
+                    <li><strong>Accept All Cookies:</strong> Enables all cookies for optimal experience</li>
+                    <li><strong>Reject Non-Essential:</strong> Only essential cookies are enabled</li>
+                    <li><strong>Customise Settings:</strong> Choose specific cookie categories</li>
+                </ul>
+
+                <h3>6.2 Changing Your Preferences</h3>
+                <p>You can change your cookie preferences at any time:</p>
+                <ul>
+                    <li><strong>Option 1:</strong> Click "Cookie Settings" in the footer</li>
+                    <li><strong>Option 2:</strong> Use your browser's cookie management tools</li>
+                    <li><strong>Option 3:</strong> Email info@shopbeha.com</li>
+                </ul>
+
+                <h3>6.3 Browser Cookie Controls</h3>
+                <p><strong>Google Chrome:</strong> Settings → Privacy and Security → Cookies and other site data<br>
+                    <strong>Safari:</strong> Preferences → Privacy → Cookies and website data<br>
+                    <strong>Firefox:</strong> Options → Privacy & Security → Cookies and Site Data<br>
+                    <strong>Microsoft Edge:</strong> Settings → Cookies and site permissions
+                </p>
+
+                <h2>7. Impact of Disabling Cookies</h2>
+                <table>
+                    <tr>
+                        <th>Cookie Type</th>
+                        <th>Impact if Disabled</th>
+                    </tr>
+                    <tr>
+                        <td>Essential</td>
+                        <td>Website may not function properly; shopping cart, checkout, and login will not work</td>
+                    </tr>
+                    <tr>
+                        <td>Performance</td>
+                        <td>We cannot improve website based on usage data; no impact on functionality</td>
+                    </tr>
+                    <tr>
+                        <td>Functionality</td>
+                        <td>Preferences not saved; need to re-select settings each visit</td>
+                    </tr>
+                    <tr>
+                        <td>Marketing</td>
+                        <td>No personalised recommendations; fewer relevant ads; no impact on core shopping</td>
+                    </tr>
+                </table>
+
+                <h2>8. POPIA Compliance</h2>
+                <h3>8.1 Lawful Processing</h3>
+                <p>We process cookie data based on:</p>
+                <ul>
+                    <li><strong>Consent:</strong> You explicitly consent to non-essential cookies</li>
+                    <li><strong>Legitimate Interest:</strong> Essential cookies for website functionality</li>
+                    <li><strong>Contractual Necessity:</strong> Cookies required to fulfil your order</li>
+                </ul>
+
+                <h3>8.2 Your Rights</h3>
+                <p>Under POPIA, you have the right to:</p>
+                <ul>
+                    <li><strong>Access:</strong> Know what cookie data we collect</li>
+                    <li><strong>Deletion:</strong> Request deletion of non-essential cookies</li>
+                    <li><strong>Objection:</strong> Object to processing of non-essential cookies</li>
+                    <li><strong>Restriction:</strong> Limit processing to essential cookies only</li>
+                </ul>
+
+                <h3>8.3 Data Retention</h3>
+                <table>
+                    <tr>
+                        <th>Cookie Type</th>
+                        <th>Retention Period</th>
+                    </tr>
+                    <tr>
+                        <td>Essential</td>
+                        <td>Session to 7 days</td>
+                    </tr>
+                    <tr>
+                        <td>Performance</td>
+                        <td>Up to 2 years</td>
+                    </tr>
+                    <tr>
+                        <td>Functionality</td>
+                        <td>Up to 1 year</td>
+                    </tr>
+                    <tr>
+                        <td>Marketing</td>
+                        <td>Up to 1 year</td>
+                    </tr>
+                </table>
+
+                <h2>9. Children's Privacy</h2>
+                <p>Our website is not directed at children under 18. We do not knowingly collect data from minors
+                    through
+                    cookies.</p>
+
+                <h2>10. Changes to Cookie Policy</h2>
+                <p>We may update this Cookie Policy to reflect new cookies or tracking technologies, changes in legal
+                    requirements, or improvements to privacy practices.</p>
+                <p><strong>How You'll Be Notified:</strong></p>
+                <ul>
+                    <li>Updated "Last Updated" date on this page</li>
+                    <li>Cookie consent banner (for material changes)</li>
+                    <li>Email notification (for significant changes)</li>
+                </ul>
+
+                <h2>11. Contact Us</h2>
+                <div class="info-box"><strong>Cookie and Privacy Enquiries:</strong><br><strong>Email:</strong>
+                    info@shopbeha.com<br><strong>Subject:</strong> "Cookie Policy Enquiry"<br><strong>Response
+                        Time:</strong> 2-3 business days</div>
+
+                <h3>POPIA Complaints</h3>
+                <p>If you have concerns about our cookie practices, contact the Information Regulator:</p>
+                <ul>
+                    <li><strong>Website:</strong> <a href="https://www.justice.gov.za/inforeg/"
+                            target="_blank">justice.gov.za/inforeg</a></li>
+                    <li><strong>Email:</strong> inforeg@justice.gov.za</li>
+                    <li><strong>Telephone:</strong> 010 023 5200</li>
+                </ul>
+
+                <hr style="margin:3rem 0;border:none;border-top:2px solid var(--border-color)">
+                <h2>Summary</h2>
+                <p><strong>In Plain Language:</strong></p>
+                <p>We use cookies to make our website work, understand how you use it, and show you relevant products.
+                </p>
+                <ul>
+                    <li>Some cookies are essential and can't be turned off</li>
+                    <li>Others are optional and you can choose whether to enable them</li>
+                    <li>You can change your mind anytime through cookie settings</li>
+                    <li>Your data is protected in accordance with South African law (POPIA)</li>
+                </ul>
+                <p><strong>Questions?</strong> Contact info@shopbeha.com</p>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p style="margin-bottom:0.5rem"><strong>ShopBeha (Pty) Ltd</strong></p>
-            <p><a href="mailto:info@shopbeha.com" style="color:#666">info@shopbeha.com</a> | <a
-                    href="./ecta-disclosure.html" style="color:#666">Legal Information</a></p>
-            <p>© 2026 ShopBeha (Pty) Ltd. All Rights Reserved.</p>
-        </div>
-    </footer>
+
+        <%- include('../home_page/footer.html') %>
+
+            <%- include('../admin_panel/cart_modal.html') %>
+                <%- include('../home_page/login_modal.html') %>
+
+                    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+                    <script src="/js/supabase-init.js"></script>
+                    <script src="/js/auth.js"></script>
+                    <script src="/home_page/js/account-popup.js"></script>
+                    <script src="/js/cart.js"></script>
+                    <script src="/js/shopbeha.js"></script>
 </body>
 
 </html>
