@@ -1,23 +1,24 @@
 const sequelize = require('./database');
 const Product = require('./models/Product');
-const User = require('./models/User');
+const Profile = require('./models/Profile');
 const { Order, OrderItem } = require('./models/Order');
 const AuditLog = require('./models/AuditLog');
 
 // Associations
-User.hasMany(Order);
-Order.belongsTo(User);
+// Profile.hasMany(Order, { foreignKey: 'user_id' }); // Optional, usually we just need Order -> Profile
+Order.belongsTo(Profile, { foreignKey: 'user_id', constraints: false });
 
-Order.hasMany(OrderItem);
-OrderItem.belongsTo(Order);
+Order.hasMany(OrderItem, { foreignKey: 'order_id' });
+OrderItem.belongsTo(Order, { foreignKey: 'order_id' });
 
-Product.hasMany(OrderItem);
-OrderItem.belongsTo(Product);
+Product.hasMany(OrderItem, { foreignKey: 'product_id' });
+OrderItem.belongsTo(Product, { foreignKey: 'product_id' });
 
 module.exports = {
     sequelize,
     Product,
-    User,
+    Profile,
+    User: Profile, // Alias for backward compatibility
     Order,
     OrderItem,
     AuditLog

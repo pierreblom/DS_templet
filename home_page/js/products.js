@@ -110,7 +110,7 @@ const ProductsModule = {
 
     // Get trail favorites
     getTrailFavorites(products) {
-        return products.filter(product => product.isTrailFavorite);
+        return products.filter(product => product.is_trail_favorite || product.isTrailFavorite);
     },
 
     // Add product to trail favorites

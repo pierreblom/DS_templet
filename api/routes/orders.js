@@ -35,6 +35,7 @@ router.post('/', authenticate, validate(createOrderSchema), async (req, res, nex
 
         const result = await orderService.createOrder({
             userId: req.user.id,
+            email: req.user.email,
             items,
             shippingAddress
         });
@@ -71,7 +72,7 @@ router.get('/', authenticate, validate(listOrdersSchema), async (req, res, next)
 
         // Customers can only see their own orders
         if (req.user.role !== 'admin') {
-            where.UserId = req.user.id;
+            where.user_id = req.user.id;
         }
 
         if (status) {
@@ -105,7 +106,7 @@ router.get('/', authenticate, validate(listOrdersSchema), async (req, res, next)
                 },
                 {
                     model: User,
-                    attributes: ['id', 'name', 'email']
+                    attributes: ['id', 'email', 'first_name', 'last_name']
                 }
             ],
             order: [[sortColumn, sortOrder.toUpperCase()]],
@@ -138,7 +139,7 @@ router.get(
     validate(getOrderSchema),
     isOwnerOrAdmin(async (req) => {
         const order = await Order.findByPk(req.params.id);
-        return order?.UserId;
+        return order?.user_id;
     }),
     async (req, res, next) => {
         try {
@@ -216,7 +217,7 @@ router.post(
     validate(getOrderSchema),
     isOwnerOrAdmin(async (req) => {
         const order = await Order.findByPk(req.params.id);
-        return order?.UserId;
+        return order?.user_id;
     }),
     async (req, res, next) => {
         try {

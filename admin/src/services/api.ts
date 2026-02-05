@@ -164,12 +164,12 @@ export const ordersApi = {
   list: (params?: Record<string, unknown>) =>
     api.get('/orders', { params }),
 
-  get: (id: number) => api.get(`/orders/${id}`),
+  get: (id: string) => api.get(`/orders/${id}`),
 
-  updateStatus: (id: number, status: string, trackingNumber?: string) =>
+  updateStatus: (id: string, status: string, trackingNumber?: string) =>
     api.patch(`/orders/${id}/status`, { status, trackingNumber }),
 
-  cancel: (id: number) => api.post(`/orders/${id}/cancel`),
+  cancel: (id: string) => api.post(`/orders/${id}/cancel`),
 };
 
 // Users API

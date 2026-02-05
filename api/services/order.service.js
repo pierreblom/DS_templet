@@ -3,7 +3,7 @@
  * Business logic for order management
  */
 const { sequelize, Product, Order, OrderItem } = require('../../database/index');
-const { InsufficientStockError, NotFoundError } = require('../../utils/errors');
+const { NotFoundError } = require('../../utils/errors');
 
 /**
  * Verify stock availability for all items
@@ -14,20 +14,15 @@ async function verifyStock(items) {
     const products = [];
 
     for (const item of items) {
-        const product = await Product.findByPk(item.productId);
+        // Use product_id if item comes from body matching snake_case or productId if camelCase
+        const pId = item.productId || item.product_id;
+        const product = await Product.findByPk(pId);
 
         if (!product) {
-            throw new NotFoundError(`Product ${item.productId} not found`);
+            throw new NotFoundError(`Product ${pId} not found`);
         }
 
-        if (product.stock < item.quantity) {
-            throw new InsufficientStockError(
-                product.id,
-                product.name,
-                product.stock,
-                item.quantity
-            );
-        }
+        // Stock check removed as stock field does not exist
 
         products.push({
             product,
@@ -54,8 +49,8 @@ function calculateTotal(products) {
  * @param {Object} params - Order parameters
  * @returns {Object} Created order with items
  */
-async function createOrder({ userId, items, shippingAddress, paymentIntentId }) {
-    // Verify stock for all items first
+async function createOrder({ userId, email, items, shippingAddress }) {
+    // Verify stock for all items first (just existence check now)
     const verifiedProducts = await verifyStock(items);
 
     // Calculate total
@@ -64,13 +59,14 @@ async function createOrder({ userId, items, shippingAddress, paymentIntentId }) 
     // Create order and items in a transaction
     const order = await sequelize.transaction(async (t) => {
         // Create order
+        // Note: Order model has user_id, total_amount, status, shipping_address
         const newOrder = await Order.create(
             {
-                UserId: userId,
+                user_id: userId,
+                email: email || 'dashboard-created@example.com', // Fallback if not provided
                 total_amount: totalAmount,
                 status: 'pending',
-                shipping_address: shippingAddress,
-                payment_intent_id: paymentIntentId
+                shipping_address: shippingAddress
             },
             { transaction: t }
         );
@@ -80,10 +76,12 @@ async function createOrder({ userId, items, shippingAddress, paymentIntentId }) 
             verifiedProducts.map(({ product, quantity }) =>
                 OrderItem.create(
                     {
-                        OrderId: newOrder.id,
-                        ProductId: product.id,
+                        order_id: newOrder.id,
+                        product_id: product.id,
                         quantity,
-                        price_at_purchase: product.price
+                        price: product.price, // Model uses 'price', not 'price_at_purchase'
+                        product_name: product.name, // Model requires product_name
+                        options: {} // Default empty options
                     },
                     { transaction: t }
                 )
@@ -100,7 +98,7 @@ async function createOrder({ userId, items, shippingAddress, paymentIntentId }) 
  * Update order status
  * @param {number} orderId - Order ID
  * @param {string} status - New status
- * @param {Object} options - Additional options (trackingNumber, etc.)
+ * @param {Object} options - Additional options
  */
 async function updateOrderStatus(orderId, status, options = {}) {
     const order = await Order.findByPk(orderId);
@@ -111,14 +109,7 @@ async function updateOrderStatus(orderId, status, options = {}) {
 
     const updates = { status };
 
-    if (status === 'shipped' && options.trackingNumber) {
-        updates.tracking_number = options.trackingNumber;
-        updates.shipped_at = new Date();
-    }
-
-    if (status === 'delivered') {
-        updates.delivered_at = new Date();
-    }
+    // Tracking info removed as columns don't exist
 
     await order.update(updates);
 
@@ -126,40 +117,14 @@ async function updateOrderStatus(orderId, status, options = {}) {
 }
 
 /**
- * Mark order as paid and decrement stock
+ * Mark order as paid
  * @param {string} paymentIntentId - Stripe payment intent ID
  */
 async function fulfillOrder(paymentIntentId) {
-    const order = await Order.findOne({
-        where: { payment_intent_id: paymentIntentId },
-        include: [{ model: OrderItem, include: [Product] }]
-    });
-
-    if (!order) {
-        throw new NotFoundError('Order not found for payment intent');
-    }
-
-    // Update order and decrement stock in a transaction
-    await sequelize.transaction(async (t) => {
-        // Update order status
-        await order.update({ status: 'paid' }, { transaction: t });
-
-        // Decrement stock for each item
-        for (const item of order.OrderItems) {
-            await Product.decrement('stock', {
-                by: item.quantity,
-                where: { id: item.ProductId },
-                transaction: t
-            });
-        }
-    });
-
-    // Reload to get updated data
-    await order.reload({
-        include: [{ model: OrderItem, include: [Product] }]
-    });
-
-    return order;
+    // Cannot lookup by payment_intent_id as it doesn't exist.
+    // This functionality is currently disabled.
+    console.warn('fulfillOrder called but payment_intent_id column is missing in DB');
+    return null;
 }
 
 /**

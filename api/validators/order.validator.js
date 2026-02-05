@@ -51,7 +51,7 @@ const checkoutSchema = {
 
 const updateOrderStatusSchema = {
     params: Joi.object({
-        id: Joi.number().integer().positive().required()
+        id: Joi.string().uuid().required()
     }),
     body: Joi.object({
         status: Joi.string()
@@ -70,7 +70,7 @@ const updateOrderStatusSchema = {
 
 const getOrderSchema = {
     params: Joi.object({
-        id: Joi.number().integer().positive().required()
+        id: Joi.string().uuid().required()
     })
 };
 

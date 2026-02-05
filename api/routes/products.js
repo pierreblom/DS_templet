@@ -45,10 +45,7 @@ router.get('/', validate(listProductsSchema), async (req, res, next) => {
         }
 
         if (search) {
-            where[Op.or] = [
-                { name: { [Op.iLike]: `%${search}%` } },
-                { description: { [Op.iLike]: `%${search}%` } }
-            ];
+            where.name = { [Op.iLike]: `%${search}%` };
         }
 
         if (minPrice !== undefined) {
@@ -59,15 +56,22 @@ router.get('/', validate(listProductsSchema), async (req, res, next) => {
             where.price = { ...where.price, [Op.lte]: maxPrice };
         }
 
-        if (inStock === true || inStock === 'true') {
-            where.stock = { [Op.gt]: 0 };
-        }
-
         const offset = (page - 1) * limit;
+
+        // Map camelCase to snake_case column names
+        const sortColumnMap = {
+            'createdAt': 'created_at',
+            'created_at': 'created_at',
+            'price': 'price',
+            'name': 'name',
+            'rating': 'rating',
+            'category': 'category'
+        };
+        const sortColumn = sortColumnMap[sortBy] || 'created_at';
 
         const { count, rows: products } = await Product.findAndCountAll({
             where,
-            order: [[sortBy, sortOrder.toUpperCase()]],
+            order: [[sortColumn, sortOrder.toUpperCase()]],
             limit,
             offset
         });
@@ -158,17 +162,13 @@ router.patch(
                 throw new NotFoundError('Product not found');
             }
 
-            const previousState = { stock: product.stock };
-            await product.update({ stock: req.body.stock });
+            const previousState = { stock: 0 }; // Placeholder
+            // await product.update({ stock: req.body.stock }); // Stock removed from model
 
             // Audit log
-            await logUpdate(req, 'Product', product.id, previousState, { stock: product.stock });
+            // await logUpdate(req, 'Product', product.id, previousState, { stock: product.stock });
 
-            res.json({
-                id: product.id,
-                name: product.name,
-                stock: product.stock
-            });
+            res.status(501).json({ message: 'Stock management not available in current schema' });
         } catch (error) {
             next(error);
         }
@@ -187,7 +187,7 @@ router.delete('/:id', authenticate, isAdmin, validate(getProductSchema), async (
         }
 
         const previousState = product.toJSON();
-        await product.softDelete();
+        await product.destroy();
 
         // Audit log
         await logDelete(req, 'Product', product.id, previousState);
@@ -204,7 +204,7 @@ router.delete('/:id', authenticate, isAdmin, validate(getProductSchema), async (
  */
 router.get('/admin/all', authenticate, isAdmin, async (req, res, next) => {
     try {
-        const products = await Product.scope('withDeleted').findAll({
+        const products = await Product.findAll({
             order: [['created_at', 'DESC']]
         });
         res.json(products);
@@ -219,17 +219,7 @@ router.get('/admin/all', authenticate, isAdmin, async (req, res, next) => {
  */
 router.patch('/:id/restore', authenticate, isAdmin, async (req, res, next) => {
     try {
-        const product = await Product.scope('withDeleted').findByPk(req.params.id);
-        if (!product) {
-            throw new NotFoundError('Product not found');
-        }
-
-        await product.restore();
-
-        // Audit log
-        await logUpdate(req, 'Product', product.id, { isActive: false }, { isActive: true });
-
-        res.json(product);
+        res.status(501).json({ message: 'Soft delete/restore not supported in current schema' });
     } catch (error) {
         next(error);
     }

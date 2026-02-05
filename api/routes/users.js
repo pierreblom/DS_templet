@@ -83,13 +83,10 @@ router.get('/', authenticate, isAdmin, async (req, res, next) => {
         const { role, search, page = 1, limit = 20 } = req.query;
         const where = {};
 
-        if (role) {
-            where.role = role;
-        }
-
         if (search) {
             where[Op.or] = [
-                { name: { [Op.iLike]: `%${search}%` } },
+                { first_name: { [Op.iLike]: `%${search}%` } },
+                { last_name: { [Op.iLike]: `%${search}%` } },
                 { email: { [Op.iLike]: `%${search}%` } }
             ];
         }
@@ -98,27 +95,37 @@ router.get('/', authenticate, isAdmin, async (req, res, next) => {
 
         const { count, rows: users } = await User.findAndCountAll({
             where,
-            attributes: ['id', 'email', 'name', 'role', 'createdAt'],
-            order: [['createdAt', 'DESC']],
+            attributes: ['id', 'email', 'first_name', 'last_name', 'updated_at'],
+            order: [['updated_at', 'DESC']],
             limit: parseInt(limit),
             offset
         });
 
-        // Get order counts for each user
-        const usersWithOrderCount = await Promise.all(
+        // Get order stats for each user
+        const usersWithStats = await Promise.all(
             users.map(async (user) => {
                 const orderCount = await Order.count({
-                    where: { UserId: user.id }
+                    where: { user_id: user.id }
                 });
+
+                const totalSpent = await Order.sum('total_amount', {
+                    where: {
+                        user_id: user.id,
+                        status: { [Op.in]: ['paid', 'shipped', 'delivered'] }
+                    }
+                }) || 0;
+
                 return {
                     ...user.toJSON(),
-                    orderCount
+                    orderCount,
+                    totalSpent,
+                    createdAt: user.updated_at // Using updated_at as createdAt for compatibility
                 };
             })
         );
 
         res.json({
-            users: usersWithOrderCount,
+            users: usersWithStats,
             pagination: {
                 total: count,
                 page: parseInt(page),

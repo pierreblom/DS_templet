@@ -31,7 +31,7 @@ export interface Product {
 
 // Order types
 export interface OrderItem {
-  id: number;
+  id: string;
   quantity: number;
   price_at_purchase: number;
   Product: {
@@ -55,7 +55,7 @@ export interface ShippingAddress {
 }
 
 export interface Order {
-  id: number;
+  id: string;
   total_amount: number;
   status: 'pending' | 'paid' | 'shipped' | 'delivered' | 'cancelled';
   shipping_address: ShippingAddress;

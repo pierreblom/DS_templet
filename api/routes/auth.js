@@ -72,6 +72,34 @@ router.post('/login', validate(loginSchema), async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
+        // Admin Login Bypass
+        if (email === process.env.ADMIN_EMAIL) {
+            const adminPassword = process.env.ADMIN_PASSWORD;
+            // Compare plaintext for env config (or you could hash it if you stored hash in env)
+            if (password === adminPassword) {
+                const adminUser = {
+                    id: 'admin-user-id',
+                    email: email,
+                    name: 'Admin',
+                    role: 'admin'
+                };
+
+                const tokens = generateTokens(adminUser);
+
+                logger.info('Admin logged in via env credentials', {
+                    traceId: req.traceId,
+                    sourceIp: req.ip,
+                    user: email,
+                    action: 'login'
+                });
+
+                return res.json({
+                    user: adminUser,
+                    ...tokens
+                });
+            }
+        }
+
         // Find user by email
         const user = await User.findOne({ where: { email } });
 
@@ -121,6 +149,17 @@ router.post('/refresh', validate(refreshTokenSchema), async (req, res, next) => 
         const decoded = verifyRefreshToken(refreshToken);
         if (!decoded) {
             throw new AuthenticationError('Invalid or expired refresh token');
+        }
+
+        if (decoded.userId === 'admin-user-id') {
+            const adminUser = {
+                id: 'admin-user-id',
+                email: process.env.ADMIN_EMAIL,
+                name: 'Admin',
+                role: 'admin'
+            };
+            const tokens = generateTokens(adminUser);
+            return res.json(tokens);
         }
 
         const user = await User.findByPk(decoded.userId);

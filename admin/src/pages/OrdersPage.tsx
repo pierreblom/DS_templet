@@ -69,15 +69,25 @@ export default function OrdersPage() {
     });
   };
 
-  const handleStatusChange = async (orderId: number, newStatus: string) => {
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
-      await ordersApi.updateStatus(orderId, newStatus);
-      fetchOrders();
+      console.log('Updating order status:', { orderId, newStatus });
+      const response = await ordersApi.updateStatus(orderId, newStatus);
+      console.log('Status update response:', response.data);
+
+      // Refresh orders list
+      await fetchOrders();
+
+      // Update selected order if modal is open
       if (selectedOrder?.id === orderId) {
         setSelectedOrder(prev => prev ? { ...prev, status: newStatus as Order['status'] } : null);
       }
-    } catch (error) {
+
+      console.log('Order status updated successfully');
+    } catch (error: any) {
       console.error('Failed to update order status:', error);
+      console.error('Error response:', error.response?.data);
+      alert(`Failed to update order status: ${error.response?.data?.error?.message || error.message}`);
     }
   };
 

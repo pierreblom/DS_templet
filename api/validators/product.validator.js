@@ -10,24 +10,20 @@ const createProductSchema = {
             'any.required': 'Product name is required',
             'string.max': 'Product name cannot exceed 255 characters'
         }),
-        description: Joi.string().max(5000).allow('').messages({
-            'string.max': 'Description cannot exceed 5000 characters'
-        }),
         price: Joi.number().positive().precision(2).required().messages({
             'any.required': 'Price is required',
             'number.positive': 'Price must be a positive number'
         }),
-        category: Joi.string().min(1).max(100).required().messages({
+        category: Joi.string().min(1).max(100).allow('').messages({
             'any.required': 'Category is required'
         }),
+        rating: Joi.number().min(0).max(5).default(5),
+        is_trail_favorite: Joi.boolean().default(false),
         image_url: Joi.string().uri().max(500).allow('').messages({
             'string.uri': 'Image URL must be a valid URL'
         }),
         hover_image_url: Joi.string().uri().max(500).allow('').messages({
             'string.uri': 'Hover image URL must be a valid URL'
-        }),
-        stock: Joi.number().integer().min(0).default(0).messages({
-            'number.min': 'Stock cannot be negative'
         })
     })
 };
@@ -38,12 +34,12 @@ const updateProductSchema = {
     }),
     body: Joi.object({
         name: Joi.string().min(1).max(255),
-        description: Joi.string().max(5000).allow(''),
         price: Joi.number().positive().precision(2),
         category: Joi.string().min(1).max(100),
+        rating: Joi.number().min(0).max(5),
+        is_trail_favorite: Joi.boolean(),
         image_url: Joi.string().uri().max(500).allow(''),
-        hover_image_url: Joi.string().uri().max(500).allow(''),
-        stock: Joi.number().integer().min(0)
+        hover_image_url: Joi.string().uri().max(500).allow('')
     })
         .min(1)
         .message('At least one field must be provided for update')
@@ -54,10 +50,7 @@ const updateStockSchema = {
         id: Joi.number().integer().positive().required()
     }),
     body: Joi.object({
-        stock: Joi.number().integer().min(0).required().messages({
-            'any.required': 'Stock value is required',
-            'number.min': 'Stock cannot be negative'
-        })
+        // details irrelevant as route is disabled
     })
 };
 

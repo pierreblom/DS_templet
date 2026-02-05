@@ -13,58 +13,34 @@ const Product = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false
         },
-        description: {
-            type: DataTypes.TEXT
-        },
         price: {
             type: DataTypes.DECIMAL(10, 2),
             allowNull: false
         },
+        rating: {
+            type: DataTypes.DECIMAL(2, 1),
+            defaultValue: 5.0
+        },
         category: {
-            type: DataTypes.STRING,
-            allowNull: false
+            type: DataTypes.STRING
+        },
+        is_trail_favorite: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            field: 'is_trail_favorite'
         },
         image_url: {
             type: DataTypes.STRING
         },
         hover_image_url: {
             type: DataTypes.STRING
-        },
-        stock: {
-            type: DataTypes.INTEGER,
-            defaultValue: 0
-        },
-        isActive: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: true,
-            field: 'is_active'
-        },
-        deletedAt: {
-            type: DataTypes.DATE,
-            allowNull: true,
-            field: 'deleted_at'
         }
     },
     {
         timestamps: true,
         createdAt: 'created_at',
-        updatedAt: 'updated_at',
-        // Default scope excludes soft-deleted products
-        defaultScope: {
-            where: {
-                isActive: true
-            }
-        },
-        scopes: {
-            // Include soft-deleted products
-            withDeleted: {},
-            // Only soft-deleted products
-            deleted: {
-                where: {
-                    isActive: false
-                }
-            }
-        }
+        updatedAt: false, // Table only has created_at
+        tableName: 'products'
     }
 );
 

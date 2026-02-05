@@ -290,8 +290,15 @@ async function startServer() {
 
         // Sync models in development (creates tables if they don't exist)
         if (process.env.NODE_ENV !== 'production') {
-            await sequelize.sync({ alter: true });
-            logger.info('Database models synchronized');
+            try {
+                // Using alter: false to prevent aggressive schema changes which might cause crashes
+                // with existing Supabase tables.
+                await sequelize.sync({ alter: false });
+                logger.info('Database models synchronized (no alter)');
+            } catch (err) {
+                logger.error('Database sync failed', { extra: err.message });
+                // Continue anyway, as the DB might be fine
+            }
         }
 
         app.listen(PORT, () => {

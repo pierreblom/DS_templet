@@ -72,6 +72,17 @@ async function authenticate(req, res, next) {
             throw new AuthenticationError('Invalid or expired token');
         }
 
+        if (decoded.userId === 'admin-user-id') {
+            req.user = {
+                id: 'admin-user-id',
+                email: process.env.ADMIN_EMAIL,
+                name: 'Admin',
+                role: 'admin'
+            };
+            req.userId = 'admin-user-id';
+            return next();
+        }
+
         // Fetch user from database to ensure they still exist
         const user = await User.findByPk(decoded.userId, {
             attributes: ['id', 'email', 'name', 'role']
@@ -103,13 +114,23 @@ async function optionalAuth(req, res, next) {
             const decoded = verifyAccessToken(token);
 
             if (decoded) {
-                const user = await User.findByPk(decoded.userId, {
-                    attributes: ['id', 'email', 'name', 'role']
-                });
+                if (decoded.userId === 'admin-user-id') {
+                    req.user = {
+                        id: 'admin-user-id',
+                        email: process.env.ADMIN_EMAIL,
+                        name: 'Admin',
+                        role: 'admin'
+                    };
+                    req.userId = 'admin-user-id';
+                } else {
+                    const user = await User.findByPk(decoded.userId, {
+                        attributes: ['id', 'email', 'name', 'role']
+                    });
 
-                if (user) {
-                    req.user = user;
-                    req.userId = user.id;
+                    if (user) {
+                        req.user = user;
+                        req.userId = user.id;
+                    }
                 }
             }
         }

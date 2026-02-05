@@ -15,6 +15,7 @@
             <h1>🔐 Admin Login</h1>
             <p>Enter your admin password to access the dashboard</p>
             <form id="loginForm">
+                <input type="email" id="adminEmail" placeholder="Enter admin email" value="admin@shopbeha.com" required>
                 <input type="password" id="adminPassword" placeholder="Enter admin password" required>
                 <button type="submit">Login</button>
                 <p id="loginError" class="error-message" style="display:none;">Incorrect password</p>
@@ -23,67 +24,130 @@
     </div>
 
     <!-- Admin Dashboard -->
+    <!-- Admin Dashboard -->
     <div id="adminDashboard" class="admin-dashboard" style="display:none;">
-        <header class="admin-header">
-            <div class="header-content">
-                <h1>🌿 Beha Admin</h1>
-                <div class="header-actions">
-                    <a href="../home_page/front_page.html" target="_blank" class="btn-view-site">View Site</a>
-                    <button onclick="logout()" class="btn-logout">Logout</button>
+        <div class="admin-layout">
+            <!-- Sidebar -->
+            <aside class="admin-sidebar">
+                <div class="sidebar-header">
+                    <h2>🌿 Beha Admin</h2>
                 </div>
-            </div>
-        </header>
+                <nav class="sidebar-nav">
+                    <button onclick="AdminModule.switchTab('dashboard')" class="nav-item active" id="nav-dashboard">
+                        <span class="icon">📊</span> Dashboard
+                    </button>
+                    <button onclick="AdminModule.switchTab('products')" class="nav-item" id="nav-products">
+                        <span class="icon">📦</span> Products
+                    </button>
+                    <button onclick="AdminModule.switchTab('customers')" class="nav-item" id="nav-customers">
+                        <span class="icon">👥</span> Customers
+                    </button>
+                </nav>
+                <div class="sidebar-footer">
+                    <button onclick="logout()" class="btn-logout-sidebar">
+                        <span class="icon">🚪</span> Logout
+                    </button>
+                </div>
+            </aside>
 
-        <main class="admin-main">
-            <div class="dashboard-grid">
-                <!-- Quick Stats -->
-                <section class="stats-section">
-                    <h2>Quick Stats</h2>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon">📦</div>
-                            <div class="stat-info">
-                                <div class="stat-value" id="totalProducts">0</div>
-                                <div class="stat-label">Total Products</div>
+            <!-- Main Content -->
+            <div class="main-content">
+                <header class="top-header">
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <div class="header-actions">
+                        <a href="../home_page/front_page.html" target="_blank" class="btn-view-site">View Site</a>
+                    </div>
+                </header>
+
+                <main class="content-body">
+                    <!-- Dashboard View (Stats) -->
+                    <div id="view-dashboard" class="admin-view">
+                        <!-- Quick Stats -->
+                        <section class="stats-section">
+                            <h2>Quick Stats</h2>
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-icon">📦</div>
+                                    <div class="stat-info">
+                                        <div class="stat-value" id="totalProducts">0</div>
+                                        <div class="stat-label">Total Products</div>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">👥</div>
+                                    <div class="stat-info">
+                                        <div class="stat-value" id="totalCustomers">0</div>
+                                        <div class="stat-label">Total Customers</div>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">⭐</div>
+                                    <div class="stat-info">
+                                        <div class="stat-value" id="trailFavoritesCount">0</div>
+                                        <div class="stat-label">Trail Favorites</div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">⭐</div>
-                            <div class="stat-info">
-                                <div class="stat-value" id="trailFavoritesCount">0</div>
-                                <div class="stat-label">Trail Favorites</div>
+                        </section>
+                    </div>
+
+                    <!-- Products View -->
+                    <div id="view-products" class="admin-view" style="display:none;">
+                        <section class="products-section">
+                            <div class="section-header">
+                                <h2>Product Management</h2>
+                                <button onclick="openModal('addProductModal')" class="btn-primary">➕ Add
+                                    Product</button>
                             </div>
-                        </div>
-                    </div>
-                </section>
 
-                <!-- Product Management -->
-                <section class="products-section">
-                    <div class="section-header">
-                        <h2>Product Management</h2>
-                        <button onclick="openModal('addProductModal')" class="btn-primary">➕ Add Product</button>
+                            <div class="products-table-container">
+                                <table class="products-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Name</th>
+                                            <th>Price</th>
+                                            <th>Rating</th>
+                                            <th>Category</th>
+                                            <th>Trail Favorite</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="productsTableBody">
+                                        <!-- Products will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
                     </div>
 
-                    <div class="products-table-container">
-                        <table class="products-table">
-                            <thead>
-                                <tr>
-                                    <th>Product Name</th>
-                                    <th>Price</th>
-                                    <th>Rating</th>
-                                    <th>Category</th>
-                                    <th>Trail Favorite</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productsTableBody">
-                                <!-- Products will be loaded here -->
-                            </tbody>
-                        </table>
+                    <!-- Customers View -->
+                    <div id="view-customers" class="admin-view" style="display:none;">
+                        <section class="customers-section">
+                            <div class="section-header">
+                                <h2>Customer Management</h2>
+                            </div>
+
+                            <div class="table-container">
+                                <table class="products-table"> <!-- Reusing table styles -->
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Total Spent</th>
+                                            <th>Joined</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="customersTableBody">
+                                        <!-- Customers will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
                     </div>
-                </section>
+                </main>
             </div>
-        </main>
+        </div>
     </div>
 
     <!--#include file="add_product_modal.html" -->
