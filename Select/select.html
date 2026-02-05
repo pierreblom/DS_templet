@@ -712,7 +712,11 @@
 
         // Cart functionality using CartModule
         async function addToCart() {
-            await window.CartModule.addToCart(currentProduct.id, currentProduct.quantity);
+            const options = {
+                color: currentProduct.selectedColor,
+                size: currentProduct.selectedSize
+            };
+            await window.CartModule.addToCart(currentProduct.id, currentProduct.quantity, options);
 
             // Show feedback
             const button = document.querySelector('.add-to-cart-btn');

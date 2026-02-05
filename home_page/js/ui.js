@@ -122,9 +122,9 @@ const UIModule = {
                 <span>${product.name} - R ${product.price.toFixed(2)}</span>
                 <div class="product-list-actions">
                     ${product.isTrailFavorite ?
-                        `<button class="delete-btn" onclick="UIModule.removeFromTrailFavorites(${product.id})">Remove</button>` :
-                        `<button class="edit-btn" onclick="UIModule.addToTrailFavorites(${product.id})">Add</button>`
-                    }
+                    `<button class="delete-btn" onclick="UIModule.removeFromTrailFavorites(${product.id})">Remove</button>` :
+                    `<button class="edit-btn" onclick="UIModule.addToTrailFavorites(${product.id})">Add</button>`
+                }
                 </div>
             `;
 

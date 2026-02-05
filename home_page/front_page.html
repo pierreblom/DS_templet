@@ -44,7 +44,7 @@
                         <div class="new-arrivals-card">
                             <h2>New Arrivals!</h2>
                             <p>Discover our latest designs that celebrate every body.</p>
-                            <p>Claim 10% off your first order now!</p>
+                            <p>Claim 15% off if you buy 2 or more items!</p>
 
                         </div>
                     </section>
@@ -118,7 +118,7 @@
                     <h3>${product.name}</h3>
                     <div class="rating" aria-label="Rated ${product.rating} out of 5">${stars} (${product.rating}/5)</div>
                     <div class="price">R ${product.price.toFixed(2)}</div>
-                    <button class="add-button" aria-label="Quick add ${product.name} to cart" onclick="quickAdd(${product.id})">ADD TO CART</button>
+                    <button class="add-button" aria-label="View details for ${product.name}" onclick="openProductPage(${product.id}, '${product.name}', ${product.price})">ADD TO CART</button>
                 </div>
             `;
 

@@ -11,7 +11,7 @@ const CartModule = {
                 if (session?.user) {
                     const { data: carts } = await supabaseClient
                         .from('carts')
-                        .select('id, cart_items(product_id, quantity)')
+                        .select('id, cart_items(product_id, quantity, size, color)')
                         .eq('user_id', session.user.id)
                         .eq('status', 'active')
                         .maybeSingle();
@@ -19,7 +19,11 @@ const CartModule = {
                     if (carts) {
                         return carts.cart_items.map(item => ({
                             productId: item.product_id,
-                            quantity: item.quantity
+                            quantity: item.quantity,
+                            options: {
+                                size: item.size || '',
+                                color: item.color || ''
+                            }
                         }));
                     }
                     return [];
@@ -34,7 +38,7 @@ const CartModule = {
             const raw = localStorage.getItem(this.CART_KEY);
             if (!raw) return [];
             const parsed = JSON.parse(raw);
-            return Array.isArray(parsed) ? parsed : [];
+            return Array.isArray(parsed) ? parsed.map(p => ({ ...p, options: p.options || {} })) : [];
         } catch (error) {
             console.error('Error loading cart from localStorage:', error);
             return [];
@@ -69,7 +73,9 @@ const CartModule = {
                         const itemsToInsert = cart.map(item => ({
                             cart_id: cartData.id,
                             product_id: item.productId,
-                            quantity: item.quantity
+                            quantity: item.quantity,
+                            size: item.options?.size || null,
+                            color: item.options?.color || null
                         }));
                         await supabaseClient.from('cart_items').insert(itemsToInsert);
                     }
@@ -108,13 +114,15 @@ const CartModule = {
     },
 
     // Add item to cart
-    async addToCart(productId, quantity = 1) {
+    async addToCart(productId, quantity = 1, options = {}) {
         const cart = await this.loadCart();
-        const existing = cart.find(i => i.productId === productId);
+        const optionsStr = JSON.stringify(options);
+        const existing = cart.find(i => i.productId === productId && JSON.stringify(i.options || {}) === optionsStr);
+
         if (existing) {
             existing.quantity = (existing.quantity || 1) + quantity;
         } else {
-            cart.push({ productId, quantity });
+            cart.push({ productId, quantity, options });
         }
         await this.saveCart(cart);
         await this.updateCartBadge();
@@ -122,9 +130,11 @@ const CartModule = {
     },
 
     // Update item quantity
-    async updateQuantity(productId, quantity) {
+    async updateQuantity(productId, quantity, options = {}) {
         const cart = await this.loadCart();
-        const item = cart.find(i => i.productId === productId);
+        const optionsStr = JSON.stringify(options);
+        const item = cart.find(i => i.productId === productId && JSON.stringify(i.options || {}) === optionsStr);
+
         if (item) {
             item.quantity = Math.max(1, quantity);
             await this.saveCart(cart);
@@ -134,9 +144,10 @@ const CartModule = {
     },
 
     // Remove item from cart
-    async removeFromCart(productId) {
+    async removeFromCart(productId, options = {}) {
         let cart = await this.loadCart();
-        cart = cart.filter(i => i.productId !== productId);
+        const optionsStr = JSON.stringify(options);
+        cart = cart.filter(i => !(i.productId === productId && JSON.stringify(i.options || {}) === optionsStr));
         await this.saveCart(cart);
         await this.updateCartBadge();
         return cart;

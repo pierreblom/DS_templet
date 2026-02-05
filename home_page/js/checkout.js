@@ -198,7 +198,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                             product_id: item.productId,
                             product_name: product ? product.name : 'Unknown Product',
                             quantity: item.quantity,
-                            price: product ? product.price : 0
+                            price: product ? product.price : 0,
+                            size: item.options?.size || null,
+                            color: item.options?.color || null
                         };
                     });
 

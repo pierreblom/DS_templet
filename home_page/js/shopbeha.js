@@ -156,34 +156,35 @@ async function quickAdd(productId) {
     openCart();
 }
 
-async function increaseQty(productId) {
+async function increaseQty(index) {
     const cart = await CartModule.loadCart();
-    const line = cart.find(l => l.productId === productId);
+    const line = cart[index];
     if (!line) return;
-    await CartModule.updateQuantity(productId, (line.quantity || 1) + 1);
+    await CartModule.updateQuantity(line.productId, (line.quantity || 1) + 1, line.options);
     renderCart(); // Re-render UI
 }
 
-async function decreaseQty(productId) {
+async function decreaseQty(index) {
     const cart = await CartModule.loadCart();
-    const line = cart.find(l => l.productId === productId);
+    const line = cart[index];
     if (!line) return;
     const newQty = (line.quantity || 1) - 1;
     if (newQty < 1) {
-        // Option: Remove or stay at 1? usually stay at 1 or remove. 
-        // Current logic was stay at 1. CartModule.updateQuantity handles max(1, qty)
-        await CartModule.updateQuantity(productId, newQty);
+        // Remove logic
+        await CartModule.removeFromCart(line.productId, line.options);
     } else {
-        await CartModule.updateQuantity(productId, newQty);
+        await CartModule.updateQuantity(line.productId, newQty, line.options);
     }
     renderCart();
 }
 
-async function removeLine(productId) {
-    await CartModule.removeFromCart(productId);
+async function removeLine(index) {
+    const cart = await CartModule.loadCart();
+    const line = cart[index];
+    if (!line) return;
+    await CartModule.removeFromCart(line.productId, line.options);
     renderCart();
 }
-
 
 // Promo & Shipping Logic
 const PROMO_KEY = 'beha_promo_v1';
@@ -231,11 +232,27 @@ async function renderCart() {
     container.innerHTML = '';
     let subtotal = 0;
 
-    cart.forEach(line => {
+    cart.forEach((line, index) => {
         const product = products.find(p => p.id === line.productId);
         if (!product) return;
         const lineTotal = product.price * (line.quantity || 1);
         subtotal += lineTotal;
+
+        // Check for Options
+        let metaHtml = '';
+        if (line.options) {
+            const parts = [];
+            if (line.options.size) parts.push(`Size: ${line.options.size.toUpperCase()}`);
+            if (line.options.color) {
+                // Capitalize first letter of color
+                const colorName = line.options.color.charAt(0).toUpperCase() + line.options.color.slice(1);
+                parts.push(`Color: ${colorName}`);
+            }
+            if (parts.length > 0) {
+                metaHtml = `<div class="cart-item-meta" style="font-size: 0.85rem; color: #666; margin-top: 4px;">${parts.join(' | ')}</div>`;
+            }
+        }
+
         const row = document.createElement('div');
         row.className = 'cart-item';
         row.innerHTML = `
@@ -243,19 +260,19 @@ async function renderCart() {
             <div class="cart-item-details">
                 <div style="display:flex; justify-content:space-between; align-items:start;">
                     <div class="cart-item-name">${product.name}</div>
-                    <button class="remove-btn" onclick="removeLine(${product.id})" aria-label="Remove ${product.name}">
+                    <button class="remove-btn" onclick="removeLine(${index})" aria-label="Remove ${product.name}">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="3 6 5 6 21 6"></polyline>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                         </svg>
                     </button>
                 </div>
-                <!-- <div class="cart-item-meta">Size: M | Color: Nude</div> -->
+                ${metaHtml}
                 <div class="cart-item-bottom">
                     <div class="cart-qty-controls">
-                        <button class="qty-btn" onclick="decreaseQty(${product.id})">-</button>
+                        <button class="qty-btn" onclick="decreaseQty(${index})">-</button>
                         <span>${line.quantity || 1}</span>
-                        <button class="qty-btn" onclick="increaseQty(${product.id})">+</button>
+                        <button class="qty-btn" onclick="increaseQty(${index})">+</button>
                     </div>
                     <div class="cart-item-price">R ${lineTotal.toFixed(2)}</div>
                 </div>
