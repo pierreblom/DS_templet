@@ -2,7 +2,7 @@
  * Analytics Service
  * Business logic for analytics and reporting
  */
-const { sequelize, Order, OrderItem, Product, User } = require('../../database/index');
+const { sequelize, Order, OrderItem, Product, User, GuestCustomer } = require('../../database/index');
 const { Op } = require('sequelize');
 
 /**
@@ -92,9 +92,9 @@ async function getProductAnalytics() {
     // Best sellers (by quantity sold)
     const bestSellers = await OrderItem.findAll({
         attributes: [
-            'ProductId',
+            'product_id',
             [sequelize.fn('SUM', sequelize.col('quantity')), 'totalSold'],
-            [sequelize.fn('SUM', sequelize.literal('quantity * price_at_purchase')), 'totalRevenue']
+            [sequelize.fn('SUM', sequelize.literal('quantity * price')), 'totalRevenue']
         ],
         include: [
             {
@@ -102,7 +102,7 @@ async function getProductAnalytics() {
                 attributes: ['id', 'name', 'price', 'stock', 'image_url']
             }
         ],
-        group: ['ProductId', 'Product.id'],
+        group: ['OrderItem.product_id', 'Product.id', 'Product.name', 'Product.price', 'Product.stock', 'Product.image_url'],
         order: [[sequelize.fn('SUM', sequelize.col('quantity')), 'DESC']],
         limit: 10,
         raw: false
@@ -111,8 +111,7 @@ async function getProductAnalytics() {
     // Low stock products (stock <= 10)
     const lowStock = await Product.findAll({
         where: {
-            stock: { [Op.lte]: 10 },
-            isActive: true
+            stock: { [Op.lte]: 10 }
         },
         attributes: ['id', 'name', 'stock', 'price'],
         order: [['stock', 'ASC']],
@@ -122,15 +121,12 @@ async function getProductAnalytics() {
     // Out of stock products
     const outOfStock = await Product.count({
         where: {
-            stock: 0,
-            isActive: true
+            stock: 0
         }
     });
 
     // Total active products
-    const totalProducts = await Product.count({
-        where: { isActive: true }
-    });
+    const totalProducts = await Product.count({});
 
     return {
         bestSellers: bestSellers.map((item) => ({
@@ -211,18 +207,32 @@ async function getDashboardSummary() {
     });
 
     // Total customers
-    const customersCount = await User.count({
-        where: { role: 'customer' }
-    });
+    const registeredCustomersCount = await User.count({});
+
+    const guestCustomersCount = await GuestCustomer.count();
+
+    const customersCount = registeredCustomersCount + guestCustomersCount;
 
     // Total products
-    const productsCount = await Product.count({
-        where: { isActive: true }
+    const productsCount = await Product.count({});
+
+    // Pending revenue (orders that are not yet paid/shipped/delivered but are pending)
+    const pendingResult = await Order.findOne({
+        where: {
+            status: 'pending'
+        },
+        attributes: [
+            [sequelize.fn('SUM', sequelize.col('total_amount')), 'revenue'],
+            [sequelize.fn('COUNT', sequelize.col('id')), 'count']
+        ],
+        raw: true
     });
 
     return {
-        revenue: parseFloat(revenueResult.revenue) || 0,
+        revenue: parseFloat(revenueResult?.revenue || 0),
+        pendingRevenue: parseFloat(pendingResult?.revenue || 0),
         orders: ordersCount,
+        pendingOrders: parseInt(pendingResult?.count || 0),
         customers: customersCount,
         products: productsCount,
         period: 'Last 30 days'

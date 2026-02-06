@@ -4,7 +4,7 @@
  */
 const express = require('express');
 const router = express.Router();
-const { User } = require('../../database/index');
+const { User, Order } = require('../../database/index');
 const { authenticate } = require('../middleware/auth');
 const { generateTokens, verifyRefreshToken } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
@@ -39,6 +39,26 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
             name,
             role: 'customer'
         });
+
+        // Link existing guest orders to new user
+        const linkedOrders = await Order.update(
+            { user_id: user.id },
+            {
+                where: {
+                    email: email,
+                    user_id: null
+                }
+            }
+        );
+
+        if (linkedOrders[0] > 0) {
+            logger.info('Linked guest orders to new user', {
+                traceId: req.traceId,
+                userId: user.id,
+                email: email,
+                count: linkedOrders[0]
+            });
+        }
 
         // Generate tokens
         const tokens = generateTokens(user);

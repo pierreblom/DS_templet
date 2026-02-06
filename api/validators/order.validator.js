@@ -86,10 +86,18 @@ const listOrdersSchema = {
     })
 };
 
+const trackOrderSchema = {
+    body: Joi.object({
+        email: Joi.string().email().required(),
+        orderId: Joi.string().uuid().required()
+    })
+};
+
 module.exports = {
     createOrderSchema,
     checkoutSchema,
     updateOrderStatusSchema,
     getOrderSchema,
-    listOrdersSchema
+    listOrdersSchema,
+    trackOrderSchema
 };

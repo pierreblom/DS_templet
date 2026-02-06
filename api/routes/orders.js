@@ -7,46 +7,85 @@ const express = require('express');
 const router = express.Router();
 const { Order, OrderItem, Product, User } = require('../../database/index');
 const { Op } = require('sequelize');
-const { authenticate } = require('../middleware/auth');
+const { authenticate, optionalAuth } = require('../middleware/auth');
 const { isAdmin, isOwnerOrAdmin } = require('../middleware/authorize');
 const { validate } = require('../middleware/validate');
 const {
     createOrderSchema,
     updateOrderStatusSchema,
     getOrderSchema,
-    listOrdersSchema
+    listOrdersSchema,
+    trackOrderSchema
 } = require('../validators/order.validator');
 const { logCreate, logUpdate } = require('../middleware/auditLogger');
 const orderService = require('../services/order.service');
 const { NotFoundError, AppError } = require('../../utils/errors');
 const {
     sendShippingNotification,
-    sendDeliveryConfirmation
+    sendDeliveryConfirmation,
+    sendOrderConfirmation
 } = require('../../services/emailService');
 const { logger } = require('../../utils/logger');
 
 /**
  * POST /api/v1/orders
- * Create new order (authenticated)
+ * Create new order (authenticated or guest)
  */
-router.post('/', authenticate, validate(createOrderSchema), async (req, res, next) => {
+router.post('/', optionalAuth, validate(createOrderSchema), async (req, res, next) => {
     try {
         const { items, shippingAddress } = req.body;
 
+        // Prepare guest info if user is not logged in
+        let guestInfo = null;
+        if (!req.user) {
+            guestInfo = {
+                email: shippingAddress.email,
+                firstName: shippingAddress.firstName,
+                lastName: shippingAddress.lastName,
+                phone: shippingAddress.phone
+            };
+        }
+
         const result = await orderService.createOrder({
-            userId: req.user.id,
-            email: req.user.email,
+            userId: req.user ? req.user.id : null,
+            email: req.user ? req.user.email : shippingAddress.email,
             items,
-            shippingAddress
+            shippingAddress,
+            guestInfo
         });
 
-        // Audit log
+        // Audit log (only if user exists, or maybe log as 'guest')
         await logCreate(req, 'Order', result.order.id, result.order);
+
+        // Send confirmation email (async, don't block response)
+        sendOrderConfirmation(result.order).catch(err => {
+            logger.error('Failed to send order confirmation email', { extra: { orderId: result.order.id, error: err.message } });
+        });
 
         res.status(201).json({
             order: result.order,
             items: result.items
         });
+    } catch (error) {
+        next(error);
+    }
+});
+
+/**
+ * POST /api/v1/orders/track
+ * Track order by email and ID (public/guest access)
+ */
+router.post('/track', validate(trackOrderSchema), async (req, res, next) => {
+    try {
+        const { email, orderId } = req.body;
+        const order = await orderService.getOrderWithDetails(orderId);
+
+        // Security check: email must match
+        if (order.email.toLowerCase() !== email.toLowerCase()) {
+            throw new NotFoundError('Order not found'); // obfuscate mismatch
+        }
+
+        res.json(order);
     } catch (error) {
         next(error);
     }
@@ -100,7 +139,7 @@ router.get('/', authenticate, validate(listOrdersSchema), async (req, res, next)
                     include: [
                         {
                             model: Product,
-                            attributes: ['id', 'name', 'image_url']
+                            attributes: ['id', 'name', 'image_url', 'supplier_url']
                         }
                     ]
                 },

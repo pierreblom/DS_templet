@@ -171,15 +171,14 @@ function shippingNotification(order) {
                     <p>Hi ${address.firstName || 'there'},</p>
                     <p>Great news! Your order #${order.id} is on its way.</p>
 
-                    ${
-                        trackingNumber
-                            ? `
+                    ${trackingNumber
+            ? `
                         <div class="address-box">
                             <strong>Tracking Number:</strong> ${trackingNumber}
                         </div>
                     `
-                            : ''
-                    }
+            : ''
+        }
 
                     <h3>Shipping To</h3>
                     <div class="address-box">

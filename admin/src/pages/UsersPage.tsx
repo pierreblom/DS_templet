@@ -6,6 +6,7 @@ import type { User } from '../types';
 interface UserWithStats extends User {
   orderCount: number;
   totalSpent?: number;
+  user_type?: 'customer' | 'guest';
 }
 
 export default function UsersPage() {
@@ -105,6 +106,7 @@ export default function UsersPage() {
             <option value="">All roles</option>
             <option value="customer">Customers</option>
             <option value="admin">Admins</option>
+            <option value="guest">Guests</option>
           </select>
         </div>
       </div>
@@ -133,22 +135,30 @@ export default function UsersPage() {
                       <div>
                         <p className="font-medium">{user.name || 'No name'}</p>
                         <p className="text-xs text-gray-500">{user.email}</p>
+                        {user.user_type === 'guest' && (
+                          <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded ml-2 sm:hidden">Guest</span>
+                        )}
                       </div>
                     </div>
                   </td>
                   <td className="table-cell">
-                    <select
-                      value={user.role}
-                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                      className={`px-2 py-1 rounded-full text-xs font-medium capitalize border-0 cursor-pointer ${
-                        user.role === 'admin'
-                          ? 'bg-purple-100 text-purple-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
-                    >
-                      <option value="customer">Customer</option>
-                      <option value="admin">Admin</option>
-                    </select>
+                    {user.user_type === 'guest' ? (
+                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                        Guest
+                      </span>
+                    ) : (
+                      <select
+                        value={user.role}
+                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                        className={`px-2 py-1 rounded-full text-xs font-medium capitalize border-0 cursor-pointer ${user.role === 'admin'
+                            ? 'bg-purple-100 text-purple-800'
+                            : 'bg-green-100 text-green-800'
+                          }`}
+                      >
+                        <option value="customer">Customer</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    )}
                   </td>
                   <td className="table-cell">
                     <span className="font-medium">{user.orderCount || 0}</span>

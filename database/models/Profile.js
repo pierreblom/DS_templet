@@ -13,7 +13,8 @@ const Profile = sequelize.define('Profile', {
         type: DataTypes.STRING
     },
     email: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        unique: true
     },
     address: {
         type: DataTypes.STRING

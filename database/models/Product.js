@@ -34,6 +34,10 @@ const Product = sequelize.define(
         },
         hover_image_url: {
             type: DataTypes.STRING
+        },
+        supplier_url: {
+            type: DataTypes.STRING,
+            allowNull: true
         }
     },
     {

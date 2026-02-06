@@ -33,11 +33,12 @@ export interface Product {
 export interface OrderItem {
   id: string;
   quantity: number;
-  price_at_purchase: number;
+  price: number;
   Product: {
     id: number;
     name: string;
     image_url: string;
+    supplier_url?: string;
   };
 }
 
@@ -72,7 +73,9 @@ export interface Order {
 // Analytics types
 export interface DashboardSummary {
   revenue: number;
+  pendingRevenue: number;
   orders: number;
+  pendingOrders: number;
   customers: number;
   products: number;
   period: string;

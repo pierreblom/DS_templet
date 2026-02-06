@@ -2,7 +2,7 @@
  * Order Service
  * Business logic for order management
  */
-const { sequelize, Product, Order, OrderItem } = require('../../database/index');
+const { sequelize, Product, Order, OrderItem, GuestCustomer } = require('../../database/index');
 const { NotFoundError } = require('../../utils/errors');
 
 /**
@@ -49,7 +49,7 @@ function calculateTotal(products) {
  * @param {Object} params - Order parameters
  * @returns {Object} Created order with items
  */
-async function createOrder({ userId, email, items, shippingAddress }) {
+async function createOrder({ userId, email, items, shippingAddress, guestInfo }) {
     // Verify stock for all items first (just existence check now)
     const verifiedProducts = await verifyStock(items);
 
@@ -58,12 +58,31 @@ async function createOrder({ userId, email, items, shippingAddress }) {
 
     // Create order and items in a transaction
     const order = await sequelize.transaction(async (t) => {
+        let guestId = null;
+        let finalEmail = email;
+
+        // Handle Guest Checkout
+        if (!userId && guestInfo) {
+            // Create guest customer record
+            const guest = await GuestCustomer.create({
+                email: guestInfo.email,
+                first_name: guestInfo.firstName,
+                last_name: guestInfo.lastName, // or name split? user inputs separate fields
+                phone: guestInfo.phone,
+                shipping_address: shippingAddress
+            }, { transaction: t });
+
+            guestId = guest.id;
+            finalEmail = guestInfo.email;
+        }
+
         // Create order
         // Note: Order model has user_id, total_amount, status, shipping_address
         const newOrder = await Order.create(
             {
-                user_id: userId,
-                email: email || 'dashboard-created@example.com', // Fallback if not provided
+                user_id: userId || null, // Ensure explicit null if undefined
+                guest_id: guestId,
+                email: finalEmail || 'guest@example.com',
                 total_amount: totalAmount,
                 status: 'pending',
                 shipping_address: shippingAddress
@@ -159,7 +178,7 @@ async function getOrderWithDetails(orderId) {
                 include: [
                     {
                         model: Product,
-                        attributes: ['id', 'name', 'image_url']
+                        attributes: ['id', 'name', 'image_url', 'supplier_url']
                     }
                 ]
             }

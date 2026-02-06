@@ -13,6 +13,10 @@ const Order = sequelize.define(
             type: DataTypes.UUID,
             allowNull: true
         },
+        guest_id: {
+            type: DataTypes.UUID,
+            allowNull: true
+        },
         email: {
             type: DataTypes.STRING,
             allowNull: false

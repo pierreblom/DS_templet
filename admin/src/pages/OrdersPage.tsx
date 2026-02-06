@@ -94,6 +94,7 @@ export default function OrdersPage() {
   const viewOrderDetails = async (order: Order) => {
     try {
       const response = await ordersApi.get(order.id);
+      console.log('Order Details fetched:', response.data);
       setSelectedOrder(response.data);
     } catch (error) {
       console.error('Failed to fetch order details:', error);
@@ -153,10 +154,13 @@ export default function OrdersPage() {
                   <td className="table-cell">
                     <div>
                       <p className="font-medium">
-                        {order.User?.name || `${order.shipping_address?.firstName} ${order.shipping_address?.lastName}`}
+                        {order.User?.name ||
+                          (order.shipping_address?.firstName && order.shipping_address?.lastName
+                            ? `${order.shipping_address.firstName} ${order.shipping_address.lastName}`
+                            : 'Guest Customer')}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {order.User?.email || order.shipping_address?.email}
+                        {order.User?.email || order.shipping_address?.email || order.shipping_address?.city || 'No email'}
                       </p>
                     </div>
                   </td>
@@ -249,7 +253,9 @@ export default function OrdersPage() {
             <div className="bg-gray-50 rounded-lg p-4">
               <h4 className="font-medium mb-2">Shipping Address</h4>
               <p className="text-sm text-gray-600">
-                {selectedOrder.shipping_address?.firstName} {selectedOrder.shipping_address?.lastName}<br />
+                {selectedOrder.shipping_address?.firstName && selectedOrder.shipping_address?.lastName
+                  ? `${selectedOrder.shipping_address.firstName} ${selectedOrder.shipping_address.lastName}`
+                  : 'Guest Customer'}<br />
                 {selectedOrder.shipping_address?.address1}<br />
                 {selectedOrder.shipping_address?.address2 && <>{selectedOrder.shipping_address.address2}<br /></>}
                 {selectedOrder.shipping_address?.city}, {selectedOrder.shipping_address?.state} {selectedOrder.shipping_address?.postalCode}<br />
@@ -288,14 +294,25 @@ export default function OrdersPage() {
                               <div className="w-10 h-10 bg-gray-100 rounded" />
                             )}
                             <span>{item.Product?.name}</span>
+                            {item.Product?.supplier_url && (
+                              <a
+                                href={item.Product.supplier_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs text-blue-600 hover:underline ml-2"
+                                title="Buy from Supplier"
+                              >
+                                (Buy)
+                              </a>
+                            )}
                           </div>
                         </td>
                         <td className="table-cell text-right">{item.quantity}</td>
                         <td className="table-cell text-right">
-                          {formatCurrency(Number(item.price_at_purchase))}
+                          {formatCurrency(Number(item.price))}
                         </td>
                         <td className="table-cell text-right font-medium">
-                          {formatCurrency(Number(item.price_at_purchase) * item.quantity)}
+                          {formatCurrency(Number(item.price) * item.quantity)}
                         </td>
                       </tr>
                     ))}

@@ -95,15 +95,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     checkoutForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Check if user is logged in
+        // Remove blocking auth check
+        let accessToken = null;
         if (typeof window.supabaseClient !== 'undefined') {
             const { data: { session } } = await window.supabaseClient.auth.getSession();
-            if (!session) {
-                alert("Please sign in to complete your purchase.");
-                if (typeof window.openLoginModal === 'function') {
-                    window.openLoginModal('signin');
-                }
-                return;
+            if (session) {
+                accessToken = session.access_token;
             }
         }
 
@@ -133,87 +130,48 @@ document.addEventListener('DOMContentLoaded', async () => {
             const postalCode = document.getElementById('postalCode').value;
             const country = document.getElementById('country').value;
 
-            // Create order in Supabase first (optional but recommended)
-            let orderId = 'local_' + Date.now();
+            // Prepare shipping address object
+            const shippingAddress = {
+                firstName,
+                lastName,
+                address1: address,
+                city,
+                postalCode,
+                country,
+                phone,
+                email
+            };
 
-            if (typeof window.supabaseClient !== 'undefined') {
-                const { data: { session } } = await window.supabaseClient.auth.getSession();
-                if (session?.user) {
-                    console.log('Creating order in Supabase...');
+            // Call Backend API to create order
+            // This handles both authenticated users (via token) and guests (no token)
+            console.log('Creating order via API...');
 
-                    // --- Update/Create Profile during checkout ---
-                    const { error: profileError } = await window.supabaseClient
-                        .from('profiles')
-                        .upsert({
-                            id: session.user.id,
-                            first_name: firstName,
-                            last_name: lastName,
-                            phone: phone,
-                            address: address,
-                            city: city,
-                            postal_code: postalCode,
-                            email: email,
-                            updated_at: new Date()
-                        });
-
-                    if (profileError) {
-                        console.warn('Profile sync failed (non-critical):', profileError);
-                        // We don't throw here as the order is more important, 
-                        // but you might want to know why it failed.
-                    }
-                    // ----------------------------------------------
-
-                    const { data: order, error } = await window.supabaseClient
-                        .from('orders')
-                        .insert({
-                            user_id: session.user.id,
-                            email: email,
-                            total_amount: finalTotals.total,
-                            status: 'pending',
-                            shipping_address: {
-                                address: address,
-                                city: city,
-                                postalCode: postalCode,
-                                country: country,
-                                firstName: firstName,
-                                lastName: lastName,
-                                phone: phone
-                            },
-                        })
-                        .select()
-                        .single();
-
-                    if (error) {
-                        console.error('Supabase Order Error:', error);
-                        throw new Error(error.message || 'Error creating order in database');
-                    }
-                    orderId = order.id;
-                    console.log('Order created successfully:', orderId);
-
-                    // Insert Order Items
-                    const orderItems = cart.map(item => {
-                        const product = allProducts.find(p => p.id === item.productId);
-                        return {
-                            order_id: orderId,
-                            product_id: item.productId,
-                            product_name: product ? product.name : 'Unknown Product',
-                            quantity: item.quantity,
-                            price: product ? product.price : 0,
-                            size: item.options?.size || null,
-                            color: item.options?.color || null
-                        };
-                    });
-
-                    const { error: itemsError } = await window.supabaseClient
-                        .from('order_items')
-                        .insert(orderItems);
-
-                    if (itemsError) {
-                        console.error('Error inserting order items:', itemsError);
-                        // Non-critical for the payment redirect, but good to know
-                    }
-                }
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            if (accessToken) {
+                headers['Authorization'] = `Bearer ${accessToken}`;
             }
+
+            const createOrderResponse = await fetch('/api/v1/orders', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    items: cart, // Cart items structure needs to match validator expectations? 
+                    // Cart items: { productId, quantity, options }
+                    // Validator: { productId, quantity }
+                    shippingAddress
+                })
+            });
+
+            if (!createOrderResponse.ok) {
+                const errorData = await createOrderResponse.json();
+                throw new Error(errorData.message || 'Failed to create order');
+            }
+
+            const { order } = await createOrderResponse.json();
+            const orderId = order.id;
+            console.log('Order created successfully:', orderId);
 
             // Call backend to create Yoco checkout session
             const response = await fetch('/api/v1/yoco/create-checkout', {
