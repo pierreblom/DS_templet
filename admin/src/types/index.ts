@@ -34,7 +34,10 @@ export interface OrderItem {
   id: string;
   quantity: number;
   price: number;
-  Product: {
+  size?: string;
+  color?: string;
+  product_name: string;
+  Product?: {
     id: number;
     name: string;
     image_url: string;

@@ -266,7 +266,72 @@ export default function OrdersPage() {
               </p>
             </div>
 
-            {/* Order Items */}
+            {/* Supplier Ordering Section */}
+            {selectedOrder.OrderItems?.some(item => item.Product?.supplier_url) && (
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="font-semibold text-blue-900 flex items-center gap-2">
+                    <span className="text-lg">📦</span> Supplier Ordering
+                  </h4>
+                  <button
+                    onClick={() => {
+                      const urls = selectedOrder.OrderItems
+                        ?.filter(item => item.Product?.supplier_url)
+                        .map(item => item.Product!.supplier_url) || [];
+                      urls.forEach(url => window.open(url, '_blank'));
+                    }}
+                    className="btn bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+                  >
+                    🔗 Open All Supplier Links ({selectedOrder.OrderItems?.filter(item => item.Product?.supplier_url).length})
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {selectedOrder.OrderItems?.filter(item => item.Product?.supplier_url).map((item) => (
+                    <div key={item.id} className="bg-white rounded-lg p-3 border border-blue-100 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        {item.Product?.image_url ? (
+                          <img
+                            src={item.Product.image_url}
+                            alt={item.Product.name}
+                            className="w-12 h-12 object-cover rounded-lg"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 bg-gray-100 rounded-lg" />
+                        )}
+                        <div>
+                          <p className="font-medium text-gray-900">{item.Product?.name}</p>
+                          <div className="flex items-center gap-3 text-sm text-gray-600 mt-1">
+                            <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-medium">
+                              Qty: {item.quantity}
+                            </span>
+                            {item.size && (
+                              <span className="bg-purple-100 text-purple-800 px-2 py-0.5 rounded font-medium">
+                                Size: {item.size}
+                              </span>
+                            )}
+                            {item.color && (
+                              <span className="bg-pink-100 text-pink-800 px-2 py-0.5 rounded font-medium">
+                                Color: {item.color}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <a
+                        href={item.Product!.supplier_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors whitespace-nowrap"
+                      >
+                        🛒 Order from Supplier
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Order Items Table */}
             <div>
               <h4 className="font-medium mb-2">Order Items</h4>
               <div className="border rounded-lg overflow-hidden">
@@ -274,6 +339,7 @@ export default function OrdersPage() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="table-header">Product</th>
+                      <th className="table-header">Size/Color</th>
                       <th className="table-header text-right">Qty</th>
                       <th className="table-header text-right">Price</th>
                       <th className="table-header text-right">Total</th>
@@ -293,19 +359,13 @@ export default function OrdersPage() {
                             ) : (
                               <div className="w-10 h-10 bg-gray-100 rounded" />
                             )}
-                            <span>{item.Product?.name}</span>
-                            {item.Product?.supplier_url && (
-                              <a
-                                href={item.Product.supplier_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-xs text-blue-600 hover:underline ml-2"
-                                title="Buy from Supplier"
-                              >
-                                (Buy)
-                              </a>
-                            )}
+                            <span>{item.Product?.name || item.product_name}</span>
                           </div>
+                        </td>
+                        <td className="table-cell text-sm text-gray-600">
+                          {item.size && <span className="block">{item.size}</span>}
+                          {item.color && <span className="block">{item.color}</span>}
+                          {!item.size && !item.color && <span className="text-gray-400">-</span>}
                         </td>
                         <td className="table-cell text-right">{item.quantity}</td>
                         <td className="table-cell text-right">
@@ -319,7 +379,7 @@ export default function OrdersPage() {
                   </tbody>
                   <tfoot className="bg-gray-50">
                     <tr>
-                      <td colSpan={3} className="table-cell text-right font-medium">
+                      <td colSpan={4} className="table-cell text-right font-medium">
                         Total
                       </td>
                       <td className="table-cell text-right font-bold">
