@@ -400,10 +400,11 @@ function openProductPage(productId, productName, productPrice) {
     window.location.href = url;
 }
 
-function openCategoryPage(category) {
-    const url = `/category_page.html?category=${category}`;
-    window.location.href = url;
-}
+// Category page removed - function disabled
+// function openCategoryPage(category) {
+//     const url = `/category_page.html?category=${category}`;
+//     window.location.href = url;
+// }
 
 // Search Logic
 function performSearch() {

@@ -135,19 +135,35 @@ app.set('view engine', 'html');
 // Page Routes (Must be before static files to enable EJS rendering)
 // ===================
 
-app.get(['/contact', '/contact.html'], (req, res) => {
+// Contact page routes
+app.get('/contact', (req, res) => {
+    res.render('contact.html');
+});
+app.get('/contact.html', (req, res) => {
     res.render('contact.html');
 });
 
-app.get(['/orders', '/orders.html'], (req, res) => {
+// Orders page routes
+app.get('/orders', (req, res) => {
+    res.render('orders.html');
+});
+app.get('/orders.html', (req, res) => {
     res.render('orders.html');
 });
 
-app.get(['/profile', '/profile.html'], (req, res) => {
+// Profile page routes
+app.get('/profile', (req, res) => {
+    res.render('profile.html');
+});
+app.get('/profile.html', (req, res) => {
     res.render('profile.html');
 });
 
-app.get(['/checkout', '/checkout.html'], (req, res) => {
+// Checkout page routes
+app.get('/checkout', (req, res) => {
+    res.render('checkout.html');
+});
+app.get('/checkout.html', (req, res) => {
     res.render('checkout.html');
 });
 

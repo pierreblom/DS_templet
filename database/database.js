@@ -15,20 +15,21 @@ if (process.env.DATABASE_URL) {
     const dialectOptions = isLocalhost
         ? {}
         : {
-              ssl: {
-                  require: true,
-                  rejectUnauthorized: false // Required for Supabase
-              }
-          };
+            ssl: {
+                require: true,
+                rejectUnauthorized: false // Required for Supabase
+            }
+        };
 
     sequelize = new Sequelize(process.env.DATABASE_URL, {
         dialect: 'postgres',
         dialectOptions,
         logging: process.env.NODE_ENV === 'development' ? console.log : false,
         pool: {
-            // Vercel serverless functions scale horizontally. A pool > 1 can quickly
-            // exhaust Supabase free tier connection limits (approx 60).
-            max: process.env.NODE_ENV === 'production' ? 1 : 5,
+            // Increased from 1 to 5 to prevent ConnectionTerminated errors under load
+            // While Vercel scales horizontally, a pool of 1 was too restrictive
+            // and caused 500 errors. Monitor Supabase connection usage.
+            max: process.env.DB_POOL_MAX ? parseInt(process.env.DB_POOL_MAX) : 5,
             min: 0,
             acquire: 30000,
             idle: 10000

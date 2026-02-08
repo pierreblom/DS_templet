@@ -143,10 +143,11 @@ const UIModule = {
         window.location.href = url;
     },
 
-    openCategoryPage(category) {
-        const url = `../category_page.html?category=${category}`;
-        window.location.href = url;
-    },
+    // Category page removed - function disabled
+    // openCategoryPage(category) {
+    //     const url = `../category_page.html?category=${category}`;
+    //     window.location.href = url;
+    // },
 
     openCart() {
         window.ModalModule.openModal('cartModal');

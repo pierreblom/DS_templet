@@ -38,6 +38,11 @@ const Product = sequelize.define(
         supplier_url: {
             type: DataTypes.STRING,
             allowNull: true
+        },
+        images: {
+            type: DataTypes.JSONB,
+            defaultValue: [],
+            comment: 'Array of image URLs for quick access'
         }
     },
     {
