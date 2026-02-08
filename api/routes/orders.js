@@ -33,7 +33,7 @@ const { logger } = require('../../utils/logger');
  */
 router.post('/', optionalAuth, validate(createOrderSchema), async (req, res, next) => {
     try {
-        const { items, shippingAddress } = req.body;
+        const { items, shippingAddress, promoCode } = req.body;
 
         // Prepare guest info if user is not logged in
         let guestInfo = null;
@@ -51,7 +51,8 @@ router.post('/', optionalAuth, validate(createOrderSchema), async (req, res, nex
             email: req.user ? req.user.email : shippingAddress.email,
             items,
             shippingAddress,
-            guestInfo
+            guestInfo,
+            promoCode
         });
 
         // Audit log (only if user exists, or maybe log as 'guest')

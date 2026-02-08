@@ -585,7 +585,7 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', async function () {
             // Load products for UIModule
-            window.products = window.ProductsModule.loadProducts();
+            window.products = await window.ProductsModule.loadProducts();
 
             const urlParams = new URLSearchParams(window.location.search);
             const id = parseInt(urlParams.get('id')) || 1;

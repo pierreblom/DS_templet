@@ -32,44 +32,39 @@ These issues currently define the platform as "broken" for end-users.
 
 ---
 
-## 🛡️ Phase 2: Security & Payment Integrity
+## 🛡️ Phase 2: Security & Payment Integrity (PRIORITY: HIGH)
+**Goal:** Prevent price manipulation and secure the checkout flow.
 
+1.  **Secure Promos & Pricing** (Completed)
+    *   [x] Create separate API endpoint for promo code validation (`/api/v1/promos/validate`).
+    *   [x] Move promo logic (expiry, limits) to server-side.
+    *   [x] Update `cart.js` to call API instead of hardcoded check.
+    *   [x] **CRITICAL:** Update Yoco backend (`api/routes/yoco.js`) to:
+        *   Recalculate total from DB prices (ignoring client-sent prices).
+        *   Apply promo discount server-side.
+        *   Calculate shipping server-side.
+        *   Only trust `product_id` and `qty` from client.
 
+2.  **Environment Security**
+    *   [x] Verified `.env` variables are secure (JWT secrets are strong).
+    *   [x] `NODE_TLS_REJECT_UNAUTHORIZED` is removed (good).
 
-### 2.2 Secure Promos & Pricing
-**Issue:** `ROOTED15` is hardcoded in `cart.js` and `shopbeha.js`. Users can manipulate cart totals client-side.
-**Files:** `home_page/js/cart.js`, `home_page/js/shopbeha.js`
-**Action:**
-- Create endpoint `POST /api/v1/promos/validate`.
-- Move discount logic to server.
-- In `api/routes/orders.js`, re-calculate the *expected* total based on DB prices before creating a Yoco checkout session. Do not trust the `amount` sent from frontend.
+### Phase 3: Data Integrity & Storefront Dynamic Features
+**Goal:** Fix broken admin analytics and make the storefront actually use the database.
 
-### 2.3 Environment Security
-**Issue:** Weak placeholder secrets.
-**File:** `.env`
-**Action:**
-- Generate strong random strings for `JWT_SECRET` and `JWT_REFRESH_SECRET`.
-- Remove `NODE_TLS_REJECT_UNAUTHORIZED=0`.
+1.  **Restore Stock Management** (Completed)
+    *   **Issue:** field `stock` was removed from Product model. Admin analytics crash because they query it.
+    *   **Action:**
+        *   [x] Add `stock_quantity` (Integer, default 0) to `Product` model.
+        *   [x] Update `api/routes/products.js` to allow editing stock.
+        *   [x] Update `analytics.service.js` to query `stock_quantity`.
 
----
-
-## 🛒 Phase 3: Data Integrity & Storefront Dynamic Features
-
-### 3.1 Restore Stock Management
-**Issue:** `stock` field was removed from Product model. Admin analytics crash because they query it.
-**File:** `database/models/Product.js`, `api/routes/analytics.js`
-**Action:**
-- Add `stock_quantity` (Integer, default 0) to `Product` model.
-- Update `api/routes/products.js` to allow editing stock.
-- Update `analytics.service.js` to query `stock_quantity`.
-
-### 3.2 Dynamic Product Data
-**Issue:** Homepage displays 8 hardcoded products. Database products are ignored.
-**Files:** `home_page/js/shopbeha.js`
-**Action:**
-- Delete existing `var products = [...]` array.
-- Create function `fetchProducts()` calling `/api/v1/products`.
-- Render products dynamically from API response.
+2.  **Dynamic Product Data** (Completed)
+    *   **Issue:** Homepage displays 8 hardcoded products. Database products are ignored.
+    *   **Action:**
+        *   [x] Delete existing `var products = [...]` array in `shopbeha.js`.
+        *   [x] Create function `fetchProducts()` calling `/api/v1/products`.
+        *   [x] Render products dynamically from API response.
 - **Benefit:** Price changes in Admin Panel will finally reflect on the Storefront.
 
 ---

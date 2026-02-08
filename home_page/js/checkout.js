@@ -11,12 +11,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnText = document.getElementById('btn-text');
 
     // Load products once for the entire script
-    const allProducts = typeof ProductsModule !== 'undefined' ? ProductsModule.loadProducts() : (window.products || []);
+    const allProducts = typeof ProductsModule !== 'undefined' ? await ProductsModule.loadProducts() : (window.products || []);
 
     // 1. Initial Render & Prefill
     async function renderSummary() {
         const cart = await CartModule.loadCart();
-        const allProducts = typeof ProductsModule !== 'undefined' ? ProductsModule.loadProducts() : (window.products || []);
+        const allProducts = typeof ProductsModule !== 'undefined' ? await ProductsModule.loadProducts() : (window.products || []);
 
         if (cart.length === 0) {
             window.location.href = '/';
@@ -160,7 +160,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     items: cart, // Cart items structure needs to match validator expectations? 
                     // Cart items: { productId, quantity, options }
                     // Validator: { productId, quantity }
-                    shippingAddress
+                    shippingAddress,
+                    promoCode: promo.code || null
                 })
             });
 
@@ -174,14 +175,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.log('Order created successfully:', orderId);
 
             // Call backend to create Yoco checkout session
+            // Send cart items so server can recalculate prices
             const response = await fetch('/api/v1/yoco/create-checkout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    amount: Math.round(finalTotals.total * 100), // Yoco expects cents
-                    currency: 'ZAR',
+                    items: cart, // Send cart items for server-side price validation
+                    promoCode: promo.code || null, // Send promo code for server-side validation
+                    region: region, // Send region for shipping calculation
                     successUrl: `${window.location.origin}/orders.html?status=success&orderId=${orderId}`,
                     cancelUrl: `${window.location.href}?status=cancelled`,
                     metadata: {
@@ -195,6 +198,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = await response.json();
 
             if (data.success && data.checkoutUrl) {
+                // Optional: Verify server-calculated total matches client-side
+                if (data.calculatedTotal) {
+                    const serverTotal = data.calculatedTotal.total;
+                    const clientTotal = finalTotals.total;
+                    const diff = Math.abs(serverTotal - clientTotal);
+
+                    // Allow small rounding differences (< 1 cent)
+                    if (diff > 0.01) {
+                        console.warn('Price mismatch detected:', {
+                            client: clientTotal,
+                            server: serverTotal,
+                            difference: diff
+                        });
+                        // Still proceed but log the discrepancy
+                    }
+                }
+
                 window.location.href = data.checkoutUrl;
             } else {
                 const errorMsg = typeof data.error === 'object' ? JSON.stringify(data.error) : data.error;

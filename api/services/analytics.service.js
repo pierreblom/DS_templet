@@ -99,10 +99,10 @@ async function getProductAnalytics() {
         include: [
             {
                 model: Product,
-                attributes: ['id', 'name', 'price', 'stock', 'image_url']
+                attributes: ['id', 'name', 'price', 'stock_quantity', 'image_url']
             }
         ],
-        group: ['OrderItem.product_id', 'Product.id', 'Product.name', 'Product.price', 'Product.stock', 'Product.image_url'],
+        group: ['OrderItem.product_id', 'Product.id', 'Product.name', 'Product.price', 'Product.stock_quantity', 'Product.image_url'],
         order: [[sequelize.fn('SUM', sequelize.col('quantity')), 'DESC']],
         limit: 10,
         raw: false
@@ -111,22 +111,26 @@ async function getProductAnalytics() {
     // Low stock products (stock <= 10)
     const lowStock = await Product.findAll({
         where: {
-            stock: { [Op.lte]: 10 }
+            stock_quantity: { [Op.lte]: 10 },
+            is_active: true
         },
-        attributes: ['id', 'name', 'stock', 'price'],
-        order: [['stock', 'ASC']],
+        attributes: ['id', 'name', 'stock_quantity', 'price'],
+        order: [['stock_quantity', 'ASC']],
         limit: 10
     });
 
     // Out of stock products
     const outOfStock = await Product.count({
         where: {
-            stock: 0
+            stock_quantity: 0,
+            is_active: true
         }
     });
 
     // Total active products
-    const totalProducts = await Product.count({});
+    const totalProducts = await Product.count({
+        where: { is_active: true }
+    });
 
     return {
         bestSellers: bestSellers.map((item) => ({

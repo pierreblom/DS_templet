@@ -203,6 +203,7 @@ app.use(express.static(path.join(__dirname)));
 const authRoutes = require('./api/routes/auth');
 const productRoutes = require('./api/routes/products');
 const yocoRoutes = require('./api/routes/yoco');
+const promosRoutes = require('./api/routes/promos');
 
 const orderRoutes = require('./api/routes/orders');
 const userRoutes = require('./api/routes/users');
@@ -220,6 +221,7 @@ app.use('/api/v1/auth/register', authLimiter);
 // Mount API v1 routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/promos', promosRoutes);
 
 app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/users', userRoutes);

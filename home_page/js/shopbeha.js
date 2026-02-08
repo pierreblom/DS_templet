@@ -8,119 +8,56 @@
 // 1. PRODUCT DATA (Mock Database)
 // ==========================================
 
-let products = [
-    {
-        id: 1,
-        name: "Deep V Backless Body Shaper Bra",
-        price: 359.00,
-        rating: 4.8,
-        category: "shapewear",
-        isTrailFavorite: true,
-        image: "images/product_1_Deep_V_Backless_Body_Shaper_Bra/1.png",
-        hoverImage: "images/product_1_Deep_V_Backless_Body_Shaper_Bra/2.png"
-    },
-    {
-        id: 2,
-        name: "Sculpt & Contour Body Shaper",
-        price: 459.00,
-        rating: 5.0,
-        category: "shapewear",
-        isTrailFavorite: true,
-        image: "images/product_2_Sculpt_&_Contour_Body_Shaper/1.png",
-        hoverImage: "images/product_2_Sculpt_&_Contour_Body_Shaper/2.png"
-    },
-    {
-        id: 3,
-        name: "The Sculpt & Smooth Minimizer",
-        price: 520.00,
-        rating: 4.9,
-        category: "bras",
-        isTrailFavorite: true,
-        image: "images/product_3_The_Sculpt_&_Smooth_Minimizer/1.png",
-        hoverImage: "images/product_3_The_Sculpt_&_Smooth_Minimizer/2.png"
-    },
-    {
-        id: 4,
-        name: "Primary Choice",
-        price: 899.00,
-        rating: 4.7,
-        category: "shapewear",
-        isTrailFavorite: true,
-        image: "images/product_4_Primary_Choice/1.png",
-        hoverImage: "images/product_4_Primary_Choice/2.png"
-    },
-    {
-        id: 5,
-        name: "Aura Front-Closure Lace Bra",
-        price: 450.00,
-        rating: 4.6,
-        category: "bras",
-        isTrailFavorite: true,
-        image: "images/product_5_Aura_Front-Closure_Lace_Bra/1.png",
-        hoverImage: "images/product_5_Aura_Front-Closure_Lace_Bra/2.png"
-    },
-    {
-        id: 6,
-        name: "The Zenith High-Impact Front-Zip Sports Bra",
-        price: 399.00,
-        rating: 4.5,
-        category: "bras",
-        isTrailFavorite: true,
-        image: "images/product_6_The_Zenith_High-Impact_Front-Zip_Sports_Bra/1.png",
-        hoverImage: "images/product_6_The_Zenith_High-Impact_Front-Zip_Sports_Bra/2.png"
-    },
-    {
-        id: 7,
-        name: "The Seamless Silhouette Full-Coverage Bra",
-        price: 350.00,
-        rating: 4.9,
-        category: "bras",
-        isTrailFavorite: true,
-        image: "images/product_7_The_Seamless_Silhouette_Full-Coverage_Bra/1.png",
-        hoverImage: "images/product_7_The_Seamless_Silhouette_Full-Coverage_Bra/2.png"
-    },
-    {
-        id: 8,
-        name: "The Sculpt-Soft Jelly Lift Bra",
-        price: 299.00,
-        rating: 5.0,
-        category: "bras",
-        isTrailFavorite: true,
-        image: "images/product_8_The_Sculpt-Soft_Jelly_Lift_Bra/1.png",
-        hoverImage: "images/product_8_The_Sculpt-Soft_Jelly_Lift_Bra/2.png"
-    }
-];
+// 1. PRODUCT DATA
+// ==========================================
 
-const PRODUCTS_KEY = 'auraflex_products_v2';
+let products = [];
 
-function loadProductsFromStorage() {
+async function fetchProducts() {
     try {
-        const raw = localStorage.getItem(PRODUCTS_KEY);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        if (!Array.isArray(parsed)) return null;
-        return parsed;
-    } catch (_) {
-        return null;
-    }
-}
+        const response = await fetch('/api/v1/products?inStock=true&limit=100');
+        if (response.ok) {
+            const data = await response.json();
+            const apiProducts = data.products || [];
+            if (apiProducts.length > 0) {
+                products = apiProducts.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    price: parseFloat(p.price),
+                    rating: parseFloat(p.rating),
+                    category: p.category,
+                    isTrailFavorite: p.is_trail_favorite,
+                    image: p.image_url || '/images/placeholder.png', // Fallback
+                    hoverImage: p.hover_image_url || p.image_url || '/images/placeholder.png'
+                }));
+                // Save to local storage for offline/cache if needed, or just keep in memory
+                // localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+                console.log(`Loaded ${products.length} products from API`);
 
-function saveProductsToStorage() {
-    try {
-        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
-    } catch (_) {
-        // ignore storage errors
+                // Trigger UI updates
+                if (typeof renderCart === 'function') renderCart();
+                // Check for homepage specific functions
+                if (typeof window.renderTrailFavorites === 'function') {
+                    window.renderTrailFavorites();
+                }
+                if (typeof window.populateProductLists === 'function') {
+                    window.populateProductLists();
+                }
+
+                if (window.UIModule && window.UIModule.populateProductLists) {
+                    window.UIModule.populateProductLists(products);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Failed to fetch products:', error);
     }
 }
 
 // Initialize Products on Load
-const storedProducts = loadProductsFromStorage();
-if (storedProducts) {
-    products = storedProducts;
-} else {
-    // Save defaults to storage so edits persist
-    saveProductsToStorage();
-}
+document.addEventListener('DOMContentLoaded', () => {
+    fetchProducts();
+});
 
 
 // ==========================================
@@ -201,18 +138,31 @@ function computeShipping(subtotal) {
     return subtotal >= 1000 ? 0 : 60;
 }
 
-function applyPromo() {
+async function applyPromo() {
     const input = document.getElementById('promoCode');
     if (!input) return;
+
     const code = (input.value || '').trim().toUpperCase();
-    if (code === 'ROOTED15') {
-        savePromo({ code, discountRate: 0.15 });
-        alert('Promo code applied: 15% off');
-    } else if (code === '') {
-        savePromo({ code: '', discountRate: 0 });
+
+    // Calculate current subtotal
+    const cart = await loadCart();
+    let subtotal = 0;
+    cart.forEach((line) => {
+        const product = products.find(p => p.id === line.productId);
+        if (product) {
+            subtotal += product.price * (line.quantity || 1);
+        }
+    });
+
+    // Use CartModule's server-side validation
+    const result = await CartModule.applyPromo(code, subtotal);
+
+    if (result.success) {
+        alert(result.message);
     } else {
-        alert('Invalid promo code');
+        alert(result.message);
     }
+
     renderCart();
 }
 

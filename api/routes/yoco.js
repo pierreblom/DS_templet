@@ -3,15 +3,68 @@ const router = express.Router();
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
+const { Product } = require('../../database/index');
+const { calculateShipping, calculatePromoDiscount } = require('../../utils/pricing');
 
 // Create a Yoco checkout session
 router.post('/create-checkout', async (req, res) => {
     try {
-        const { amount, successUrl, cancelUrl } = req.body;
+        const { items, promoCode, region, successUrl, cancelUrl } = req.body;
 
-        const safeAmount = Math.round(Number(amount));
+        // Validate items
+        if (!items || !Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: { message: 'Cart items are required' }
+            });
+        }
 
-        if (isNaN(safeAmount) || safeAmount < 200) {
+        // Fetch product prices from database to prevent price manipulation
+        const productIds = items.map(item => item.productId);
+        const products = await Product.findAll({
+            where: { id: productIds, is_active: true },
+            attributes: ['id', 'price']
+        });
+
+        if (products.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: { message: 'No valid products found in cart' }
+            });
+        }
+
+        // Create a map for quick lookup
+        const productMap = {};
+        products.forEach(p => {
+            productMap[p.id] = p.price;
+        });
+
+        // Calculate subtotal based on DATABASE prices (not client prices)
+        let subtotal = 0;
+        for (const item of items) {
+            const dbPrice = productMap[item.productId];
+            if (!dbPrice) {
+                return res.status(400).json({
+                    success: false,
+                    error: { message: `Product ${item.productId} not found or inactive` }
+                });
+            }
+            subtotal += dbPrice * (item.quantity || 1);
+        }
+
+        // Apply promo code discount (server-side validation)
+        const discount = calculatePromoDiscount(promoCode, subtotal);
+
+        // Calculate shipping
+        const shipping = calculateShipping(subtotal - discount, region);
+
+        // Calculate final total
+        const total = Math.max(0, subtotal - discount) + shipping;
+
+        // Convert to cents for Yoco (Yoco expects amount in cents)
+        const amountInCents = Math.round(total * 100);
+
+        if (amountInCents < 200) {
             return res.status(400).json({
                 success: false,
                 error: { message: 'Invalid amount. Minimum is 200 cents (R 2.00)' }
@@ -19,10 +72,11 @@ router.post('/create-checkout', async (req, res) => {
         }
 
         const checkoutData = {
-            amount: safeAmount,
+            amount: amountInCents,
             currency: 'ZAR',
             successUrl: successUrl || `${req.protocol}://${req.get('host')}/orders?status=success`,
-            cancelUrl: cancelUrl || `${req.protocol}://${req.get('host')}/checkout`
+            cancelUrl: cancelUrl || `${req.protocol}://${req.get('host')}/checkout`,
+            metadata: req.body.metadata || {}
         };
 
         const secretKey = (process.env.Secret_Key || '').trim();
@@ -30,7 +84,13 @@ router.post('/create-checkout', async (req, res) => {
         const debugLogPath = path.join(__dirname, '../../../yoco_debug.log');
         const logData = `
 --- REQUEST ${new Date().toISOString()} ---
-Amount: ${safeAmount}
+Subtotal: R ${subtotal.toFixed(2)}
+Discount: R ${discount.toFixed(2)}
+Shipping: R ${shipping.toFixed(2)}
+Total: R ${total.toFixed(2)}
+Amount (cents): ${amountInCents}
+Promo Code: ${promoCode || 'none'}
+Region: ${region || 'sa'}
 SecretKey (first 10): ${secretKey ? secretKey.substring(0, 10) : 'MISSING'}
 Payload: ${JSON.stringify(checkoutData, null, 2)}
 -------------------------------------------
@@ -55,7 +115,14 @@ Payload: ${JSON.stringify(checkoutData, null, 2)}
             return res.json({
                 success: true,
                 checkoutUrl: response.data.redirectUrl,
-                checkoutId: response.data.id
+                checkoutId: response.data.id,
+                // Return calculated amounts for frontend verification
+                calculatedTotal: {
+                    subtotal: Math.round(subtotal * 100) / 100,
+                    discount: Math.round(discount * 100) / 100,
+                    shipping: Math.round(shipping * 100) / 100,
+                    total: Math.round(total * 100) / 100
+                }
             });
         } catch (apiError) {
             const status = apiError.response?.status || 500;
@@ -82,19 +149,14 @@ Payload: ${JSON.stringify(checkoutData, null, 2)}
     }
 });
 
+const { markOrderPaid, updateOrderStatus, cancelOrder } = require('../services/order.service');
+
 // Webhook endpoint to handle Yoco payment notifications
 router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
     try {
         const event = JSON.parse(req.body.toString());
 
         console.log('Yoco webhook received:', event);
-
-        // Initialize Supabase client for server-side
-        const { createClient } = require('@supabase/supabase-js');
-        const supabase = createClient(
-            process.env.SUPABASE_URL,
-            process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY
-        );
 
         // Handle different event types
         switch (event.type) {
@@ -104,13 +166,8 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
                 const orderId = event.payload.metadata?.orderId;
 
                 if (orderId) {
-                    const { error } = await supabase
-                        .from('orders')
-                        .update({ status: 'paid' })
-                        .eq('id', orderId);
-
-                    if (error) console.error('Error updating order status:', error);
-                    else console.log(`Order ${orderId} marked as paid`);
+                    await markOrderPaid(orderId);
+                    console.log(`Order ${orderId} marked as paid`);
                 }
                 break;
 
@@ -119,10 +176,12 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
                 console.log('Payment failed:', event.payload);
                 const failedOrderId = event.payload.metadata?.orderId;
                 if (failedOrderId) {
-                    await supabase
-                        .from('orders')
-                        .update({ status: 'cancelled' })
-                        .eq('id', failedOrderId);
+                    try {
+                        await cancelOrder(failedOrderId);
+                        console.log(`Order ${failedOrderId} cancelled due to failed payment`);
+                    } catch (e) {
+                        console.error('Error cancelling order', e);
+                    }
                 }
                 break;
 

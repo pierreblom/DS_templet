@@ -22,7 +22,13 @@ async function verifyStock(items) {
             throw new NotFoundError(`Product ${pId} not found`);
         }
 
-        // Stock check removed as stock field does not exist
+        if (!product.is_active) {
+            throw new Error(`Product ${product.name} is no longer available`);
+        }
+
+        if (product.stock_quantity < item.quantity) {
+            throw new Error(`Insufficient stock for product ${product.name}. Available: ${product.stock_quantity}, Requested: ${item.quantity}`);
+        }
 
         products.push({
             product,
@@ -44,17 +50,30 @@ function calculateTotal(products) {
     }, 0);
 }
 
+const { calculateShipping, calculatePromoDiscount } = require('../../utils/pricing');
+
 /**
  * Create a new order with items
  * @param {Object} params - Order parameters
  * @returns {Object} Created order with items
  */
-async function createOrder({ userId, email, items, shippingAddress, guestInfo }) {
+async function createOrder({ userId, email, items, shippingAddress, guestInfo, promoCode }) {
     // Verify stock for all items first (just existence check now)
     const verifiedProducts = await verifyStock(items);
 
-    // Calculate total
-    const totalAmount = calculateTotal(verifiedProducts);
+    // Calculate subtotal from verified DB prices
+    const subtotal = calculateTotal(verifiedProducts);
+
+    // Calculate discount
+    const discount = calculatePromoDiscount(promoCode, subtotal);
+
+    // Calculate shipping
+    // Infer region from country code 'ZA' -> 'sa', anything else -> 'intl'
+    const region = (shippingAddress?.country || 'ZA') === 'ZA' ? 'sa' : 'intl';
+    const shipping = calculateShipping(subtotal - discount, region);
+
+    // Calculate final total
+    const totalAmount = Math.max(0, subtotal - discount) + shipping;
 
     // Create order and items in a transaction
     const order = await sequelize.transaction(async (t) => {
@@ -90,10 +109,13 @@ async function createOrder({ userId, email, items, shippingAddress, guestInfo })
             { transaction: t }
         );
 
-        // Create order items
+        // Create order items and update stock
         const orderItems = await Promise.all(
-            verifiedProducts.map(({ product, quantity }) =>
-                OrderItem.create(
+            verifiedProducts.map(async ({ product, quantity }) => {
+                // Update stock
+                await product.decrement('stock_quantity', { by: quantity, transaction: t });
+
+                return OrderItem.create(
                     {
                         order_id: newOrder.id,
                         product_id: product.id,
@@ -103,11 +125,20 @@ async function createOrder({ userId, email, items, shippingAddress, guestInfo })
                         options: {} // Default empty options
                     },
                     { transaction: t }
-                )
-            )
+                );
+            })
         );
 
-        return { order: newOrder, items: orderItems };
+        return {
+            order: newOrder,
+            items: orderItems,
+            pricing: {
+                subtotal,
+                discount,
+                shipping,
+                total: totalAmount
+            }
+        };
     });
 
     return order;
@@ -139,11 +170,22 @@ async function updateOrderStatus(orderId, status, options = {}) {
  * Mark order as paid
  * @param {string} paymentIntentId - Stripe payment intent ID
  */
-async function fulfillOrder(paymentIntentId) {
-    // Cannot lookup by payment_intent_id as it doesn't exist.
-    // This functionality is currently disabled.
-    console.warn('fulfillOrder called but payment_intent_id column is missing in DB');
-    return null;
+/**
+ * Mark order as paid
+ * @param {string} orderId - Order ID
+ */
+async function markOrderPaid(orderId) {
+    const order = await Order.findByPk(orderId);
+    if (!order) {
+        throw new NotFoundError('Order not found');
+    }
+
+    // Only update if not already paid
+    if (order.status !== 'paid') {
+        await order.update({ status: 'paid' });
+    }
+
+    return order;
 }
 
 /**
@@ -161,7 +203,23 @@ async function cancelOrder(orderId) {
         throw new Error('Only pending orders can be cancelled');
     }
 
-    await order.update({ status: 'cancelled' });
+    // Start transaction to restore stock
+    await sequelize.transaction(async (t) => {
+        // Get order items
+        const items = await OrderItem.findAll({
+            where: { order_id: orderId },
+            include: [{ model: Product }]
+        });
+
+        // Restore stock for each item
+        for (const item of items) {
+            if (item.Product) {
+                await item.Product.increment('stock_quantity', { by: item.quantity, transaction: t });
+            }
+        }
+
+        await order.update({ status: 'cancelled' }, { transaction: t });
+    });
 
     return order;
 }
@@ -197,7 +255,7 @@ module.exports = {
     calculateTotal,
     createOrder,
     updateOrderStatus,
-    fulfillOrder,
+    markOrderPaid,
     cancelOrder,
     getOrderWithDetails
 };

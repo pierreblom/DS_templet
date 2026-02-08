@@ -32,6 +32,7 @@ const UIModule = {
     },
 
     // Render cart
+    // Render cart
     async renderCart() {
         const container = document.getElementById('cartItems');
         const totalEl = document.getElementById('cartTotal');
@@ -51,12 +52,26 @@ const UIModule = {
         container.innerHTML = '';
         let subtotal = 0;
 
-        cart.forEach(line => {
+        cart.forEach((line, index) => {
             const product = window.ProductsModule.findProduct(products, line.productId);
             if (!product) return;
 
             const lineTotal = product.price * (line.quantity || 1);
             subtotal += lineTotal;
+
+            // Generate options metadata
+            let metaHtml = '';
+            if (line.options) {
+                const parts = [];
+                if (line.options.size) parts.push(`Size: ${line.options.size.toUpperCase()}`);
+                if (line.options.color) {
+                    const colorName = line.options.color.charAt(0).toUpperCase() + line.options.color.slice(1);
+                    parts.push(`Color: ${colorName}`);
+                }
+                if (parts.length > 0) {
+                    metaHtml = `<div class="cart-item-meta" style="font-size: 0.85rem; color: #666; margin-top: 4px;">${parts.join(' | ')}</div>`;
+                }
+            }
 
             const row = document.createElement('div');
             row.className = 'cart-item';
@@ -65,19 +80,19 @@ const UIModule = {
                 <div class="cart-item-details">
                     <div style="display:flex; justify-content:space-between; align-items:start;">
                         <div class="cart-item-name">${product.name}</div>
-                        <button class="remove-btn" onclick="UIModule.removeFromCart(${product.id})" aria-label="Remove ${product.name}">
+                        <button class="remove-btn" onclick="UIModule.removeLine(${index})" aria-label="Remove ${product.name}">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                             </svg>
                         </button>
                     </div>
-                    <div class="cart-item-meta">Size: M | Color: Nude</div>
+                    ${metaHtml}
                     <div class="cart-item-bottom">
                         <div class="cart-qty-controls">
-                            <button class="qty-btn" onclick="UIModule.decreaseQuantity(${product.id})">-</button>
+                            <button class="qty-btn" onclick="UIModule.decreaseQuantity(${index})">-</button>
                             <span>${line.quantity || 1}</span>
-                            <button class="qty-btn" onclick="UIModule.increaseQuantity(${product.id})">+</button>
+                            <button class="qty-btn" onclick="UIModule.increaseQuantity(${index})">+</button>
                         </div>
                         <div class="cart-item-price">R ${lineTotal.toFixed(2)}</div>
                     </div>
@@ -86,7 +101,7 @@ const UIModule = {
             container.appendChild(row);
         });
 
-        if (promoInput) promoInput.value = promo.code || '';
+        if (promoInput && !promoInput.value) promoInput.value = promo.code || '';
 
         const totals = window.CartModule.calculateTotals(cart, products, promo);
         const { discount, shipping, total } = totals;
@@ -164,25 +179,41 @@ const UIModule = {
         this.openCart(); // Open cart to show feedback
     },
 
-    async increaseQuantity(productId) {
+    async increaseQuantity(index) {
         const cart = await window.CartModule.loadCart();
-        const line = cart.find(l => l.productId === productId);
+        const line = cart[index];
         if (line) {
-            await window.CartModule.updateQuantity(productId, (line.quantity || 1) + 1);
+            await window.CartModule.updateQuantity(line.productId, (line.quantity || 1) + 1, line.options);
             this.renderCart();
         }
     },
 
-    async decreaseQuantity(productId) {
+    async decreaseQuantity(index) {
         const cart = await window.CartModule.loadCart();
-        const line = cart.find(l => l.productId === productId);
+        const line = cart[index];
         if (line) {
-            await window.CartModule.updateQuantity(productId, Math.max(1, (line.quantity || 1) - 1));
+            const newQty = (line.quantity || 1) - 1;
+            if (newQty < 1) {
+                await window.CartModule.removeFromCart(line.productId, line.options);
+            } else {
+                await window.CartModule.updateQuantity(line.productId, newQty, line.options);
+            }
             this.renderCart();
         }
     },
 
+    async removeLine(index) {
+        const cart = await window.CartModule.loadCart();
+        const line = cart[index];
+        if (line) {
+            await window.CartModule.removeFromCart(line.productId, line.options);
+            this.renderCart();
+        }
+    },
+
+    // Legacy method redirection (in case used elsewhere)
     async removeFromCart(productId) {
+        // Warning: This only removes items with default options!
         await window.CartModule.removeFromCart(productId);
         this.renderCart();
     },

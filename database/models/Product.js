@@ -43,6 +43,15 @@ const Product = sequelize.define(
             type: DataTypes.JSONB,
             defaultValue: [],
             comment: 'Array of image URLs for quick access'
+        },
+        stock_quantity: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull: false
+        },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
         }
     },
     {
@@ -55,15 +64,13 @@ const Product = sequelize.define(
 
 // Soft delete method
 Product.prototype.softDelete = async function () {
-    this.isActive = false;
-    this.deletedAt = new Date();
+    this.is_active = false;
     await this.save();
 };
 
 // Restore soft-deleted product
 Product.prototype.restore = async function () {
-    this.isActive = true;
-    this.deletedAt = null;
+    this.is_active = true;
     await this.save();
 };
 

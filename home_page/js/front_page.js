@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     debugLog('🚀 ShopBeha: Page loaded, initializing...');
 
     // Load products
-    products = window.ProductsModule.loadProducts();
+    products = await window.ProductsModule.loadProducts();
     window.products = products;
     debugLog(`📦 ShopBeha: Loaded products: ${products.length} items`);
 

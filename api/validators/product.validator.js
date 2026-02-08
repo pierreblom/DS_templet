@@ -14,6 +14,7 @@ const createProductSchema = {
             'any.required': 'Price is required',
             'number.positive': 'Price must be a positive number'
         }),
+        stock_quantity: Joi.number().integer().min(0).default(0),
         category: Joi.string().min(1).max(100).allow('').messages({
             'any.required': 'Category is required'
         }),
@@ -35,6 +36,7 @@ const updateProductSchema = {
     body: Joi.object({
         name: Joi.string().min(1).max(255),
         price: Joi.number().positive().precision(2),
+        stock_quantity: Joi.number().integer().min(0),
         category: Joi.string().min(1).max(100),
         rating: Joi.number().min(0).max(5),
         is_trail_favorite: Joi.boolean(),
@@ -50,7 +52,7 @@ const updateStockSchema = {
         id: Joi.number().integer().positive().required()
     }),
     body: Joi.object({
-        // details irrelevant as route is disabled
+        stock: Joi.number().integer().min(0).required()
     })
 };
 

@@ -86,15 +86,33 @@ const ProductsModule = {
         }
     ],
 
-    // Load products from storage or return defaults
-    loadProducts() {
+    // Load products from API
+    async loadProducts() {
         try {
-            const raw = localStorage.getItem(this.STORAGE_KEY);
-            if (!raw) return [...this.defaultProducts];
-            const parsed = JSON.parse(raw);
-            return Array.isArray(parsed) ? parsed : [...this.defaultProducts];
+            const response = await fetch('/api/v1/products?inStock=true&limit=100');
+            if (response.ok) {
+                const data = await response.json();
+                const apiProducts = data.products || [];
+
+                if (apiProducts.length > 0) {
+                    // Map API fields to frontend format
+                    return apiProducts.map(p => ({
+                        id: p.id,
+                        name: p.name,
+                        price: parseFloat(p.price),
+                        rating: parseFloat(p.rating),
+                        category: p.category,
+                        isTrailFavorite: p.is_trail_favorite,
+                        image: p.image_url || '/images/placeholder.png', // Fallback
+                        hoverImage: p.hover_image_url || p.image_url || '/images/placeholder.png',
+                        stock: p.stock_quantity
+                    }));
+                }
+            }
+            console.warn('Failed to load products from API, falling back to defaults');
+            return [...this.defaultProducts];
         } catch (error) {
-            console.error('Error loading products:', error);
+            console.error('Error loading products from API:', error);
             return [...this.defaultProducts];
         }
     },

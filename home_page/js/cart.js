@@ -177,17 +177,50 @@ const CartModule = {
         }
     },
 
-    // Apply promo code
-    applyPromo(code) {
+    // Apply promo code (server-side validation)
+    async applyPromo(code, subtotal) {
         const upperCode = (code || '').trim().toUpperCase();
-        if (upperCode === 'ROOTED15') {
-            this.savePromo({ code: upperCode, discountRate: 0.15 });
-            return { success: true, message: 'Promo code applied: 15% off' };
-        } else if (upperCode === '') {
+
+        if (upperCode === '') {
             this.savePromo({ code: '', discountRate: 0 });
             return { success: true, message: 'Promo code cleared' };
-        } else {
-            return { success: false, message: 'Invalid promo code' };
+        }
+
+        try {
+            const response = await fetch('/api/v1/promos/validate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    code: upperCode,
+                    subtotal: subtotal
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                this.savePromo({
+                    code: data.promo.code,
+                    discountRate: data.promo.discountRate
+                });
+                return {
+                    success: true,
+                    message: data.message || 'Promo code applied successfully'
+                };
+            } else {
+                return {
+                    success: false,
+                    message: data.message || 'Invalid promo code'
+                };
+            }
+        } catch (error) {
+            console.error('Error validating promo code:', error);
+            return {
+                success: false,
+                message: 'Failed to validate promo code. Please try again.'
+            };
         }
     },
 
