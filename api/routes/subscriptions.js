@@ -84,4 +84,44 @@ router.post('/', validate(subscriptionSchema), async (req, res) => {
     }
 });
 
+/**
+ * GET /api/v1/subscriptions
+ * Get all subscriptions (Admin only)
+ */
+router.get('/', async (req, res) => {
+    try {
+        const { limit = 50, offset = 0, status } = req.query;
+        const where = {};
+        if (status) where.status = status;
+
+        const subscriptions = await Subscription.findAll({
+            where,
+            limit: parseInt(limit),
+            offset: parseInt(offset),
+            order: [['created_at', 'DESC']]
+        });
+
+        const total = await Subscription.count({ where });
+
+        res.json({
+            success: true,
+            data: subscriptions,
+            meta: {
+                total,
+                limit: parseInt(limit),
+                offset: parseInt(offset)
+            }
+        });
+    } catch (error) {
+        logger.error('Failed to fetch subscriptions', {
+            traceId: req.traceId,
+            extra: { error: error.message }
+        });
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch subscriptions'
+        });
+    }
+});
+
 module.exports = router;

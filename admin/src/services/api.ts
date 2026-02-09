@@ -200,3 +200,9 @@ export const contactApi = {
   list: (params?: Record<string, unknown>) =>
     api.get('/contact', { params }),
 };
+
+// Subscription API
+export const subscriptionApi = {
+  list: (params?: Record<string, unknown>) =>
+    api.get('/subscriptions', { params }),
+};

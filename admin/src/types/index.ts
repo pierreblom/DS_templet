@@ -156,3 +156,13 @@ export interface ContactSubmission {
   created_at: string;
   updated_at: string;
 }
+
+// Subscription types
+export interface Subscription {
+  id: string;
+  email: string;
+  status: 'active' | 'unsubscribed';
+  source?: string;
+  created_at: string;
+  updated_at: string;
+}

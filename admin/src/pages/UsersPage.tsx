@@ -147,17 +147,12 @@ export default function UsersPage() {
                         Guest
                       </span>
                     ) : (
-                      <select
-                        value={user.role}
-                        onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                        className={`px-2 py-1 rounded-full text-xs font-medium capitalize border-0 cursor-pointer ${user.role === 'admin'
-                            ? 'bg-purple-100 text-purple-800'
-                            : 'bg-green-100 text-green-800'
-                          }`}
-                      >
-                        <option value="customer">Customer</option>
-                        <option value="admin">Admin</option>
-                      </select>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${user.role === 'admin'
+                          ? 'bg-purple-100 text-purple-800'
+                          : 'bg-green-100 text-green-800'
+                        }`}>
+                        {user.role}
+                      </span>
                     )}
                   </td>
                   <td className="table-cell">
