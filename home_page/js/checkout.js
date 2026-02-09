@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             console.error('Checkout error detail:', error);
             const displayMsg = error.message || (typeof error === 'string' ? error : JSON.stringify(error));
-            alert('Checkout failed: ' + displayMsg);
+            window.showNotification('Checkout failed: ' + displayMsg, 'error');
 
             // Reset button
             payButton.disabled = false;

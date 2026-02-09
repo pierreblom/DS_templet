@@ -8,6 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import ProductsPage from './pages/ProductsPage';
 import OrdersPage from './pages/OrdersPage';
 import UsersPage from './pages/UsersPage';
+import ContactPage from './pages/ContactPage';
 
 export default function App() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -43,6 +44,7 @@ export default function App() {
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/users" element={<UsersPage />} />
+        <Route path="/contact" element={<ContactPage />} />
       </Route>
 
       {/* Catch all - redirect to dashboard */}

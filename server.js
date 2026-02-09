@@ -68,7 +68,9 @@ if (process.env.NODE_ENV !== 'production') {
         `http://localhost:${port}`,
         `http://127.0.0.1:${port}`,
         'http://localhost:3000',
-        'http://127.0.0.1:3000'
+        'http://127.0.0.1:3000',
+        'http://localhost:5500',
+        'http://127.0.0.1:5500'
     ];
 
     localOrigins.forEach(origin => {
@@ -261,6 +263,9 @@ app.use('/api/v1/analytics', analyticsRoutes);
 app.use('/api/v1/contact', contactRoutes);
 app.use('/api/v1/yoco', yocoRoutes);
 app.use('/api/webhooks', webhookRoutes);
+
+const subscriptionRoutes = require('./api/routes/subscriptions');
+app.use('/api/v1/subscriptions', subscriptionRoutes);
 
 // Legacy routes (for backward compatibility during transition)
 app.use('/api/products', productRoutes);

@@ -32,7 +32,10 @@ function escapeJS(str) {
 
 async function fetchProducts() {
     try {
-        const response = await fetch('/api/v1/products?inStock=true&limit=100');
+        const API_BASE = (window.location.protocol === 'file:' || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3030'))
+            ? 'http://localhost:3030'
+            : '';
+        const response = await fetch(`${API_BASE}/api/v1/products?inStock=true&limit=100`);
         if (response.ok) {
             const data = await response.json();
             const apiProducts = data.products || [];
@@ -176,9 +179,9 @@ async function applyPromo() {
     const result = await CartModule.applyPromo(code, subtotal);
 
     if (result.success) {
-        alert(result.message);
+        window.showNotification(result.message, 'success');
     } else {
-        alert(result.message);
+        window.showNotification(result.message, 'error');
     }
 
     renderCart();
@@ -303,7 +306,7 @@ function openCart() {
 async function openCheckout() {
     const cart = await loadCart();
     if (!cart || cart.length === 0) {
-        alert("Your cart is empty!");
+        window.showNotification("Your cart is empty!", 'warning');
         return;
     }
     window.location.href = '/checkout.html';

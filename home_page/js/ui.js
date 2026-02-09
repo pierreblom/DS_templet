@@ -239,7 +239,11 @@ const UIModule = {
         if (!input) return;
 
         const result = window.CartModule.applyPromo(input.value);
-        alert(result.message);
+        if (result.success) {
+            window.showNotification(result.message, 'success');
+        } else {
+            window.showNotification(result.message, 'error');
+        }
         this.renderCart();
     },
 

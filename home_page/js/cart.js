@@ -187,7 +187,11 @@ const CartModule = {
         }
 
         try {
-            const response = await fetch('/api/v1/promos/validate', {
+            const API_BASE = (window.location.protocol === 'file:' || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3030'))
+                ? 'http://localhost:3030'
+                : '';
+
+            const response = await fetch(`${API_BASE}/api/v1/promos/validate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

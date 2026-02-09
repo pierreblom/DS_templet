@@ -180,6 +180,8 @@
                     <script src="home_page/js/account-popup.js"></script>
                     <script src="js/cart.js"></script>
                     <script src="js/shopbeha.js"></script>
+                    <script src="js/notifications.js"></script>
+                    <link rel="stylesheet" href="home_page/css/notifications.css">
 
                     <script>
                         // Contact Form Submission
@@ -212,14 +214,14 @@
                                     const result = await response.json();
 
                                     if (response.ok) {
-                                        alert('Thank you! Your message has been sent successfully.');
+                                        window.showNotification(result.message || 'Thank you! Your message has been sent successfully.', 'success');
                                         this.reset();
                                     } else {
-                                        alert(result.message || 'Something went wrong. Please try again.');
+                                        window.showNotification(result.message || 'Something went wrong. Please try again.', 'error');
                                     }
                                 } catch (error) {
                                     console.error('Error:', error);
-                                    alert('An error occurred. Please try again later.');
+                                    window.showNotification('An error occurred. Please try again later.', 'error');
                                 } finally {
                                     btn.disabled = false;
                                     btn.textContent = originalText;

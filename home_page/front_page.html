@@ -76,6 +76,10 @@
                                         <script src="js/cart.js"></script>
                                         <script src="js/shopbeha.js"></script>
 
+                                        <script src="js/notifications.js"></script>
+                                        <script src="js/newsletter.js"></script>
+                                        <link rel="stylesheet" href="home_page/css/notifications.css">
+
                                         <script>
                                             // Page-specific logic for Home Page
 
@@ -196,7 +200,7 @@
                                                 saveProductsToStorage();
                                                 renderTrailFavorites();
                                                 closeModal('editTrailFavoritesModal');
-                                                alert('Favorites updated successfully!');
+                                                window.showNotification('Favorites updated successfully!', 'success');
                                             }
 
                                             // Form Handling for Add Product
@@ -214,7 +218,7 @@
                                                     };
                                                     products.push(newProduct);
                                                     saveProductsToStorage();
-                                                    alert('Product added successfully!');
+                                                    window.showNotification('Product added successfully!', 'success');
                                                     closeModal('addProductModal');
                                                     populateProductLists();
                                                     addProductForm.reset();

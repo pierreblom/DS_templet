@@ -4,6 +4,8 @@ const Profile = require('./models/Profile');
 const { Order, OrderItem } = require('./models/Order');
 const AuditLog = require('./models/AuditLog');
 const GuestCustomer = require('./models/GuestCustomer');
+const Subscription = require('./models/Subscription');
+const ContactSubmission = require('./models/ContactSubmission');
 
 // Associations
 // Profile.hasMany(Order, { foreignKey: 'user_id' }); // Optional, usually we just need Order -> Profile
@@ -24,5 +26,7 @@ module.exports = {
     Order,
     OrderItem,
     AuditLog,
-    GuestCustomer
+    GuestCustomer,
+    Subscription,
+    ContactSubmission
 };

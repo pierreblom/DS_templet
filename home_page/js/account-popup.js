@@ -39,7 +39,8 @@ async function handleSignOut() {
     const { error } = await supabaseClient.auth.signOut();
     if (error) {
         console.error('Error signing out:', error);
-        alert('Failed to sign out: ' + error.message);
+        if (window.showNotification) window.showNotification('Failed to sign out: ' + error.message, 'error');
+        else alert('Failed to sign out: ' + error.message);
     } else {
         console.log('User signed out successfully');
         await updateAccountPopupState();

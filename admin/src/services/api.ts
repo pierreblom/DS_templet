@@ -194,3 +194,9 @@ export const analyticsApi = {
 
   orders: () => api.get('/analytics/orders'),
 };
+
+// Contact API
+export const contactApi = {
+  list: (params?: Record<string, unknown>) =>
+    api.get('/contact', { params }),
+};

@@ -416,6 +416,8 @@
                     <script src="js/account-popup.js"></script>
                     <script src="js/cart.js"></script>
                     <script src="js/shopbeha.js"></script>
+                    <script src="js/notifications.js"></script>
+                    <link rel="stylesheet" href="home_page/css/notifications.css">
 
                     <script>
                         // Check authentication and load profile
@@ -533,13 +535,14 @@
 
                                 const { error } = await window.supabaseClient
                                     .from('profiles')
-                                    .upsert(updates);
+                                    .upsert(updates)
+                                    .select();
 
                                 if (error) throw error;
-                                alert('Profile updated successfully!');
+                                window.showNotification('Profile updated successfully!', 'success');
                             } catch (error) {
                                 console.error('Error saving profile:', error);
-                                alert('Error saving profile: ' + error.message);
+                                window.showNotification('Error saving profile: ' + error.message, 'error');
                             } finally {
                                 btn.disabled = false;
                                 btn.textContent = 'Save Personal Details';
@@ -578,27 +581,27 @@
                             const confirmPassword = document.getElementById('confirmPassword').value;
 
                             if (newPassword !== confirmPassword) {
-                                alert('Passwords do not match!');
+                                window.showNotification('Passwords do not match!', 'error');
                                 return;
                             }
 
                             if (newPassword.length < 6) {
-                                alert('Password must be at least 6 characters long!');
+                                window.showNotification('Password must be at least 6 characters long!', 'warning');
                                 return;
                             }
 
                             try {
-                                const { error } = await window.supabaseClient.auth.updateUser({
+                                const { data, error } = await window.supabaseClient.auth.updateUser({
                                     password: newPassword
                                 });
 
                                 if (error) throw error;
 
-                                alert('Password updated successfully!');
+                                window.showNotification('Password updated successfully!', 'success');
                                 document.getElementById('passwordForm').reset();
                             } catch (error) {
                                 console.error('Error updating password:', error);
-                                alert('Error updating password: ' + error.message);
+                                window.showNotification('Error updating password: ' + error.message, 'error');
                             }
                         });
 

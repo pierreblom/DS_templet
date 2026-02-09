@@ -14,6 +14,7 @@ const router = express.Router();
 const axios = require('axios');
 const { contactSubmissionSchema } = require('../validators/contact.validator');
 const { validate } = require('../middleware/validate');
+const { ContactSubmission } = require('../../database/index');
 const { logger } = require('../../utils/logger');
 const { AppError } = require('../../utils/errors');
 
@@ -57,7 +58,26 @@ router.post('/', validate(contactSubmissionSchema), async (req, res, next) => {
             webhookData.secretToken = process.env.GOOGLE_SHEETS_SECRET_TOKEN;
         }
 
+        // Save to Database
+        try {
+            await ContactSubmission.create({
+                name,
+                email,
+                phone: phone || null,
+                message: comment || null,
+                status: 'new'
+            });
+            logger.info('Contact submission saved to database', { traceId: req.traceId });
+        } catch (dbError) {
+            logger.error('Failed to save contact submission to database', {
+                traceId: req.traceId,
+                extra: { error: dbError.message }
+            });
+            // We continue execution to try Google Sheets as well
+        }
+
         // Send to Google Sheets webhook
+
         const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
 
         if (!webhookUrl) {
@@ -143,6 +163,40 @@ router.get('/health', (req, res) => {
         webhookConfigured,
         timestamp: new Date().toISOString()
     });
+});
+
+/**
+ * GET /api/v1/contact
+ * Get all contact submissions (Admin only)
+ */
+router.get('/', async (req, res, next) => {
+    try {
+        const { limit = 50, offset = 0 } = req.query;
+
+        const submissions = await ContactSubmission.findAll({
+            limit: parseInt(limit),
+            offset: parseInt(offset),
+            order: [['created_at', 'DESC']]
+        });
+
+        const total = await ContactSubmission.count();
+
+        res.json({
+            success: true,
+            data: submissions,
+            meta: {
+                total,
+                limit: parseInt(limit),
+                offset: parseInt(offset)
+            }
+        });
+    } catch (error) {
+        logger.error('Failed to fetch contact submissions', {
+            traceId: req.traceId,
+            extra: { error: error.message }
+        });
+        next(new AppError('Failed to fetch submissions', 500));
+    }
 });
 
 module.exports = router;
