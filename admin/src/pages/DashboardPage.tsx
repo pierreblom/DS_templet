@@ -18,22 +18,51 @@ export default function DashboardPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [orderStats, setOrderStats] = useState<OrderAnalytics | null>(null);
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
-  const [salesData, setSalesData] = useState<Array<{ date: string; revenue: number }>>([]);
+  const [salesData, setSalesData] = useState<Array<{ date: string; day: number; revenue: number }>>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
         const [summaryRes, orderStatsRes, salesRes, ordersRes] = await Promise.all([
           analyticsApi.dashboard(),
           analyticsApi.orders(),
-          analyticsApi.sales({ period: 'week' }),
+          analyticsApi.sales({
+            period: 'month',
+            startDate: startOfMonth.toISOString(),
+            endDate: endOfMonth.toISOString(),
+          }),
           ordersApi.list({ limit: 5, sortBy: 'createdAt', sortOrder: 'desc' }),
         ]);
 
         setSummary(summaryRes.data);
         setOrderStats(orderStatsRes.data);
-        setSalesData(salesRes.data.dailyData || []);
+
+        // Process sales data to include all days of the month
+        const rawSalesData = salesRes.data.dailyData || [];
+        const daysInMonth = endOfMonth.getDate();
+        const fullMonthData = [];
+
+        for (let i = 1; i <= daysInMonth; i++) {
+          const year = now.getFullYear();
+          const month = String(now.getMonth() + 1).padStart(2, '0');
+          const day = String(i).padStart(2, '0');
+          const dateStr = `${year}-${month}-${day}`;
+
+          const dayData = rawSalesData.find((d: any) => d.date === dateStr);
+
+          fullMonthData.push({
+            date: dateStr,
+            day: i,
+            revenue: dayData ? parseFloat(dayData.revenue) : 0,
+          });
+        }
+
+        setSalesData(fullMonthData);
         setRecentOrders(ordersRes.data.orders || []);
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
@@ -130,33 +159,40 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Sales Chart */}
         <div className="card">
-          <h3 className="font-semibold mb-4">Sales This Week</h3>
+          <h3 className="font-semibold mb-4">Sales This Month</h3>
           <div className="h-64">
             {salesData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={salesData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <LineChart data={salesData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
                   <XAxis
-                    dataKey="date"
-                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-ZA', { weekday: 'short' })}
-                    stroke="#9ca3af"
-                    fontSize={12}
+                    dataKey="day"
+                    tickLine={false}
+                    axisLine={{ stroke: '#e5e7eb' }}
+                    tick={{ fill: '#9ca3af', fontSize: 10 }}
+                    interval={0}
                   />
                   <YAxis
                     tickFormatter={(value) => `R${value}`}
                     stroke="#9ca3af"
                     fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
                   />
                   <Tooltip
+                    cursor={{ stroke: '#d1d5db', strokeWidth: 1, strokeDasharray: '4 4' }}
+                    contentStyle={{ border: 'none', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                     formatter={(value: number) => [formatCurrency(value), 'Revenue']}
-                    labelFormatter={(label) => new Date(label).toLocaleDateString('en-ZA')}
+                    labelFormatter={(day) => `Day ${day}`}
                   />
                   <Line
                     type="monotone"
                     dataKey="revenue"
                     stroke="#A0522D"
                     strokeWidth={2}
-                    dot={{ fill: '#A0522D' }}
+                    dot={{ fill: '#A0522D', r: 3, strokeWidth: 2, stroke: '#fff' }}
+                    activeDot={{ r: 5, strokeWidth: 0 }}
+                    strokeDasharray="5 5"
                   />
                 </LineChart>
               </ResponsiveContainer>

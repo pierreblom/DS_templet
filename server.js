@@ -25,25 +25,32 @@ app.use(
                 defaultSrc: ["'self'"],
                 scriptSrc: [
                     "'self'",
-                    "'unsafe-inline'", // Needed for inline scripts and EJS
-                    "https://cdn.jsdelivr.net", // Supabase JS, etc.
-                    "https://js.yoco.com" // Yoco Payment
+                    "'unsafe-inline'",
+                    "'unsafe-eval'", // Often needed for development tools
+                    "https://cdn.jsdelivr.net",
+                    "https://js.yoco.com"
                 ],
                 styleSrc: [
                     "'self'",
-                    "'unsafe-inline'", // Needed for inline styles
+                    "'unsafe-inline'",
                     "https://fonts.googleapis.com"
                 ],
-                imgSrc: ["'self'", "data:", "https:", "blob:"], // Allow all HTTPS images (Supabase, etc.)
+                imgSrc: ["'self'", "data:", "https:", "blob:", "http:"],
                 fontSrc: ["'self'", "https://fonts.gstatic.com"],
                 connectSrc: [
                     "'self'",
                     "https://*.supabase.co",
-                    "https://*.yoco.com"
+                    "https://*.yoco.com",
+                    "http://localhost:*",
+                    "https://fonts.googleapis.com",
+                    "https://fonts.gstatic.com",
+                    "https://cdn.jsdelivr.net",
+                    "https://upload.wikimedia.org"
                 ],
-                frameSrc: ["'self'", "https://js.yoco.com"], // If Yoco uses iframes
+                scriptSrcAttr: ["'unsafe-inline'"], // Allow inline event handlers
+                frameSrc: ["'self'", "https://js.yoco.com"],
                 objectSrc: ["'none'"],
-                upgradeInsecureRequests: [],
+                // upgradeInsecureRequests: [], // Removed to fix localhost issues
             },
         },
         crossOriginEmbedderPolicy: false
