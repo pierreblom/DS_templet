@@ -190,7 +190,7 @@
                 onclick="window.location.href='select.html?id=7&name=The%20Seamless%20Silhouette%20Full-Coverage%20Bra&price=350'">
                 <div class="related-image">
                     <img src="/images/product_7_The_Seamless_Silhouette_Full-Coverage_Bra/1.png"
-                        alt="The Seamless Silhouette Full-Coverage Bra">
+                        alt="The Seamless Silhouette Full-Coverage Bra" loading="lazy">
                 </div>
                 <h3 class="related-name">The Seamless Silhouette Full-Coverage Bra</h3>
             </div>
@@ -200,7 +200,7 @@
                 onclick="window.location.href='select.html?id=6&name=The%20Zenith%20High-Impact%20Front-Zip%20Sports%20Bra&price=399'">
                 <div class="related-image">
                     <img src="/images/product_6_The_Zenith_High-Impact_Front-Zip_Sports_Bra/1.png"
-                        alt="The Zenith High-Impact Front-Zip Sports Bra">
+                        alt="The Zenith High-Impact Front-Zip Sports Bra" loading="lazy">
                 </div>
                 <h3 class="related-name">The Zenith High-Impact Front-Zip Sports Bra</h3>
             </div>
@@ -209,7 +209,8 @@
             <div class="related-card"
                 onclick="window.location.href='select.html?id=5&name=Aura%20Front-Closure%20Lace%20Bra&price=450'">
                 <div class="related-image">
-                    <img src="/images/product_5_Aura_Front-Closure_Lace_Bra/2.png" alt="Aura Front-Closure Lace Bra">
+                    <img src="/images/product_5_Aura_Front-Closure_Lace_Bra/2.png" alt="Aura Front-Closure Lace Bra"
+                        loading="lazy">
                 </div>
                 <h3 class="related-name">Aura Front-Closure Lace Bra</h3>
             </div>
@@ -217,7 +218,7 @@
             <!-- Product 4: Primary Choice -->
             <div class="related-card" onclick="window.location.href='select.html?id=4&name=Primary%20Choice&price=899'">
                 <div class="related-image">
-                    <img src="/images/product_4_Primary_Choice/2.png" alt="Primary Choice">
+                    <img src="/images/product_4_Primary_Choice/2.png" alt="Primary Choice" loading="lazy">
                 </div>
                 <h3 class="related-name">Primary Choice</h3>
             </div>
@@ -584,6 +585,12 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', async function () {
+            // Register Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('Service Worker registered', reg))
+                    .catch(err => console.log('Service Worker not registered', err));
+            }
             // Load products for UIModule
             window.products = await window.ProductsModule.loadProducts();
 
@@ -608,7 +615,7 @@
             const gallery = document.getElementById('imageGallery');
             gallery.innerHTML = config.images.map(img => `
                 <div class="gallery-image">
-                    <img ${img.id ? `id="${img.id}"` : ''} src="../images/${config.folder}/${img.src}" alt="${img.alt}">
+                    <img ${img.id ? `id="${img.id}"` : ''} src="../images/${config.folder}/${img.src}" alt="${img.alt}" loading="lazy">
                 </div>
             `).join('');
 

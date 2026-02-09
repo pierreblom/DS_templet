@@ -16,8 +16,8 @@ const UIModule = {
 
             productCard.innerHTML = `
                 <div class="product-image" onclick="UIModule.openProductPage(${product.id}, '${product.name}', ${product.price})">
-                    <img src="${product.image}" alt="${product.name}" class="main-img">
-                    ${product.hoverImage ? `<img src="${product.hoverImage}" alt="${product.name} hover" class="hover-img">` : ''}
+                    <img src="${product.image}" alt="${product.name}" class="main-img" loading="lazy">
+                    ${product.hoverImage ? `<img src="${product.hoverImage}" alt="${product.name} hover" class="hover-img" loading="lazy">` : ''}
                 </div>
                 <div class="product-info">
                     <h3>${product.name}</h3>
@@ -76,7 +76,7 @@ const UIModule = {
             const row = document.createElement('div');
             row.className = 'cart-item';
             row.innerHTML = `
-                <img src="${product.image}" alt="${product.name}" class="cart-item-img">
+                <img src="${product.image}" alt="${product.name}" class="cart-item-img" loading="lazy">
                 <div class="cart-item-details">
                     <div style="display:flex; justify-content:space-between; align-items:start;">
                         <div class="cart-item-name">${product.name}</div>

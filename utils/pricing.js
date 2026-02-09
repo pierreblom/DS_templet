@@ -20,8 +20,9 @@ const VALID_PROMOS = {
  * Calculate shipping cost
  */
 function calculateShipping(subtotal, region = 'sa') {
+    if (subtotal <= 0) return 0;
     if (region === 'intl') return 300;
-    return subtotal >= 1000 ? 0 : 60;
+    return subtotal >= 900 ? 0 : 60;
 }
 
 /**

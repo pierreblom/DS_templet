@@ -97,7 +97,7 @@ class CartManager {
      */
     getTotal() {
         const subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const shipping = subtotal > 0 ? 60 : 0;
+        const shipping = subtotal > 0 ? (subtotal >= 900 ? 0 : 60) : 0;
         return {
             subtotal: subtotal,
             shipping: shipping,

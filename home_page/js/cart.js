@@ -226,8 +226,9 @@ const CartModule = {
 
     // Calculate shipping
     computeShipping(subtotal, region = 'sa') {
+        if (subtotal <= 0) return 0;
         if (region === 'intl') return 300;
-        return subtotal >= 1000 ? 0 : 60;
+        return subtotal >= 900 ? 0 : 60;
     },
 
     // Calculate cart totals

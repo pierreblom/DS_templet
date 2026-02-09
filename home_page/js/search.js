@@ -42,7 +42,7 @@ const SearchModule = {
 
         resultsContainer.innerHTML = filtered.map(product => `
             <div class="search-result-item" onclick="UIModule.openProductPage(${product.id}, '${product.name}', ${product.price})" style="display:flex; align-items:center; padding:0.5rem; cursor:pointer; border-bottom:1px solid #eee;">
-                <img src="${product.image}" alt="${product.name}" style="width:50px; height:50px; object-fit:cover; margin-right:1rem; border-radius:4px;">
+                <img src="${product.image}" alt="${product.name}" style="width:50px; height:50px; object-fit:cover; margin-right:1rem; border-radius:4px;" loading="lazy">
                 <div>
                     <div style="font-weight:500;">${product.name}</div>
                     <div style="font-size:0.9rem; color:#666;">R ${product.price.toFixed(2)}</div>

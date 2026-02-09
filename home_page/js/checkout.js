@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const row = document.createElement('div');
             row.className = 'checkout-item';
             row.innerHTML = `
-                <img src="${product.image}" alt="${product.name}">
+                <img src="${product.image}" alt="${product.name}" loading="lazy">
                 <div class="checkout-item-info">
                     <h4>${product.name}</h4>
                     <p>Quantity: ${item.quantity}</p>

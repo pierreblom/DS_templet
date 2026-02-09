@@ -132,10 +132,11 @@ function savePromo(state) {
     try { localStorage.setItem(PROMO_KEY, JSON.stringify(state)); } catch (_) { }
 }
 function computeShipping(subtotal) {
+    if (subtotal <= 0) return 0;
     const regionEl = document.getElementById('shippingRegion');
     const region = regionEl ? regionEl.value : 'sa';
     if (region === 'intl') return 300;
-    return subtotal >= 1000 ? 0 : 60;
+    return subtotal >= 900 ? 0 : 60;
 }
 
 async function applyPromo() {
@@ -206,7 +207,7 @@ async function renderCart() {
         const row = document.createElement('div');
         row.className = 'cart-item';
         row.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" class="cart-item-img">
+            <img src="${product.image}" alt="${product.name}" class="cart-item-img" loading="lazy">
             <div class="cart-item-details">
                 <div style="display:flex; justify-content:space-between; align-items:start;">
                     <div class="cart-item-name">${product.name}</div>
@@ -426,4 +427,17 @@ function toggleTermsMenu() {
 document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 ShopBeha: Common JS initialized');
     updateCartBadge();
+
+    // Register Service Worker for caching images
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                })
+                .catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+        });
+    }
 });
