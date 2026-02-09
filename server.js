@@ -20,7 +20,32 @@ const PORT = process.env.PORT || 3000;
 // Helmet for security headers
 app.use(
     helmet({
-        contentSecurityPolicy: false,
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: [
+                    "'self'",
+                    "'unsafe-inline'", // Needed for inline scripts and EJS
+                    "https://cdn.jsdelivr.net", // Supabase JS, etc.
+                    "https://js.yoco.com" // Yoco Payment
+                ],
+                styleSrc: [
+                    "'self'",
+                    "'unsafe-inline'", // Needed for inline styles
+                    "https://fonts.googleapis.com"
+                ],
+                imgSrc: ["'self'", "data:", "https:", "blob:"], // Allow all HTTPS images (Supabase, etc.)
+                fontSrc: ["'self'", "https://fonts.gstatic.com"],
+                connectSrc: [
+                    "'self'",
+                    "https://*.supabase.co",
+                    "https://*.yoco.com"
+                ],
+                frameSrc: ["'self'", "https://js.yoco.com"], // If Yoco uses iframes
+                objectSrc: ["'none'"],
+                upgradeInsecureRequests: [],
+            },
+        },
         crossOriginEmbedderPolicy: false
     })
 );

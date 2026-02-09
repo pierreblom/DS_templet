@@ -13,6 +13,23 @@
 
 let products = [];
 
+// XSS Sanitization Helpers
+function escapeHTML(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+    }[tag]));
+}
+
+function escapeJS(str) {
+    if (!str) return '';
+    return str.replace(/'/g, "\\'");
+}
+
 async function fetchProducts() {
     try {
         const response = await fetch('/api/v1/products?inStock=true&limit=100');
@@ -207,11 +224,11 @@ async function renderCart() {
         const row = document.createElement('div');
         row.className = 'cart-item';
         row.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" class="cart-item-img" loading="lazy">
+            <img src="${product.image}" alt="${escapeHTML(product.name)}" class="cart-item-img" loading="lazy">
             <div class="cart-item-details">
                 <div style="display:flex; justify-content:space-between; align-items:start;">
-                    <div class="cart-item-name">${product.name}</div>
-                    <button class="remove-btn" onclick="removeLine(${index})" aria-label="Remove ${product.name}">
+                    <div class="cart-item-name">${escapeHTML(product.name)}</div>
+                    <button class="remove-btn" onclick="removeLine(${index})" aria-label="Remove ${escapeHTML(product.name)}">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="3 6 5 6 21 6"></polyline>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -387,10 +404,11 @@ function performSearch() {
             closeModal('searchModal');
             openProductPage(product.id, product.name, product.price);
         };
+        const safeName = escapeHTML(product.name);
         resultItem.innerHTML = `
             <div style="font-size:1.5rem;">${getCategoryIcon(product.category)}</div>
             <div>
-                <div style="font-weight:600;">${product.name}</div>
+                <div style="font-weight:600;">${safeName}</div>
                 <div style="color:#888;">R ${product.price.toFixed(2)}</div>
             </div>
         `;
