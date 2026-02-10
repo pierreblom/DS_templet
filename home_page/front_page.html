@@ -95,7 +95,12 @@
                                                 if (!container) return;
                                                 container.innerHTML = '';
 
-                                                const trailFavorites = products.filter(product => product.isTrailFavorite);
+                                                let trailFavorites = products.filter(product => product.isTrailFavorite);
+
+                                                // Fallback: If no favorites are set, show the first 8 products
+                                                if (trailFavorites.length === 0 && products.length > 0) {
+                                                    trailFavorites = products.slice(0, 8);
+                                                }
 
                                                 trailFavorites.forEach(product => {
                                                     const productCard = document.createElement('div');
