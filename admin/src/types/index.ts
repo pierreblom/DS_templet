@@ -23,8 +23,8 @@ export interface Product {
   category: string;
   image_url: string;
   hover_image_url?: string;
-  stock: number;
-  isActive: boolean;
+  stock_quantity: number;
+  is_active: boolean;
   created_at?: string;
   updated_at?: string;
 }

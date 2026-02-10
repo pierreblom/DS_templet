@@ -64,7 +64,7 @@ export default function ProductsPage() {
       category: product.category,
       image_url: product.image_url || '',
       hover_image_url: product.hover_image_url || '',
-      stock: String(product.stock),
+      stock: String(product.stock_quantity),
     });
     setIsModalOpen(true);
   };
@@ -79,7 +79,7 @@ export default function ProductsPage() {
       category: formData.category,
       image_url: formData.image_url,
       hover_image_url: formData.hover_image_url,
-      stock: parseInt(formData.stock),
+      stock_quantity: parseInt(formData.stock),
     };
 
     try {
@@ -180,7 +180,7 @@ export default function ProductsPage() {
                   <td className="table-cell">
                     <input
                       type="number"
-                      value={product.stock}
+                      value={product.stock_quantity}
                       onChange={(e) => handleStockChange(product.id, parseInt(e.target.value))}
                       className="w-20 px-2 py-1 border border-gray-200 rounded text-center"
                       min="0"
