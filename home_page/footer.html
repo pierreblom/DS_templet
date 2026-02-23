@@ -21,13 +21,11 @@
 
         <!-- Terms & Policies Popup Menu (Inside footer for relative positioning) -->
         <div id="terms-menu" class="terms-menu-popup">
-            <a href="../legal/shipping-policy.html">Shipping & Delivery</a>
-            <a href="../legal/return-refund-policy.html">Returns & Exchanges</a>
-            <a href="../legal/privacy-policy.html">Privacy Policy</a>
-            <a href="../legal/terms-and-conditions.html">Terms & Conditions</a>
-            <a href="../legal/cookie-policy.html">Cookie Policy</a>
-            <a href="../legal/ecta-disclosure.html">ECTA Disclosure</a>
-            <a href="../contact.html">Contact Us</a>
+            <% siteSettings.navigation.footerLinks.forEach(function(link) { %>
+                <a href="<%= link.url %>">
+                    <%= link.label %>
+                </a>
+                <% }); %>
         </div>
     </div>
 </footer>

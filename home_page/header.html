@@ -11,12 +11,20 @@
         </button>
 
         <ul class="nav-links">
-            <li><a href="/">Home</a></li>
-            <li><a href="/contact.html">Contact</a></li>
+            <% siteSettings.navigation.headerLinks.forEach(function(link) { %>
+                <li><a href="<%= link.url %>">
+                        <%= link.label %>
+                    </a></li>
+                <% }); %>
         </ul>
 
         <div class="logo">
-            Beha
+            <% if (siteSettings.media.logo) { %>
+                <img src="<%= siteSettings.media.logo %>" alt="<%= siteSettings.branding.websiteTitle %>"
+                    style="max-height: 40px;">
+                <% } else { %>
+                    <%= siteSettings.branding.websiteTitle.split(' ')[0] || ' Store' %>
+                        <% } %>
         </div>
 
         <div class="nav-icons">

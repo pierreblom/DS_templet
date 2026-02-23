@@ -22,10 +22,28 @@ try {
 } catch (err) {
     logger.error('Failed to load initial site settings', { extra: err.message });
     app.locals.siteSettings = {
-        theme: { primaryColor: "#C88E75", secondaryColor: "#A0522D" },
-        branding: { websiteTitle: "shopbeha.com - The Most Comfortable Bra", headerImage: "images/hero-bg.jpg" },
-        contact: { email: "hello@shopbeha.com" },
-        footer: { copyright: "© 2024 shopbeha.com. All rights reserved." }
+        theme: {
+            primaryColor: "#C88E75",
+            secondaryColor: "#A0522D",
+            typography: { fontFamily: "Outfit, sans-serif", headingFontFamily: "Playfair Display, serif" },
+            shapes: { borderRadius: "8px" },
+            spacing: { globalPadding: "2rem", globalMargin: "1rem" }
+        },
+        layout: {
+            heroEnabled: true, customerLoveEnabled: true, trailFavoritesEnabled: true,
+            newArrivalsEnabled: true, valuePropsEnabled: true, newsletterEnabled: true
+        },
+        content: {
+            hero: { title: "Celebrate Every Body", subtitle: "Discover our inclusive and stylish collection.", ctaText: "SHOP NOW", ctaLink: "/select.html" },
+            newArrivals: { title: "New Arrivals!", subtitle: "Discover our latest designs that celebrate every body.", promoText: "Claim 15% off if you buy 2 or more items!" }
+        },
+        navigation: {
+            headerLinks: [{ label: "Home", url: "/" }, { label: "Shop", url: "/select.html" }],
+            footerLinks: [{ label: "Terms and Conditions", url: "/legal/terms-and-conditions.html" }]
+        },
+        media: { logo: "/images/logo.png", favicon: "/favicon.ico", heroBackground: "/images/hero-bg.jpg" },
+        branding: { websiteTitle: "shopbeha.com - The Most Comfortable Bra" },
+        contact: { email: "hello@shopbeha.com" }
     };
 }
 

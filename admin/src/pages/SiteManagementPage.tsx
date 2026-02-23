@@ -3,7 +3,7 @@ import Header from '../components/layout/Header';
 import { settingsApi, uploadApi } from '../services/api';
 
 export default function SiteManagementPage() {
-    const [activeTab, setActiveTab] = useState<'branding' | 'settings'>('settings');
+    const [activeTab, setActiveTab] = useState<'branding' | 'settings' | 'layout' | 'content' | 'navigation'>('settings');
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [uploadingImage, setUploadingImage] = useState(false);
@@ -14,17 +14,26 @@ export default function SiteManagementPage() {
         theme: {
             primaryColor: '#C88E75',
             secondaryColor: '#A0522D',
+            typography: { fontFamily: 'Outfit, sans-serif', headingFontFamily: 'Playfair Display, serif' },
+            shapes: { borderRadius: '8px' },
+            spacing: { globalPadding: '2rem', globalMargin: '1rem' }
         },
-        branding: {
-            websiteTitle: '',
-            headerImage: '',
+        layout: {
+            heroEnabled: true, customerLoveEnabled: true, trailFavoritesEnabled: true,
+            newArrivalsEnabled: true, valuePropsEnabled: true, newsletterEnabled: true
         },
-        contact: {
-            email: '',
+        content: {
+            hero: { title: '', subtitle: '', ctaText: '', ctaLink: '' },
+            newArrivals: { title: '', subtitle: '', promoText: '' }
         },
-        footer: {
-            copyright: '',
+        navigation: {
+            headerLinks: [],
+            footerLinks: []
         },
+        branding: { websiteTitle: '', headerImage: '' },
+        media: { logo: '', favicon: '', heroBackground: '' },
+        contact: { email: '' },
+        footer: { copyright: '' },
     });
 
     useEffect(() => {
@@ -35,7 +44,8 @@ export default function SiteManagementPage() {
         try {
             const response = await settingsApi.get();
             if (response.data.success) {
-                setSettings(response.data.settings);
+                // Merge with default to ensure new fields act properly
+                setSettings({ ...settings, ...response.data.settings });
             }
         } catch (error) {
             console.error('Failed to fetch settings:', error);
@@ -72,9 +82,9 @@ export default function SiteManagementPage() {
             if (response.data.success) {
                 setSettings({
                     ...settings,
-                    branding: {
-                        ...settings.branding,
-                        headerImage: response.data.url,
+                    media: {
+                        ...settings.media,
+                        heroBackground: response.data.url,
                     }
                 });
             }
@@ -83,7 +93,6 @@ export default function SiteManagementPage() {
             setErrorMessage('Failed to upload image.');
         } finally {
             setUploadingImage(false);
-            // Reset input
             if (e.target) e.target.value = '';
         }
     };
@@ -100,7 +109,7 @@ export default function SiteManagementPage() {
         <div>
             <Header
                 title="Site Management"
-                subtitle="Manage global site settings and branding"
+                subtitle="Manage global layout, content, and aesthetics"
             />
 
             {successMessage && (
@@ -115,30 +124,23 @@ export default function SiteManagementPage() {
                 </div>
             )}
 
-            <div className="mb-6 flex space-x-4 border-b border-gray-200">
-                <button
-                    onClick={() => setActiveTab('settings')}
-                    className={`py-2 px-4 font-medium text-sm border-b-2 transition-colors ${activeTab === 'settings'
+            <div className="mb-6 flex space-x-4 border-b border-gray-200 overflow-x-auto">
+                {['settings', 'branding', 'layout', 'content', 'navigation'].map((tab) => (
+                    <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab as any)}
+                        className={`py-2 px-4 font-medium text-sm border-b-2 transition-colors whitespace-nowrap capitalize ${activeTab === tab
                             ? 'border-terracotta text-terracotta'
                             : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                        }`}
-                >
-                    Site Settings
-                </button>
-                <button
-                    onClick={() => setActiveTab('branding')}
-                    className={`py-2 px-4 font-medium text-sm border-b-2 transition-colors ${activeTab === 'branding'
-                            ? 'border-terracotta text-terracotta'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                        }`}
-                >
-                    Branding
-                </button>
+                            }`}
+                    >
+                        {tab}
+                    </button>
+                ))}
             </div>
 
-            <div className="card max-w-2xl">
+            <div className="card max-w-4xl">
                 <form onSubmit={handleSave}>
-
                     {activeTab === 'settings' && (
                         <div className="space-y-6">
                             <div>
@@ -151,7 +153,7 @@ export default function SiteManagementPage() {
                                         <div className="flex space-x-2 items-center">
                                             <input
                                                 type="color"
-                                                value={settings.theme.primaryColor}
+                                                value={settings.theme.primaryColor || '#000000'}
                                                 onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, primaryColor: e.target.value } })}
                                                 className="h-10 w-10 border-0 p-0 rounded cursor-pointer"
                                             />
@@ -170,7 +172,7 @@ export default function SiteManagementPage() {
                                         <div className="flex space-x-2 items-center">
                                             <input
                                                 type="color"
-                                                value={settings.theme.secondaryColor}
+                                                value={settings.theme.secondaryColor || '#000000'}
                                                 onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, secondaryColor: e.target.value } })}
                                                 className="h-10 w-10 border-0 p-0 rounded cursor-pointer"
                                             />
@@ -186,11 +188,33 @@ export default function SiteManagementPage() {
                             </div>
 
                             <div>
+                                <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Typography & Style</h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Base Font Family</label>
+                                        <input type="text" className="input" value={settings.theme?.typography?.fontFamily || ''} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, typography: { ...settings.theme.typography, fontFamily: e.target.value } } })} />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Heading Font Family</label>
+                                        <input type="text" className="input" value={settings.theme?.typography?.headingFontFamily || ''} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, typography: { ...settings.theme.typography, headingFontFamily: e.target.value } } })} />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Border Radius</label>
+                                        <input type="text" className="input" value={settings.theme?.shapes?.borderRadius || ''} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, shapes: { ...settings.theme.shapes, borderRadius: e.target.value } } })} placeholder="e.g. 0px or 8px" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Global Padding</label>
+                                        <input type="text" className="input" value={settings.theme?.spacing?.globalPadding || ''} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, spacing: { ...settings.theme.spacing, globalPadding: e.target.value } } })} />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
                                 <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Global Text Strings</h3>
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Website Title <span className="text-gray-400 text-xs">(Used for SEO & Hero Title)</span>
+                                            Website Title <span className="text-gray-400 text-xs">(Used for SEO)</span>
                                         </label>
                                         <input
                                             type="text"
@@ -226,15 +250,108 @@ export default function SiteManagementPage() {
                         </div>
                     )}
 
+                    {activeTab === 'layout' && (
+                        <div className="space-y-6">
+                            <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Toggle Sections</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                                {Object.keys(settings.layout).map((key) => (
+                                    <div key={key} className="flex items-center justify-between p-4 border rounded-lg">
+                                        <span className="font-medium capitalize">{key.replace('Enabled', '')} Section</span>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" className="sr-only peer" checked={(settings.layout as any)[key]} onChange={(e) => setSettings({ ...settings, layout: { ...settings.layout, [key]: e.target.checked } })} />
+                                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-terracotta/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-terracotta"></div>
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'content' && (
+                        <div className="space-y-8">
+                            <div>
+                                <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Hero Section Content</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                        <input type="text" className="input" value={settings.content?.hero?.title || ''} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, hero: { ...settings.content.hero, title: e.target.value } } })} />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle</label>
+                                        <input type="text" className="input" value={settings.content?.hero?.subtitle || ''} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, hero: { ...settings.content.hero, subtitle: e.target.value } } })} />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">CTA Text</label>
+                                            <input type="text" className="input" value={settings.content?.hero?.ctaText || ''} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, hero: { ...settings.content.hero, ctaText: e.target.value } } })} />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">CTA Link</label>
+                                            <input type="text" className="input" value={settings.content?.hero?.ctaLink || ''} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, hero: { ...settings.content.hero, ctaLink: e.target.value } } })} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">New Arrivals Content</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                        <input type="text" className="input" value={settings.content?.newArrivals?.title || ''} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, newArrivals: { ...settings.content.newArrivals, title: e.target.value } } })} />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle</label>
+                                        <input type="text" className="input" value={settings.content?.newArrivals?.subtitle || ''} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, newArrivals: { ...settings.content.newArrivals, subtitle: e.target.value } } })} />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Promo Text</label>
+                                        <input type="text" className="input" value={settings.content?.newArrivals?.promoText || ''} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, newArrivals: { ...settings.content.newArrivals, promoText: e.target.value } } })} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'navigation' && (
+                        <div className="space-y-8">
+                            <div>
+                                <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Header Links</h3>
+                                <div className="space-y-2">
+                                    {settings.navigation?.headerLinks?.map((link: any, idx) => (
+                                        <div key={idx} className="flex space-x-2">
+                                            <input type="text" placeholder="Label" className="input w-1/3" value={link.label} onChange={(e) => { const newLinks = [...settings.navigation.headerLinks]; (newLinks[idx] as any).label = e.target.value; setSettings({ ...settings, navigation: { ...settings.navigation, headerLinks: newLinks } }) }} />
+                                            <input type="text" placeholder="URL" className="input flex-1" value={link.url} onChange={(e) => { const newLinks = [...settings.navigation.headerLinks]; (newLinks[idx] as any).url = e.target.value; setSettings({ ...settings, navigation: { ...settings.navigation, headerLinks: newLinks } }) }} />
+                                            <button type="button" onClick={() => { const newLinks = settings.navigation.headerLinks.filter((_, i) => i !== idx); setSettings({ ...settings, navigation: { ...settings.navigation, headerLinks: newLinks } }) }} className="btn btn-secondary text-red-600">Remove</button>
+                                        </div>
+                                    ))}
+                                    <button type="button" onClick={() => setSettings({ ...settings, navigation: { ...settings.navigation, headerLinks: [...(settings.navigation?.headerLinks || []), { label: '', url: '' }] as any } })} className="text-sm text-terracotta font-medium mt-2">+ Add Header Link</button>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Footer Links</h3>
+                                <div className="space-y-2">
+                                    {settings.navigation?.footerLinks?.map((link: any, idx) => (
+                                        <div key={idx} className="flex space-x-2">
+                                            <input type="text" placeholder="Label" className="input w-1/3" value={link.label} onChange={(e) => { const newLinks = [...settings.navigation.footerLinks]; (newLinks[idx] as any).label = e.target.value; setSettings({ ...settings, navigation: { ...settings.navigation, footerLinks: newLinks } }) }} />
+                                            <input type="text" placeholder="URL" className="input flex-1" value={link.url} onChange={(e) => { const newLinks = [...settings.navigation.footerLinks]; (newLinks[idx] as any).url = e.target.value; setSettings({ ...settings, navigation: { ...settings.navigation, footerLinks: newLinks } }) }} />
+                                            <button type="button" onClick={() => { const newLinks = settings.navigation.footerLinks.filter((_, i) => i !== idx); setSettings({ ...settings, navigation: { ...settings.navigation, footerLinks: newLinks } }) }} className="btn btn-secondary text-red-600">Remove</button>
+                                        </div>
+                                    ))}
+                                    <button type="button" onClick={() => setSettings({ ...settings, navigation: { ...settings.navigation, footerLinks: [...(settings.navigation?.footerLinks || []), { label: '', url: '' }] as any } })} className="text-sm text-terracotta font-medium mt-2">+ Add Footer Link</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {activeTab === 'branding' && (
                         <div className="space-y-6">
                             <div>
-                                <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Hero Header Image</h3>
+                                <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Media Library</h3>
                                 <div className="space-y-4">
-                                    {settings.branding.headerImage ? (
+                                    {settings.media?.heroBackground ? (
                                         <div className="relative border rounded-lg overflow-hidden group">
                                             <img
-                                                src={`/${settings.branding.headerImage}`}
+                                                src={settings.media.heroBackground}
                                                 alt="Header Hero"
                                                 className="w-full h-48 object-cover"
                                             />
@@ -254,14 +371,14 @@ export default function SiteManagementPage() {
                                     ) : (
                                         <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:bg-gray-50 transition-colors">
                                             <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>
                                             <div className="mt-4 flex text-sm text-gray-600 justify-center">
                                                 <label
                                                     htmlFor="file-upload"
                                                     className="relative cursor-pointer bg-white rounded-md font-medium text-terracotta hover:text-orange-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-terracotta"
                                                 >
-                                                    <span>Upload a file</span>
+                                                    <span>Upload Background</span>
                                                     <input
                                                         id="file-upload"
                                                         name="file-upload"
@@ -282,6 +399,12 @@ export default function SiteManagementPage() {
                                     <p className="text-sm text-gray-500">
                                         This image will be displayed on the homepage hero section.
                                     </p>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Site Logo URL</label>
+                                        <input type="text" className="input" placeholder="e.g. /images/logo.png" value={settings.media?.logo || ''} onChange={(e) => setSettings({ ...settings, media: { ...settings.media, logo: e.target.value } })} />
+                                        <p className="text-xs text-gray-500 mt-1">Leave blank to use text-based logo</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -298,7 +421,6 @@ export default function SiteManagementPage() {
                     </div>
                 </form>
             </div>
-
         </div>
     );
 }

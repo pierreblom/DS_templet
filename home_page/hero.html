@@ -1,10 +1,16 @@
 <!-- Hero Section -->
 <section class="hero"
-    style="background-image: url('/<%= siteSettings.branding.headerImage %>'); background-size: cover; background-position: center;">
+    style="background-image: url('<%= siteSettings.media.heroBackground %>'); background-size: cover; background-position: center;">
     <div class="hero-content">
-        <h1>THE MOST COMFORTABLE BRA IN AFRICA.</h1>
-        <p>From Cape Town to JHB, we got you covered.</p>
-
-
+        <h1>
+            <%= siteSettings.content.hero.title %>
+        </h1>
+        <p>
+            <%= siteSettings.content.hero.subtitle %>
+        </p>
+        <a href="<%= siteSettings.content.hero.ctaLink %>" class="btn btn-primary"
+            style="display:inline-block; padding: 1rem 2rem; background: var(--primary-color); color: white; text-decoration: none; margin-top:20px; font-weight:bold; border-radius:var(--border-radius);">
+            <%= siteSettings.content.hero.ctaText %>
+        </a>
     </div>
 </section>
