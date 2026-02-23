@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>shopbeha.com - The Most Comfortable Bra</title>
+    <title><%= siteSettings.branding.websiteTitle %></title>
     <meta name="description"
         content="ShopBeha offers the most comfortable bras, panties, and maternity wear. Celebrate every body with our inclusive and stylish collection.">
-    <meta property="og:title" content="shopbeha.com - The Most Comfortable Bra">
+    <meta property="og:title" content="<%= siteSettings.branding.websiteTitle %>">
     <meta property="og:description"
         content="ShopBeha offers the most comfortable bras, panties, and maternity wear. Celebrate every body with our inclusive and stylish collection.">
     <meta property="og:image" content="https://shopbeha.com/images/og-image.jpg">
@@ -21,6 +21,11 @@
         rel="stylesheet">
     <link rel="stylesheet" href="css/front_page.css">
     <style>
+        :root {
+            --primary-color: <%= siteSettings.theme.primaryColor %>;
+            --secondary-color: <%= siteSettings.theme.secondaryColor %>;
+        }
+
         /* Extra safety to ensure modals are hidden by default */
         .modal {
             display: none !important;

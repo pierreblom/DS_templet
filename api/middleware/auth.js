@@ -6,8 +6,8 @@ const jwt = require('jsonwebtoken');
 const { AuthenticationError } = require('../../utils/errors');
 const { User } = require('../../database/index');
 
-const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
+const getJwtSecret = () => process.env.JWT_SECRET || 'super_secret_jwt_key_for_development';
+const getJwtRefreshSecret = () => process.env.JWT_REFRESH_SECRET || 'super_secret_jwt_refresh_key_for_development';
 const ACCESS_TOKEN_EXPIRY = '15m';
 const REFRESH_TOKEN_EXPIRY = '7d';
 
@@ -21,11 +21,11 @@ function generateTokens(user) {
         role: user.role
     };
 
-    const accessToken = jwt.sign(payload, JWT_SECRET, {
+    const accessToken = jwt.sign(payload, getJwtSecret(), {
         expiresIn: ACCESS_TOKEN_EXPIRY
     });
 
-    const refreshToken = jwt.sign({ userId: user.id }, JWT_REFRESH_SECRET, {
+    const refreshToken = jwt.sign({ userId: user.id }, getJwtRefreshSecret(), {
         expiresIn: REFRESH_TOKEN_EXPIRY
     });
 
@@ -37,7 +37,7 @@ function generateTokens(user) {
  */
 function verifyAccessToken(token) {
     try {
-        return jwt.verify(token, JWT_SECRET);
+        return jwt.verify(token, getJwtSecret());
     } catch (_error) {
         return null;
     }
@@ -48,7 +48,7 @@ function verifyAccessToken(token) {
  */
 function verifyRefreshToken(token) {
     try {
-        return jwt.verify(token, JWT_REFRESH_SECRET);
+        return jwt.verify(token, getJwtRefreshSecret());
     } catch (_error) {
         return null;
     }

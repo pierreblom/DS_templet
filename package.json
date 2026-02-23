@@ -12,7 +12,8 @@
     "admin:install": "cd admin && npm install",
     "admin:dev": "cd admin && npm run dev",
     "admin:build": "cd admin && npm run build",
-    "seed": "node scripts/seed.js"
+    "seed": "node scripts/seed.js",
+    "db:init-local": "node scripts/setup-local-db.js"
   },
   "keywords": [],
   "author": "",
@@ -37,6 +38,7 @@
     "pg": "^8.17.2",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7",
     "stripe": "^20.0.0",
     "uuid": "^9.0.1"
   },

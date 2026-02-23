@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const Profile = sequelize.define('Profile', {
     id: {
         type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
     name: {

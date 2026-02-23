@@ -1,108 +1,14 @@
 require('dotenv').config();
-const { sequelize, Product, User } = require('../database/index');
-
-const products = [
-    // Bras
-    {
-        name: 'The Snap & Go Bra',
-        price: 359.0,
-        category: 'bras',
-        image_url: '/images/snap-go-bra.jpg',
-        description:
-            'Front-closure bra with magnetic snaps for easy on/off. Perfect for everyday comfort.',
-        stock: 50
-    },
-    {
-        name: 'The Ultimate Coverage Bra',
-        price: 459.0,
-        category: 'bras',
-        image_url: '/images/ultimate-coverage-bra.jpg',
-        description: 'Full coverage wireless bra with wide straps for maximum support and comfort.',
-        stock: 45
-    },
-    {
-        name: 'The Glimmer Bra',
-        price: 450.0,
-        category: 'bras',
-        image_url: '/images/glimmer-bra.jpg',
-        description: 'Elegant lace-detailed bra that combines style with everyday wearability.',
-        stock: 35
-    },
-    {
-        name: 'The Active Zip Bra',
-        price: 399.0,
-        category: 'bras',
-        image_url: '/images/active-zip-bra.jpg',
-        description: 'High-impact sports bra with front zip for easy wear during workouts.',
-        stock: 60
-    },
-    {
-        name: 'The 24/7 Seamless Bra',
-        price: 350.0,
-        category: 'bras',
-        image_url: '/images/seamless-bra.jpg',
-        description: 'Ultra-soft seamless bra perfect for all-day comfort.',
-        stock: 75
-    },
-    {
-        name: 'The Seamless Soft Bra',
-        price: 299.0,
-        category: 'bras',
-        image_url: '/images/soft-bra.jpg',
-        description: 'Light support seamless bra for lounging and light activities.',
-        stock: 55
-    },
-    // Shapewear
-    {
-        name: 'The Posture Perfect Shaper',
-        price: 520.0,
-        category: 'shapewear',
-        image_url: '/images/posture-shaper.jpg',
-        description: 'Back-support shaper that improves posture while smoothing your silhouette.',
-        stock: 30
-    },
-    {
-        name: 'The High Compression Bodysuit',
-        price: 899.0,
-        category: 'shapewear',
-        image_url: '/images/bodysuit.jpg',
-        description: 'Full-body shaper with firm compression for special occasions.',
-        stock: 25
-    },
-    {
-        name: 'High-Waist Smoothing Shorts',
-        price: 380.0,
-        category: 'shapewear',
-        image_url: '/images/smoothing-shorts.jpg',
-        description: 'High-waist shapewear shorts that smooth thighs and tummy.',
-        stock: 40
-    },
-    {
-        name: 'Seamless Shaping Brief',
-        price: 250.0,
-        category: 'shapewear',
-        image_url: '/images/shaping-brief.jpg',
-        description: 'Invisible under clothes with medium tummy control.',
-        stock: 65
-    },
-    // Underwear
-    {
-        name: 'Cotton Comfort Bikini 3-Pack',
-        price: 199.0,
-        category: 'underwear',
-        image_url: '/images/bikini-pack.jpg',
-        description: 'Breathable cotton bikini underwear in neutral colors.',
-        stock: 80
-    },
-    {
-        name: 'Seamless Thong 5-Pack',
-        price: 249.0,
-        category: 'underwear',
-        image_url: '/images/thong-pack.jpg',
-        description: 'No-show seamless thongs perfect under any outfit.',
-        stock: 70
-    }
-];
+const {
+    sequelize,
+    Profile,
+    Client,
+    Invoice,
+    InvoiceItem,
+    Deal,
+    Task,
+    Subscription
+} = require('../database/index');
 
 async function seed() {
     try {
@@ -111,39 +17,113 @@ async function seed() {
         console.log('Connected successfully.');
 
         console.log('Syncing database schema...');
-        await sequelize.sync({ force: true }); // Reset database
+        await sequelize.sync({ force: true }); // Reset database with associations
 
         console.log('Creating admin user...');
-        const adminUser = await User.create({
-            email: 'admin@shopbeha.com',
-            password: 'Admin123!',
+        const adminUser = await Profile.create({
+            email: 'admin@crm-system.com',
+            password_hash: 'Admin123!', // Profile hook handles hashing
             name: 'Admin User',
             role: 'admin'
         });
         console.log(`Admin user created: ${adminUser.email}`);
 
-        console.log('Creating sample customer...');
-        const customerUser = await User.create({
-            email: 'customer@example.com',
-            password: 'Customer123!',
-            name: 'Sample Customer',
-            role: 'customer'
+        console.log('Creating sample clients...');
+        const client1 = await Client.create({
+            user_id: adminUser.id,
+            name: 'Tech Solutions Inc.',
+            email: 'contact@techsolutions.com',
+            phone: '+1-555-1234',
+            vat_number: 'VAT123456789',
+            address: '123 Innovation Way',
+            city: 'San Francisco',
+            country: 'USA'
         });
-        console.log(`Customer user created: ${customerUser.email}`);
 
-        console.log('Creating products...');
-        for (const product of products) {
-            await Product.create(product);
-        }
-        console.log(`${products.length} products created.`);
+        const client2 = await Client.create({
+            user_id: adminUser.id,
+            name: 'Global Logistics Ltd.',
+            email: 'billing@globallogistics.co',
+            phone: '+44-20-7946-0958',
+            address: '45 Export St',
+            city: 'London',
+            country: 'UK'
+        });
+        console.log('Clients created.');
 
-        console.log('\n=== Database seeded successfully! ===');
+        console.log('Creating sample invoices...');
+        const invoice1 = await Invoice.create({
+            user_id: adminUser.id,
+            client_id: client1.id,
+            invoice_number: 'INV-2026-001',
+            amount: 1500.00,
+            status: 'sent',
+            due_date: '2026-03-01',
+            currency: 'USD'
+        });
+
+        await InvoiceItem.create({
+            invoice_id: invoice1.id,
+            description: 'Cloud Infrastructure Setup',
+            quantity: 1,
+            unit_price: 1000.00,
+            total_price: 1000.00
+        });
+
+        await InvoiceItem.create({
+            invoice_id: invoice1.id,
+            description: 'Security Audit (Level 1)',
+            quantity: 1,
+            unit_price: 500.00,
+            total_price: 500.00
+        });
+        console.log('Invoice 1 created.');
+
+        console.log('Creating sample deals and tasks...');
+        const deal1 = await Deal.create({
+            user_id: adminUser.id,
+            client_id: client2.id,
+            name: 'Q3 Software Expansion',
+            value: 25000.00,
+            status: 'negotiation',
+            expected_close_date: '2026-04-15',
+            probability: 60
+        });
+
+        await Task.create({
+            user_id: adminUser.id,
+            client_id: client2.id,
+            deal_id: deal1.id,
+            title: 'Send Revised Proposal',
+            description: 'Apply the 10% discount discussed in the last meeting.',
+            status: 'todo',
+            due_date: new Date(Date.now() + 86400000 * 2) // In 2 days
+        });
+
+        await Task.create({
+            user_id: adminUser.id,
+            client_id: client1.id,
+            title: 'Quarterly Review Meeting',
+            status: 'todo',
+            due_date: new Date(Date.now() + 86400000 * 7) // In 7 days
+        });
+        console.log('Deals and tasks created.');
+
+        console.log('Creating sample subscription...');
+        await Subscription.create({
+            user_id: adminUser.id,
+            client_id: client1.id,
+            plan_name: 'Premium Support Plan',
+            amount: 199.99,
+            status: 'active',
+            interval: 'month',
+            next_payment_at: new Date(Date.now() + 86400000 * 30)
+        });
+
+        console.log('\n=== Database seeded successfully with CRM data! ===');
         console.log('\nAdmin credentials:');
-        console.log('Email: admin@shopbeha.com');
+        console.log('Email: admin@crm-system.com');
         console.log('Password: Admin123!');
-        console.log('\nCustomer credentials:');
-        console.log('Email: customer@example.com');
-        console.log('Password: Customer123!');
 
         process.exit(0);
     } catch (error) {

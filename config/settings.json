@@ -1,0 +1,16 @@
+{
+    "theme": {
+        "primaryColor": "#C88E75",
+        "secondaryColor": "#A0522D"
+    },
+    "branding": {
+        "websiteTitle": "shopbeha.com - The Most Comfortable Bra",
+        "headerImage": "images/hero-bg.jpg"
+    },
+    "contact": {
+        "email": "hello@shopbeha.com"
+    },
+    "footer": {
+        "copyright": "© 2024 shopbeha.com. All rights reserved."
+    }
+}

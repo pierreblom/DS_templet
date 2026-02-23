@@ -9,9 +9,25 @@ const { sequelize } = require('./database/index');
 const { logger } = require('./utils/logger');
 const { traceIdMiddleware } = require('./api/middleware/traceId');
 const { errorHandler, notFoundHandler } = require('./api/middleware/errorHandler');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Load initial settings
+const SETTINGS_FILE_PATH = path.join(__dirname, 'config/settings.json');
+try {
+    const rawSettings = fs.readFileSync(SETTINGS_FILE_PATH, 'utf8');
+    app.locals.siteSettings = JSON.parse(rawSettings);
+} catch (err) {
+    logger.error('Failed to load initial site settings', { extra: err.message });
+    app.locals.siteSettings = {
+        theme: { primaryColor: "#C88E75", secondaryColor: "#A0522D" },
+        branding: { websiteTitle: "shopbeha.com - The Most Comfortable Bra", headerImage: "images/hero-bg.jpg" },
+        contact: { email: "hello@shopbeha.com" },
+        footer: { copyright: "© 2024 shopbeha.com. All rights reserved." }
+    };
+}
 
 // ===================
 // Security Middleware
@@ -244,6 +260,8 @@ const userRoutes = require('./api/routes/users');
 const analyticsRoutes = require('./api/routes/analytics');
 const webhookRoutes = require('./api/routes/webhooks');
 const contactRoutes = require('./api/routes/contact');
+const settingsRoutes = require('./api/routes/settings');
+const uploadRoutes = require('./api/routes/upload');
 
 // Apply stricter rate limit to auth routes
 app.use('/api/v1/auth/login', authLimiter);
@@ -263,6 +281,8 @@ app.use('/api/v1/analytics', analyticsRoutes);
 app.use('/api/v1/contact', contactRoutes);
 app.use('/api/v1/yoco', yocoRoutes);
 app.use('/api/webhooks', webhookRoutes);
+app.use('/api/v1/settings', settingsRoutes);
+app.use('/api/v1/upload', uploadRoutes);
 
 const subscriptionRoutes = require('./api/routes/subscriptions');
 app.use('/api/v1/subscriptions', subscriptionRoutes);
@@ -356,7 +376,7 @@ async function startServer() {
             }
         }
 
-        app.listen(PORT, () => {
+        const server = app.listen(PORT, () => {
             logger.info(`Server running on port ${PORT}`, {
                 extra: {
                     port: PORT,
@@ -364,6 +384,15 @@ async function startServer() {
                 }
             });
         });
+
+        server.on('close', () => {
+            logger.info('Server connection closed');
+        });
+
+        // Debug: keep event loop alive manually
+        setInterval(() => {
+            logger.debug('Event loop interval tick');
+        }, 1000 * 60);
     } catch (error) {
         logger.error('Unable to start server', {
             extra: { error: error.message, stack: error.stack }

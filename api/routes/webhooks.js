@@ -4,7 +4,8 @@
  */
 const express = require('express');
 const router = express.Router();
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripeKey = process.env.STRIPE_SECRET_KEY || 'sk_test_dummy';
+const stripe = require('stripe')(stripeKey);
 const orderService = require('../services/order.service');
 const { logger } = require('../../utils/logger');
 const { sendOrderConfirmation } = require('../../services/emailService');

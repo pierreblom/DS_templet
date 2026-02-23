@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/layout/Header';
 import Modal from '../components/common/Modal';
-import { productsApi } from '../services/api';
+import { productsApi, uploadApi } from '../services/api';
 import type { Product } from '../types';
 
 export default function ProductsPage() {
@@ -9,6 +9,8 @@ export default function ProductsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [uploadingImage, setUploadingImage] = useState<'main' | 'hover' | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -115,6 +117,34 @@ export default function ProductsPage() {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'main' | 'hover') => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+
+    setUploadingImage(type);
+    try {
+      const response = await uploadApi.uploadImage(file);
+      if (response.data.success) {
+        if (type === 'main') {
+          setFormData({ ...formData, image_url: response.data.url });
+        } else {
+          setFormData({ ...formData, hover_image_url: response.data.url });
+        }
+      }
+    } catch (error) {
+      console.error('Failed to upload image:', error);
+      alert('Failed to upload image.');
+    } finally {
+      setUploadingImage(null);
+      if (e.target) e.target.value = '';
+    }
+  };
+
+  const filteredProducts = products.filter(p =>
+    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (p.description && p.description.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -136,6 +166,20 @@ export default function ProductsPage() {
       />
 
       <div className="card overflow-hidden">
+        <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+          <div className="relative w-64">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="input pl-10"
+            />
+            <svg className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
@@ -148,7 +192,7 @@ export default function ProductsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <tr key={product.id} className="hover:bg-gray-50">
                   <td className="table-cell">
                     <div className="flex items-center gap-3">
@@ -208,7 +252,7 @@ export default function ProductsPage() {
                   </td>
                 </tr>
               ))}
-              {products.length === 0 && (
+              {filteredProducts.length === 0 && (
                 <tr>
                   <td colSpan={5} className="table-cell text-center text-gray-400">
                     No products found
@@ -300,28 +344,48 @@ export default function ProductsPage() {
               />
             </div>
 
-            <div>
+            <div className="col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Image URL
+                Main Image {uploadingImage === 'main' && <span className="text-terracotta text-xs">(Uploading...)</span>}
               </label>
-              <input
-                type="url"
-                value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                className="input"
-              />
+              <div className="space-y-2">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, 'main')}
+                  disabled={uploadingImage !== null}
+                  className="input p-1"
+                />
+                <input
+                  type="url"
+                  value={formData.image_url}
+                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                  className="input"
+                  placeholder="Or provide direct URL"
+                />
+              </div>
             </div>
 
-            <div className="col-span-2">
+            <div className="col-span-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Hover Image URL
+                Hover Image {uploadingImage === 'hover' && <span className="text-terracotta text-xs">(Uploading...)</span>}
               </label>
-              <input
-                type="url"
-                value={formData.hover_image_url}
-                onChange={(e) => setFormData({ ...formData, hover_image_url: e.target.value })}
-                className="input"
-              />
+              <div className="space-y-2">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, 'hover')}
+                  disabled={uploadingImage !== null}
+                  className="input p-1"
+                />
+                <input
+                  type="url"
+                  value={formData.hover_image_url}
+                  onChange={(e) => setFormData({ ...formData, hover_image_url: e.target.value })}
+                  className="input"
+                  placeholder="Or provide direct URL"
+                />
+              </div>
             </div>
           </div>
 

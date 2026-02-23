@@ -206,3 +206,22 @@ export const subscriptionApi = {
   list: (params?: Record<string, unknown>) =>
     api.get('/subscriptions', { params }),
 };
+
+// Settings API
+export const settingsApi = {
+  get: () => api.get('/settings'),
+  update: (data: any) => api.put('/settings', data),
+};
+
+// Upload API
+export const uploadApi = {
+  uploadImage: (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    return api.post('/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+};

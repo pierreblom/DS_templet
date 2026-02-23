@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database');
 
-const Subscription = sequelize.define('Subscription', {
+const Payment = sequelize.define('Payment', {
     id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
@@ -11,34 +11,34 @@ const Subscription = sequelize.define('Subscription', {
         type: DataTypes.UUID,
         allowNull: false
     },
-    client_id: {
+    invoice_id: {
         type: DataTypes.UUID,
-        allowNull: false
-    },
-    plan_name: {
-        type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     },
     amount: {
         type: DataTypes.DECIMAL(15, 2),
         allowNull: false
     },
+    payment_method: {
+        type: DataTypes.STRING
+    },
+    payment_id: {
+        type: DataTypes.STRING,
+        comment: 'External transaction ID'
+    },
     status: {
         type: DataTypes.STRING,
-        defaultValue: 'active'
+        defaultValue: 'completed'
     },
-    interval: {
-        type: DataTypes.STRING,
-        defaultValue: 'month'
-    },
-    next_payment_at: {
-        type: DataTypes.DATE
+    payment_date: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
     }
 }, {
-    tableName: 'subscriptions',
+    tableName: 'payments',
     timestamps: true,
     createdAt: 'created_at',
-    updatedAt: 'updated_at'
+    updatedAt: false
 });
 
-module.exports = Subscription;
+module.exports = Payment;
