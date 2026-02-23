@@ -11,7 +11,7 @@ const path = require('path');
 // Use SQLite exclusively as the main database
 sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: path.join(__dirname, '../database.sqlite'),
+    storage: path.join(__dirname, 'database.sqlite'),
     logging: process.env.NODE_ENV === 'development' ? console.log : false
 });
 
