@@ -20,12 +20,8 @@ const createProductSchema = {
         }),
         rating: Joi.number().min(0).max(5).default(5),
         is_trail_favorite: Joi.boolean().default(false),
-        image_url: Joi.string().uri().max(500).allow('').messages({
-            'string.uri': 'Image URL must be a valid URL'
-        }),
-        hover_image_url: Joi.string().uri().max(500).allow('').messages({
-            'string.uri': 'Hover image URL must be a valid URL'
-        })
+        image_url: Joi.string().max(500).allow(''),
+        hover_image_url: Joi.string().max(500).allow('')
     })
 };
 
@@ -40,8 +36,8 @@ const updateProductSchema = {
         category: Joi.string().min(1).max(100),
         rating: Joi.number().min(0).max(5),
         is_trail_favorite: Joi.boolean(),
-        image_url: Joi.string().uri().max(500).allow(''),
-        hover_image_url: Joi.string().uri().max(500).allow('')
+        image_url: Joi.string().max(500).allow(''),
+        hover_image_url: Joi.string().max(500).allow('')
     })
         .min(1)
         .message('At least one field must be provided for update')

@@ -1,11 +1,19 @@
 <!-- Hero Section -->
-<% // Map text position to flexbox properties const pos=siteSettings.content.hero.textPosition || 'left' ; let
-    justifyContent='flex-start' ; let alignItems='center' ; let heroMargin='' ; if (pos.includes('left'))
-    justifyContent='flex-start' ; else if (pos.includes('center') && !pos.includes('top') && !pos.includes('bottom') &&
-    pos==='center' ) justifyContent='center' ; else if (pos==='top-center' || pos==='bottom-center' )
-    justifyContent='center' ; else if (pos.includes('right')) justifyContent='flex-end' ; if (pos.includes('top'))
-    alignItems='flex-start' ; else if (pos.includes('bottom')) alignItems='flex-end' ; else alignItems='center' ; if
-    (pos==='center' || pos==='top-center' || pos==='bottom-center' ) heroMargin='margin: 0 auto;' ; %>
+<%
+    // Map text position to flexbox properties
+    const pos = siteSettings.content.hero.textPosition || 'left';
+    let justifyContent = 'flex-start';
+    let alignItems = 'center';
+    let heroMargin = '';
+    if (pos.includes('left')) justifyContent = 'flex-start';
+    else if (pos.includes('center') && !pos.includes('top') && !pos.includes('bottom') && pos === 'center') justifyContent = 'center';
+    else if (pos === 'top-center' || pos === 'bottom-center') justifyContent = 'center';
+    else if (pos.includes('right')) justifyContent = 'flex-end';
+    if (pos.includes('top')) alignItems = 'flex-start';
+    else if (pos.includes('bottom')) alignItems = 'flex-end';
+    else alignItems = 'center';
+    if (pos === 'center' || pos === 'top-center' || pos === 'bottom-center') heroMargin = 'margin: 0 auto;';
+%>
     <section class="hero"
         style="background-image: url('<%= siteSettings.media.heroBackground %>'); background-size: <%= siteSettings.media.heroSize || 'cover' %>; background-position: <%= siteSettings.media.heroPosition || 'center' %>; min-height: <%= siteSettings.media.heroHeight || '80vh' %>; background-repeat: no-repeat; justify-content: <%= justifyContent %>; align-items: <%= alignItems %>;">
         <div class="hero-content"

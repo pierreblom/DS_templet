@@ -357,11 +357,11 @@ export default function ProductsPage() {
                   className="input p-1"
                 />
                 <input
-                  type="url"
+                  type="text"
                   value={formData.image_url}
                   onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                   className="input"
-                  placeholder="Or provide direct URL"
+                  placeholder="Or provide image path / URL"
                 />
               </div>
             </div>
@@ -379,11 +379,11 @@ export default function ProductsPage() {
                   className="input p-1"
                 />
                 <input
-                  type="url"
+                  type="text"
                   value={formData.hover_image_url}
                   onChange={(e) => setFormData({ ...formData, hover_image_url: e.target.value })}
                   className="input"
-                  placeholder="Or provide direct URL"
+                  placeholder="Or provide image path / URL"
                 />
               </div>
             </div>
