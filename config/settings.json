@@ -30,7 +30,12 @@
       "title": "Celebrate Every Body",
       "subtitle": "Discover our inclusive and stylish collection.",
       "ctaText": "SHOP NOW",
-      "ctaLink": "/select.html"
+      "ctaLink": "/select.html",
+      "textPosition": "left",
+      "textAlign": "left",
+      "titleColor": "#000000",
+      "subtitleColor": "#666666",
+      "titleSize": "clamp(2rem, 4vw, 3rem)"
     },
     "newArrivals": {
       "title": "New Arrivals!",
@@ -138,7 +143,10 @@
   "media": {
     "logo": "",
     "favicon": "/favicon.ico",
-    "heroBackground": "/images/uploads/1771868627774-383105119.png"
+    "heroBackground": "/images/uploads/1771868627774-383105119.png",
+    "heroPosition": "center",
+    "heroSize": "cover",
+    "heroHeight": "80vh"
   },
   "contact": {
     "email": "hello@shopbeha.com"

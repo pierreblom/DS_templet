@@ -34,14 +34,14 @@ try {
             newArrivalsEnabled: true, valuePropsEnabled: true, newsletterEnabled: true
         },
         content: {
-            hero: { title: "Celebrate Every Body", subtitle: "Discover our inclusive and stylish collection.", ctaText: "SHOP NOW", ctaLink: "/select.html" },
+            hero: { title: "Celebrate Every Body", subtitle: "Discover our inclusive and stylish collection.", ctaText: "SHOP NOW", ctaLink: "/select.html", textPosition: "left", textAlign: "left", titleColor: "#000000", subtitleColor: "#666666", titleSize: "clamp(2.5rem, 5vw, 4rem)" },
             newArrivals: { title: "New Arrivals!", subtitle: "Discover our latest designs that celebrate every body.", promoText: "Claim 15% off if you buy 2 or more items!" }
         },
         navigation: {
             headerLinks: [{ label: "Home", url: "/" }, { label: "Shop", url: "/select.html" }],
             footerLinks: [{ label: "Terms and Conditions", url: "/legal/terms-and-conditions.html" }]
         },
-        media: { logo: "/images/logo.png", favicon: "/favicon.ico", heroBackground: "/images/hero-bg.jpg" },
+        media: { logo: "/images/logo.png", favicon: "/favicon.ico", heroBackground: "/images/hero-bg.jpg", heroPosition: "center", heroSize: "cover", heroHeight: "80vh" },
         branding: { websiteTitle: "shopbeha.com - The Most Comfortable Bra" },
         contact: { email: "hello@shopbeha.com" },
         footer: { copyright: "© 2026 ShopBeha. All rights reserved." }

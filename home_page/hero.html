@@ -1,16 +1,25 @@
 <!-- Hero Section -->
-<section class="hero"
-    style="background-image: url('<%= siteSettings.media.heroBackground %>'); background-size: cover; background-position: center;">
-    <div class="hero-content">
-        <h1>
-            <%= siteSettings.content.hero.title %>
-        </h1>
-        <p>
-            <%= siteSettings.content.hero.subtitle %>
-        </p>
-        <a href="<%= siteSettings.content.hero.ctaLink %>" class="btn btn-primary"
-            style="display:inline-block; padding: 1rem 2rem; background: var(--primary-color); color: white; text-decoration: none; margin-top:20px; font-weight:bold; border-radius:var(--border-radius);">
-            <%= siteSettings.content.hero.ctaText %>
-        </a>
-    </div>
-</section>
+<% // Map text position to flexbox properties const pos=siteSettings.content.hero.textPosition || 'left' ; let
+    justifyContent='flex-start' ; let alignItems='center' ; let heroMargin='' ; if (pos.includes('left'))
+    justifyContent='flex-start' ; else if (pos.includes('center') && !pos.includes('top') && !pos.includes('bottom') &&
+    pos==='center' ) justifyContent='center' ; else if (pos==='top-center' || pos==='bottom-center' )
+    justifyContent='center' ; else if (pos.includes('right')) justifyContent='flex-end' ; if (pos.includes('top'))
+    alignItems='flex-start' ; else if (pos.includes('bottom')) alignItems='flex-end' ; else alignItems='center' ; if
+    (pos==='center' || pos==='top-center' || pos==='bottom-center' ) heroMargin='margin: 0 auto;' ; %>
+    <section class="hero"
+        style="background-image: url('<%= siteSettings.media.heroBackground %>'); background-size: <%= siteSettings.media.heroSize || 'cover' %>; background-position: <%= siteSettings.media.heroPosition || 'center' %>; min-height: <%= siteSettings.media.heroHeight || '80vh' %>; background-repeat: no-repeat; justify-content: <%= justifyContent %>; align-items: <%= alignItems %>;">
+        <div class="hero-content"
+            style="text-align: <%= siteSettings.content.hero.textAlign || 'left' %>; <%= heroMargin %>">
+            <h1
+                style="color: <%= siteSettings.content.hero.titleColor || '#000000' %>; font-size: <%= siteSettings.content.hero.titleSize || 'clamp(2.5rem, 5vw, 4rem)' %>;">
+                <%= siteSettings.content.hero.title %>
+            </h1>
+            <p style="color: <%= siteSettings.content.hero.subtitleColor || '#666666' %>;">
+                <%= siteSettings.content.hero.subtitle %>
+            </p>
+            <a href="<%= siteSettings.content.hero.ctaLink %>" class="btn btn-primary"
+                style="display:inline-block; padding: 1rem 2rem; background: var(--primary-color); color: white; text-decoration: none; margin-top:20px; font-weight:bold; border-radius:var(--border-radius);">
+                <%= siteSettings.content.hero.ctaText %>
+            </a>
+        </div>
+    </section>

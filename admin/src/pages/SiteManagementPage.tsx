@@ -26,7 +26,7 @@ export default function SiteManagementPage() {
             newArrivalsEnabled: true, valuePropsEnabled: true, newsletterEnabled: true
         },
         content: {
-            hero: { title: '', subtitle: '', ctaText: '', ctaLink: '' },
+            hero: { title: '', subtitle: '', ctaText: '', ctaLink: '', textPosition: 'left', textAlign: 'left', titleColor: '#000000', subtitleColor: '#666666', titleSize: 'clamp(2.5rem, 5vw, 4rem)' },
             newArrivals: { title: '', subtitle: '', promoText: '', backgroundImage: '../../images/arrivals.png', cardBackgroundColor: '#FFFFFF', cardBorderColor: '#E0F2F1', cardTextColor: '#000000' },
             newsletter: { title: '', subtitle: '' },
             valueProps: [],
@@ -37,7 +37,7 @@ export default function SiteManagementPage() {
             footerLinks: []
         },
         branding: { websiteTitle: '', headerImage: '' },
-        media: { logo: '', favicon: '', heroBackground: '' },
+        media: { logo: '', favicon: '', heroBackground: '', heroPosition: 'center', heroSize: 'cover', heroHeight: '80vh' },
         contact: { email: '' },
         footer: { copyright: '' },
     });
@@ -407,6 +407,58 @@ export default function SiteManagementPage() {
                                             <input type="text" className="input" value={settings.content?.hero?.ctaLink || ''} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, hero: { ...settings.content.hero, ctaLink: e.target.value } } })} />
                                         </div>
                                     </div>
+
+                                    <h4 className="text-md font-medium text-gray-800 mt-4 mb-2 border-t pt-4">Text Styling</h4>
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Text Position</label>
+                                            <select className="input" value={settings.content?.hero?.textPosition || 'left'} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, hero: { ...settings.content.hero, textPosition: e.target.value } } })}>
+                                                <option value="top-left">Top Left</option>
+                                                <option value="top-center">Top Center</option>
+                                                <option value="top-right">Top Right</option>
+                                                <option value="left">Center Left</option>
+                                                <option value="center">Center</option>
+                                                <option value="right">Center Right</option>
+                                                <option value="bottom-left">Bottom Left</option>
+                                                <option value="bottom-center">Bottom Center</option>
+                                                <option value="bottom-right">Bottom Right</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Text Alignment</label>
+                                            <select className="input" value={settings.content?.hero?.textAlign || 'left'} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, hero: { ...settings.content.hero, textAlign: e.target.value } } })}>
+                                                <option value="left">Left</option>
+                                                <option value="center">Center</option>
+                                                <option value="right">Right</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Title Size</label>
+                                            <select className="input" value={settings.content?.hero?.titleSize || 'clamp(2.5rem, 5vw, 4rem)'} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, hero: { ...settings.content.hero, titleSize: e.target.value } } })}>
+                                                <option value="clamp(1.5rem, 3vw, 2.5rem)">Small</option>
+                                                <option value="clamp(2rem, 4vw, 3rem)">Medium</option>
+                                                <option value="clamp(2.5rem, 5vw, 4rem)">Large (Default)</option>
+                                                <option value="clamp(3rem, 6vw, 5rem)">Extra Large</option>
+                                                <option value="clamp(3.5rem, 7vw, 6rem)">Huge</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4 mt-3">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Title Color</label>
+                                            <div className="flex space-x-2 items-center">
+                                                <input type="color" value={settings.content?.hero?.titleColor || '#000000'} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, hero: { ...settings.content.hero, titleColor: e.target.value } } })} className="h-10 w-10 border-0 p-0 rounded cursor-pointer" />
+                                                <input type="text" value={settings.content?.hero?.titleColor || '#000000'} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, hero: { ...settings.content.hero, titleColor: e.target.value } } })} className="input font-mono text-sm uppercase" />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle Color</label>
+                                            <div className="flex space-x-2 items-center">
+                                                <input type="color" value={settings.content?.hero?.subtitleColor || '#666666'} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, hero: { ...settings.content.hero, subtitleColor: e.target.value } } })} className="h-10 w-10 border-0 p-0 rounded cursor-pointer" />
+                                                <input type="text" value={settings.content?.hero?.subtitleColor || '#666666'} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, hero: { ...settings.content.hero, subtitleColor: e.target.value } } })} className="input font-mono text-sm uppercase" />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div>
@@ -666,6 +718,51 @@ export default function SiteManagementPage() {
                                     <p className="text-sm text-gray-500">
                                         This image will be displayed on the homepage hero section.
                                     </p>
+
+                                    <div className="mt-4">
+                                        <h4 className="text-md font-medium text-gray-800 mb-3">Hero Image Settings</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Image Position</label>
+                                                <select className="input" value={settings.media?.heroPosition || 'center'} onChange={(e) => setSettings({ ...settings, media: { ...settings.media, heroPosition: e.target.value } })}>
+                                                    <option value="left top">Top Left</option>
+                                                    <option value="center top">Top Center</option>
+                                                    <option value="right top">Top Right</option>
+                                                    <option value="left center">Center Left</option>
+                                                    <option value="center">Center</option>
+                                                    <option value="right center">Center Right</option>
+                                                    <option value="left bottom">Bottom Left</option>
+                                                    <option value="center bottom">Bottom Center</option>
+                                                    <option value="right bottom">Bottom Right</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Image Size</label>
+                                                <select className="input" value={settings.media?.heroSize || 'cover'} onChange={(e) => setSettings({ ...settings, media: { ...settings.media, heroSize: e.target.value } })}>
+                                                    <option value="cover">Cover (Fill Area)</option>
+                                                    <option value="contain">Contain (Fit Inside)</option>
+                                                    <option value="auto">Auto (Original Size)</option>
+                                                    <option value="100% auto">Full Width</option>
+                                                    <option value="auto 100%">Full Height</option>
+                                                    <option value="50%">50% (Smaller)</option>
+                                                    <option value="75%">75%</option>
+                                                    <option value="125%">125% (Larger)</option>
+                                                    <option value="150%">150% (Much Larger)</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">Hero Height</label>
+                                                <select className="input" value={settings.media?.heroHeight || '80vh'} onChange={(e) => setSettings({ ...settings, media: { ...settings.media, heroHeight: e.target.value } })}>
+                                                    <option value="50vh">Small (50vh)</option>
+                                                    <option value="60vh">Medium (60vh)</option>
+                                                    <option value="70vh">Tall (70vh)</option>
+                                                    <option value="80vh">Extra Tall (80vh)</option>
+                                                    <option value="90vh">Near Fullscreen (90vh)</option>
+                                                    <option value="100vh">Fullscreen (100vh)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Site Logo URL</label>
