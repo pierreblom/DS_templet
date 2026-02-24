@@ -35,7 +35,11 @@
     "newArrivals": {
       "title": "New Arrivals!",
       "subtitle": "Discover our latest designs that celebrate every body.",
-      "promoText": "Claim 15% off if you buy 2 or more items!"
+      "promoText": "Claim 15% off if you buy 2 or more items!",
+      "backgroundImage": "../../images/arrivals.png",
+      "cardBackgroundColor": "#FFFFFF",
+      "cardBorderColor": "#E0F2F1",
+      "cardTextColor": "#000000"
     },
     "newsletter": {
       "title": "JOIN OUR COMMUNITY",

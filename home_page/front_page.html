@@ -74,6 +74,21 @@
         .modal.show {
             display: flex !important;
         }
+
+        /* Dynamic styles for New Arrivals Section */
+        .new-arrivals-bg {
+            background-image: url('<%= siteSettings.content.newArrivals?.backgroundImage || "../../images/arrivals.png" %>') !important;
+        }
+
+        .new-arrivals-card {
+            background-color: <%=siteSettings.content.newArrivals?.cardBackgroundColor || "#FFFFFF" %> !important;
+            border-color: <%=siteSettings.content.newArrivals?.cardBorderColor || "#E0F2F1" %> !important;
+        }
+
+        .new-arrivals-card h2,
+        .new-arrivals-card p {
+            color: <%=siteSettings.content.newArrivals?.cardTextColor || "#000000" %> !important;
+        }
     </style>
 </head>
 
