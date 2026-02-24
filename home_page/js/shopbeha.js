@@ -32,9 +32,7 @@ function escapeJS(str) {
 
 async function fetchProducts() {
     try {
-        const API_BASE = (window.location.protocol === 'file:' || ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '3030'))
-            ? 'http://localhost:3030'
-            : '';
+        const API_BASE = '';
         const response = await fetch(`${API_BASE}/api/v1/products?inStock=true&limit=100`);
         if (response.ok) {
             const data = await response.json();

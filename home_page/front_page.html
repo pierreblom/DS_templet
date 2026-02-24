@@ -26,6 +26,12 @@
         :root {
             --primary-color: <%=siteSettings.theme.primaryColor %>;
             --secondary-color: <%=siteSettings.theme.secondaryColor %>;
+            --bg-color: <%=siteSettings.theme.backgroundColor || '#F9F5F0' %>;
+            --text-color: <%=siteSettings.theme.textColor || '#000000' %>;
+            --header-bg: <%=siteSettings.theme.headerBackgroundColor || '#FFFFFF' %>;
+            --bg-color: <%=siteSettings.theme.backgroundColor || '#F9F5F0' %>;
+            --text-color: <%=siteSettings.theme.textColor || '#000000' %>;
+            --header-bg: <%=siteSettings.theme.headerBackgroundColor || '#FFFFFF' %>;
             --font-family-base: <%=siteSettings.theme.typography.fontFamily %>;
             --font-family-heading: <%=siteSettings.theme.typography.headingFontFamily %>;
             --border-radius: <%=siteSettings.theme.shapes.borderRadius %>;
@@ -152,12 +158,8 @@
                                                                 if (!container) return;
                                                                 container.innerHTML = '';
 
-                                                                let trailFavorites = products.filter(product => product.isTrailFavorite);
-
-                                                                // Fallback: If no favorites are set, show the first 8 products
-                                                                if (trailFavorites.length === 0 && products.length > 0) {
-                                                                    trailFavorites = products.slice(0, 8);
-                                                                }
+                                                                // Show all 8 products
+                                                                let trailFavorites = products.slice(0, 8);
 
                                                                 trailFavorites.forEach(product => {
                                                                     const productCard = document.createElement('div');

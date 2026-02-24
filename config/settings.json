@@ -1,79 +1,145 @@
 {
-    "theme": {
-        "primaryColor": "#C88E75",
-        "secondaryColor": "#A0522D",
-        "typography": {
-            "fontFamily": "Outfit, sans-serif",
-            "headingFontFamily": "Playfair Display, serif"
-        },
-        "shapes": {
-            "borderRadius": "8px"
-        },
-        "spacing": {
-            "globalPadding": "2rem",
-            "globalMargin": "1rem"
-        }
+  "theme": {
+    "primaryColor": "#C88E75",
+    "secondaryColor": "#A0522D",
+    "backgroundColor": "#F9F5F0",
+    "textColor": "#000000",
+    "headerBackgroundColor": "#FFFFFF",
+    "typography": {
+      "fontFamily": "Outfit, sans-serif",
+      "headingFontFamily": "Playfair Display, serif"
     },
-    "layout": {
-        "heroEnabled": true,
-        "customerLoveEnabled": true,
-        "trailFavoritesEnabled": true,
-        "newArrivalsEnabled": true,
-        "valuePropsEnabled": true,
-        "newsletterEnabled": true
+    "shapes": {
+      "borderRadius": "8px"
     },
-    "content": {
-        "hero": {
-            "title": "Celebrate Every Body",
-            "subtitle": "Discover our inclusive and stylish collection.",
-            "ctaText": "SHOP NOW",
-            "ctaLink": "/select.html"
-        },
-        "newArrivals": {
-            "title": "New Arrivals!",
-            "subtitle": "Discover our latest designs that celebrate every body.",
-            "promoText": "Claim 15% off if you buy 2 or more items!"
-        }
-    },
-    "navigation": {
-        "headerLinks": [
-            {
-                "label": "Home",
-                "url": "/"
-            },
-            {
-                "label": "Shop",
-                "url": "/select.html"
-            }
-        ],
-        "footerLinks": [
-            {
-                "label": "Terms and Conditions",
-                "url": "/legal/terms-and-conditions.html"
-            },
-            {
-                "label": "Privacy Policy",
-                "url": "/legal/privacy-policy.html"
-            },
-            {
-                "label": "Refund Policy",
-                "url": "/legal/refund-policy.html"
-            },
-            {
-                "label": "Shipping Policy",
-                "url": "/legal/shipping-policy.html"
-            }
-        ]
-    },
-    "media": {
-        "logo": "/images/logo.png",
-        "favicon": "/favicon.ico",
-        "heroBackground": "/images/hero-bg.jpg"
-    },
-    "branding": {
-        "websiteTitle": "shopbeha.com - The Most Comfortable Bra"
-    },
-    "contact": {
-        "email": "hello@shopbeha.com"
+    "spacing": {
+      "globalPadding": "2rem",
+      "globalMargin": "1rem"
     }
+  },
+  "layout": {
+    "heroEnabled": true,
+    "customerLoveEnabled": true,
+    "trailFavoritesEnabled": true,
+    "newArrivalsEnabled": true,
+    "valuePropsEnabled": true,
+    "newsletterEnabled": true
+  },
+  "content": {
+    "hero": {
+      "title": "Celebrate Every Body",
+      "subtitle": "Discover our inclusive and stylish collection.",
+      "ctaText": "SHOP NOW",
+      "ctaLink": "/select.html"
+    },
+    "newArrivals": {
+      "title": "New Arrivals!",
+      "subtitle": "Discover our latest designs that celebrate every body.",
+      "promoText": "Claim 15% off if you buy 2 or more items!"
+    },
+    "newsletter": {
+      "title": "JOIN OUR COMMUNITY",
+      "subtitle": "Subscribe for exclusive insights and curated collections tailored for you."
+    },
+    "valueProps": [
+      {
+        "title": "Free Shipping",
+        "description": "Free shipping on all orders over R900. Delivered to your door.",
+        "icon": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"1\" y=\"3\" width=\"15\" height=\"13\"></rect><polygon points=\"16 8 20 8 23 11 23 16 16 16 16 8\"></polygon><circle cx=\"5.5\" cy=\"18.5\" r=\"2.5\"></circle><circle cx=\"18.5\" cy=\"18.5\" r=\"2.5\"></circle><line x1=\"1\" y1=\"11\" x2=\"16\" y2=\"11\"></line></svg>"
+      },
+      {
+        "title": "Guaranteed Fit",
+        "description": "Our fit technology ensures you find the perfect size, every time.",
+        "icon": "<svg width=\"50\" height=\"50\" viewBox=\"0 0 24 24\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z\"></path><path d=\"M12 7v10\"></path><path d=\"M8 12h8\"></path><path d=\"M10 9l-2 3 2 3\"></path><path d=\"M14 9l2 3-2 3\"></path></svg>"
+      }
+    ],
+    "customerLove": [
+      {
+        "stars": 5,
+        "title": "\"Best Purchase I've Made All Year!\"",
+        "text": "I absolutely LOVE this bra! The snap closure makes it so easy to put on and take off. The support is incredible - I'm a 36D and this holds everything perfectly in place.",
+        "reviewer": "Sarah M.",
+        "product": "The Snap & Go Bra"
+      },
+      {
+        "stars": 5,
+        "title": "\"So easy to use!\"",
+        "text": "This bra is a lifesaver. The front snaps are so much better than struggling with back hooks. Very comfortable fabric too.",
+        "reviewer": "Linda S.",
+        "product": "The Snap & Go Bra"
+      },
+      {
+        "stars": 5,
+        "title": "\"Perfect for Sensitive Skin\"",
+        "text": "I have extremely sensitive skin and most bras irritate me within hours. This one? I can wear it all day with ZERO irritation!",
+        "reviewer": "Amanda K.",
+        "product": "The Snap & Go Bra"
+      },
+      {
+        "stars": 5,
+        "title": "\"True to Its Name - Ultimate Coverage!\"",
+        "text": "This bra provides the BEST coverage I've ever experienced! I'm a 40DD and have always struggled with spillage and side bulge.",
+        "reviewer": "Rebecca S.",
+        "product": "The Ultimate Coverage Bra"
+      },
+      {
+        "stars": 5,
+        "title": "\"My Posture Has Improved Dramatically!\"",
+        "text": "I work at a desk all day and my posture was terrible. This shaper has been a game-changer!",
+        "reviewer": "Jennifer C.",
+        "product": "The Posture Perfect Shaper"
+      },
+      {
+        "stars": 5,
+        "title": "\"Instant Confidence Boost!\"",
+        "text": "WOW! This bodysuit is AMAZING! The compression is strong but comfortable - it smooths everything beautifully.",
+        "reviewer": "Samantha J.",
+        "product": "The High Compression Bodysuit"
+      }
+    ]
+  },
+  "navigation": {
+    "headerLinks": [
+      {
+        "label": "Home",
+        "url": "/"
+      },
+      {
+        "label": "Shop",
+        "url": "/select.html"
+      }
+    ],
+    "footerLinks": [
+      {
+        "label": "Terms and Conditions",
+        "url": "/legal/terms-and-conditions.html"
+      },
+      {
+        "label": "Privacy Policy",
+        "url": "/legal/privacy-policy.html"
+      },
+      {
+        "label": "Refund Policy",
+        "url": "/legal/refund-policy.html"
+      },
+      {
+        "label": "Shipping Policy",
+        "url": "/legal/shipping-policy.html"
+      }
+    ]
+  },
+  "branding": {
+    "websiteTitle": "Beha"
+  },
+  "media": {
+    "logo": "",
+    "favicon": "/favicon.ico",
+    "heroBackground": "/images/uploads/1771868627774-383105119.png"
+  },
+  "contact": {
+    "email": "hello@shopbeha.com"
+  },
+  "footer": {
+    "copyright": ""
+  }
 }

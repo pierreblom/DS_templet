@@ -14,6 +14,9 @@ export default function SiteManagementPage() {
         theme: {
             primaryColor: '#C88E75',
             secondaryColor: '#A0522D',
+            backgroundColor: '#F9F5F0',
+            textColor: '#000000',
+            headerBackgroundColor: '#FFFFFF',
             typography: { fontFamily: 'Outfit, sans-serif', headingFontFamily: 'Playfair Display, serif' },
             shapes: { borderRadius: '8px' },
             spacing: { globalPadding: '2rem', globalMargin: '1rem' }
@@ -24,7 +27,10 @@ export default function SiteManagementPage() {
         },
         content: {
             hero: { title: '', subtitle: '', ctaText: '', ctaLink: '' },
-            newArrivals: { title: '', subtitle: '', promoText: '' }
+            newArrivals: { title: '', subtitle: '', promoText: '' },
+            newsletter: { title: '', subtitle: '' },
+            valueProps: [],
+            customerLove: []
         },
         navigation: {
             headerLinks: [],
@@ -184,6 +190,63 @@ export default function SiteManagementPage() {
                                             />
                                         </div>
                                     </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Background Color
+                                        </label>
+                                        <div className="flex space-x-2 items-center">
+                                            <input
+                                                type="color"
+                                                value={settings.theme.backgroundColor || '#F9F5F0'}
+                                                onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, backgroundColor: e.target.value } })}
+                                                className="h-10 w-10 border-0 p-0 rounded cursor-pointer"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={settings.theme.backgroundColor || '#F9F5F0'}
+                                                onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, backgroundColor: e.target.value } })}
+                                                className="input font-mono text-sm uppercase"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Text Color
+                                        </label>
+                                        <div className="flex space-x-2 items-center">
+                                            <input
+                                                type="color"
+                                                value={settings.theme.textColor || '#000000'}
+                                                onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, textColor: e.target.value } })}
+                                                className="h-10 w-10 border-0 p-0 rounded cursor-pointer"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={settings.theme.textColor || '#000000'}
+                                                onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, textColor: e.target.value } })}
+                                                className="input font-mono text-sm uppercase"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Header Background
+                                        </label>
+                                        <div className="flex space-x-2 items-center">
+                                            <input
+                                                type="color"
+                                                value={settings.theme.headerBackgroundColor || '#FFFFFF'}
+                                                onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, headerBackgroundColor: e.target.value } })}
+                                                className="h-10 w-10 border-0 p-0 rounded cursor-pointer"
+                                            />
+                                            <input
+                                                type="text"
+                                                value={settings.theme.headerBackgroundColor || '#FFFFFF'}
+                                                onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, headerBackgroundColor: e.target.value } })}
+                                                className="input font-mono text-sm uppercase"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -192,19 +255,45 @@ export default function SiteManagementPage() {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Base Font Family</label>
-                                        <input type="text" className="input" value={settings.theme?.typography?.fontFamily || ''} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, typography: { ...settings.theme.typography, fontFamily: e.target.value } } })} />
+                                        <select className="input" value={settings.theme?.typography?.fontFamily || ''} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, typography: { ...settings.theme.typography, fontFamily: e.target.value } } })}>
+                                            <option value="Outfit, sans-serif">Outfit, sans-serif</option>
+                                            <option value="Inter, sans-serif">Inter, sans-serif</option>
+                                            <option value="Roboto, sans-serif">Roboto, sans-serif</option>
+                                            <option value="Open Sans, sans-serif">Open Sans, sans-serif</option>
+                                            <option value="Lato, sans-serif">Lato, sans-serif</option>
+                                        </select>
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Heading Font Family</label>
-                                        <input type="text" className="input" value={settings.theme?.typography?.headingFontFamily || ''} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, typography: { ...settings.theme.typography, headingFontFamily: e.target.value } } })} />
+                                        <select className="input" value={settings.theme?.typography?.headingFontFamily || ''} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, typography: { ...settings.theme.typography, headingFontFamily: e.target.value } } })}>
+                                            <option value="Playfair Display, serif">Playfair Display, serif</option>
+                                            <option value="Merriweather, serif">Merriweather, serif</option>
+                                            <option value="Lora, serif">Lora, serif</option>
+                                            <option value="Montserrat, sans-serif">Montserrat, sans-serif</option>
+                                            <option value="Oswald, sans-serif">Oswald, sans-serif</option>
+                                        </select>
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Border Radius</label>
-                                        <input type="text" className="input" value={settings.theme?.shapes?.borderRadius || ''} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, shapes: { ...settings.theme.shapes, borderRadius: e.target.value } } })} placeholder="e.g. 0px or 8px" />
+                                        <select className="input" value={settings.theme?.shapes?.borderRadius || ''} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, shapes: { ...settings.theme.shapes, borderRadius: e.target.value } } })}>
+                                            <option value="0px">0px (Square)</option>
+                                            <option value="4px">4px (Small)</option>
+                                            <option value="8px">8px (Medium)</option>
+                                            <option value="12px">12px (Large)</option>
+                                            <option value="16px">16px (Extra Large)</option>
+                                            <option value="24px">24px (Pill)</option>
+                                        </select>
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Global Padding</label>
-                                        <input type="text" className="input" value={settings.theme?.spacing?.globalPadding || ''} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, spacing: { ...settings.theme.spacing, globalPadding: e.target.value } } })} />
+                                        <select className="input" value={settings.theme?.spacing?.globalPadding || ''} onChange={(e) => setSettings({ ...settings, theme: { ...settings.theme, spacing: { ...settings.theme.spacing, globalPadding: e.target.value } } })}>
+                                            <option value="1rem">1rem (Compact)</option>
+                                            <option value="1.5rem">1.5rem (Normal)</option>
+                                            <option value="2rem">2rem (Spacious)</option>
+                                            <option value="2.5rem">2.5rem (Relaxed)</option>
+                                            <option value="3rem">3rem (Wide)</option>
+                                            <option value="4rem">4rem (Extra Wide)</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -309,6 +398,81 @@ export default function SiteManagementPage() {
                                     </div>
                                 </div>
                             </div>
+
+                            <div>
+                                <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Newsletter Content</h3>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                        <input type="text" className="input" value={settings.content?.newsletter?.title || ''} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, newsletter: { ...settings.content.newsletter, title: e.target.value } } })} />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle</label>
+                                        <input type="text" className="input" value={settings.content?.newsletter?.subtitle || ''} onChange={(e) => setSettings({ ...settings, content: { ...settings.content, newsletter: { ...settings.content.newsletter, subtitle: e.target.value } } })} />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Value Propositions</h3>
+                                <div className="space-y-4">
+                                    {settings.content?.valueProps?.map((prop: any, index: number) => (
+                                        <div key={index} className="p-4 border rounded relative bg-gray-50">
+                                            <button type="button" onClick={() => { const newProps = [...settings.content.valueProps]; newProps.splice(index, 1); setSettings({ ...settings, content: { ...settings.content, valueProps: newProps } as any }); }} className="absolute top-2 right-2 text-red-500 hover:text-red-700 font-medium">Remove</button>
+                                            <div className="grid grid-cols-1 gap-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                                    <input type="text" className="input" value={prop.title || ''} onChange={(e) => { const newProps = [...settings.content.valueProps]; (newProps[index] as any).title = e.target.value; setSettings({ ...settings, content: { ...settings.content, valueProps: newProps } as any }); }} />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                                    <textarea className="input" value={prop.description || ''} onChange={(e) => { const newProps = [...settings.content.valueProps]; (newProps[index] as any).description = e.target.value; setSettings({ ...settings, content: { ...settings.content, valueProps: newProps } as any }); }} />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">SVG Icon HTML</label>
+                                                    <textarea className="input font-mono text-xs" rows={3} value={prop.icon || ''} onChange={(e) => { const newProps = [...settings.content.valueProps]; (newProps[index] as any).icon = e.target.value; setSettings({ ...settings, content: { ...settings.content, valueProps: newProps } as any }); }} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <button type="button" onClick={() => setSettings({ ...settings, content: { ...settings.content, valueProps: [...(settings.content?.valueProps || []), { title: 'New Value Prop', description: '', icon: '' }] } as any })} className="btn btn-secondary mt-2">+ Add Value Proposition</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 className="text-lg font-medium text-gray-900 mb-4 border-b pb-2">Customer Reviews</h3>
+                                <div className="space-y-4">
+                                    {settings.content?.customerLove?.map((review: any, index: number) => (
+                                        <div key={index} className="p-4 border rounded relative bg-gray-50">
+                                            <button type="button" onClick={() => { const newLove = [...settings.content.customerLove]; newLove.splice(index, 1); setSettings({ ...settings, content: { ...settings.content, customerLove: newLove } as any }); }} className="absolute top-2 right-2 text-red-500 hover:text-red-700 font-medium">Remove</button>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Reviewer Name</label>
+                                                    <input type="text" className="input" value={review.reviewer || ''} onChange={(e) => { const newLove = [...settings.content.customerLove]; (newLove[index] as any).reviewer = e.target.value; setSettings({ ...settings, content: { ...settings.content, customerLove: newLove } as any }); }} />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                                                    <input type="text" className="input" value={review.product || ''} onChange={(e) => { const newLove = [...settings.content.customerLove]; (newLove[index] as any).product = e.target.value; setSettings({ ...settings, content: { ...settings.content, customerLove: newLove } as any }); }} />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Stars (1-5)</label>
+                                                    <input type="number" min="1" max="5" className="input" value={review.stars || 5} onChange={(e) => { const newLove = [...settings.content.customerLove]; (newLove[index] as any).stars = parseInt(e.target.value, 10); setSettings({ ...settings, content: { ...settings.content, customerLove: newLove } as any }); }} />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Review Title</label>
+                                                    <input type="text" className="input" value={review.title || ''} onChange={(e) => { const newLove = [...settings.content.customerLove]; (newLove[index] as any).title = e.target.value; setSettings({ ...settings, content: { ...settings.content, customerLove: newLove } as any }); }} />
+                                                </div>
+                                                <div className="col-span-2">
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Review Text</label>
+                                                    <textarea className="input" rows={2} value={review.text || ''} onChange={(e) => { const newLove = [...settings.content.customerLove]; (newLove[index] as any).text = e.target.value; setSettings({ ...settings, content: { ...settings.content, customerLove: newLove } as any }); }} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <button type="button" onClick={() => setSettings({ ...settings, content: { ...settings.content, customerLove: [...(settings.content?.customerLove || []), { reviewer: 'New Reviewer', product: '', stars: 5, title: '', text: '' }] } as any })} className="btn btn-secondary mt-2">+ Add Review</button>
+                                </div>
+                            </div>
+
                         </div>
                     )}
 

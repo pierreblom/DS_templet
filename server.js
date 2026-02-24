@@ -43,7 +43,8 @@ try {
         },
         media: { logo: "/images/logo.png", favicon: "/favicon.ico", heroBackground: "/images/hero-bg.jpg" },
         branding: { websiteTitle: "shopbeha.com - The Most Comfortable Bra" },
-        contact: { email: "hello@shopbeha.com" }
+        contact: { email: "hello@shopbeha.com" },
+        footer: { copyright: "© 2026 ShopBeha. All rights reserved." }
     };
 }
 
@@ -233,6 +234,14 @@ app.get('/checkout', (req, res) => {
 });
 app.get('/checkout.html', (req, res) => {
     res.render('checkout.html');
+});
+
+// Select (Product Detail) page routes
+app.get('/select', (req, res) => {
+    res.render(path.join(__dirname, 'Select', 'select.html'));
+});
+app.get('/select.html', (req, res) => {
+    res.render(path.join(__dirname, 'Select', 'select.html'));
 });
 
 app.get('/success', (req, res) => {

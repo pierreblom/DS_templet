@@ -13,6 +13,48 @@
     <link rel="stylesheet" href="/home_page/css/front_page.css">
     <link rel="stylesheet" href="/home_page/css/product_page.css">
     <link rel="stylesheet" href="/home_page/css/modals.css">
+
+    <style>
+        :root {
+            --primary-color: <%=siteSettings.theme.primaryColor %>;
+            --secondary-color: <%=siteSettings.theme.secondaryColor %>;
+            --bg-color: <%=siteSettings.theme.backgroundColor || '#F9F5F0' %>;
+            --text-color: <%=siteSettings.theme.textColor || '#000000' %>;
+            --header-bg: <%=siteSettings.theme.headerBackgroundColor || '#FFFFFF' %>;
+            --font-family-base: <%=siteSettings.theme.typography.fontFamily %>;
+            --font-family-heading: <%=siteSettings.theme.typography.headingFontFamily %>;
+            --border-radius: <%=siteSettings.theme.shapes.borderRadius %>;
+            --global-padding: <%=siteSettings.theme.spacing.globalPadding %>;
+            --global-margin: <%=siteSettings.theme.spacing.globalMargin %>;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-family-heading);
+        }
+
+        button,
+        .card,
+        .product-card,
+        input {
+            border-radius: var(--border-radius);
+        }
+
+        header {
+            background-color: var(--header-bg);
+        }
+    </style>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/js/supabase-init.js"></script>
     <script src="/js/auth.js"></script>
