@@ -214,7 +214,14 @@ router.get('/me', authenticate, async (req, res, next) => {
                 id: req.user.id,
                 email: req.user.email,
                 name: req.user.name,
-                role: req.user.role
+                first_name: req.user.first_name,
+                last_name: req.user.last_name,
+                role: req.user.role,
+                phone: req.user.phone,
+                address: req.user.address,
+                city: req.user.city,
+                postal_code: req.user.postal_code,
+                google_id: req.user.google_id
             }
         });
     } catch (error) {
@@ -228,10 +235,17 @@ router.get('/me', authenticate, async (req, res, next) => {
  */
 router.put('/me', authenticate, validate(updateProfileSchema), async (req, res, next) => {
     try {
-        const { name, email } = req.body;
+        const { name, email, first_name, last_name, phone, address, city, postal_code } = req.body;
         const updates = {};
 
         if (name) updates.name = name;
+        if (first_name !== undefined) updates.first_name = first_name;
+        if (last_name !== undefined) updates.last_name = last_name;
+        if (phone !== undefined) updates.phone = phone;
+        if (address !== undefined) updates.address = address;
+        if (city !== undefined) updates.city = city;
+        if (postal_code !== undefined) updates.postal_code = postal_code;
+
         if (email && email !== req.user.email) {
             // Check if new email is already taken
             const existingUser = await User.findOne({ where: { email } });
@@ -256,7 +270,13 @@ router.put('/me', authenticate, validate(updateProfileSchema), async (req, res, 
                 id: req.user.id,
                 email: req.user.email,
                 name: req.user.name,
-                role: req.user.role
+                first_name: req.user.first_name,
+                last_name: req.user.last_name,
+                role: req.user.role,
+                phone: req.user.phone,
+                address: req.user.address,
+                city: req.user.city,
+                postal_code: req.user.postal_code
             }
         });
     } catch (error) {

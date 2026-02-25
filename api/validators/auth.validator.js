@@ -63,6 +63,12 @@ const updateProfileSchema = {
                 'string.pattern.base':
                     'Name can only contain letters, spaces, hyphens, and apostrophes'
             }),
+        first_name: Joi.string().max(100).allow(''),
+        last_name: Joi.string().max(100).allow(''),
+        phone: Joi.string().max(30).allow(''),
+        address: Joi.string().max(500).allow(''),
+        city: Joi.string().max(100).allow(''),
+        postal_code: Joi.string().max(20).allow(''),
         email: Joi.string().email().max(255).messages({
             'string.email': 'Please provide a valid email address'
         })
@@ -73,7 +79,7 @@ const updateProfileSchema = {
 
 const changePasswordSchema = {
     body: Joi.object({
-        currentPassword: Joi.string().required().messages({
+        currentPassword: Joi.string().allow('').messages({
             'any.required': 'Current password is required'
         }),
         newPassword: passwordSchema.required().messages({

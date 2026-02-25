@@ -2,9 +2,9 @@
   "theme": {
     "primaryColor": "#C88E75",
     "secondaryColor": "#A0522D",
-    "backgroundColor": "#F9F5F0",
+    "backgroundColor": "#f9f5f1",
     "textColor": "#000000",
-    "headerBackgroundColor": "#FFFFFF",
+    "headerBackgroundColor": "#ffffff",
     "typography": {
       "fontFamily": "Outfit, sans-serif",
       "headingFontFamily": "Playfair Display, serif"
@@ -23,7 +23,8 @@
     "trailFavoritesEnabled": true,
     "newArrivalsEnabled": true,
     "valuePropsEnabled": true,
-    "newsletterEnabled": true
+    "newsletterEnabled": true,
+    "slideshowEnabled": false
   },
   "content": {
     "hero": {
@@ -35,7 +36,8 @@
       "textAlign": "left",
       "titleColor": "#000000",
       "subtitleColor": "#666666",
-      "titleSize": "clamp(2rem, 4vw, 3rem)"
+      "titleSize": "clamp(2rem, 4vw, 3rem)",
+      "customCSS": ""
     },
     "newArrivals": {
       "title": "New Arrivals!",
@@ -153,5 +155,62 @@
   },
   "footer": {
     "copyright": ""
+  },
+  "header": {
+    "logo": {
+      "position": "center"
+    },
+    "menu": {
+      "position": "left",
+      "row": "top"
+    },
+    "search": {
+      "enabled": true,
+      "position": "left"
+    },
+    "customerAccount": true,
+    "font": "heading",
+    "fontSize": "16px",
+    "announcementPosition": "left",
+    "announcementRow": "top",
+    "appearance": {
+      "width": "full",
+      "height": "standard"
+    },
+    "stickyHeader": "always",
+    "borderThickness": 0,
+    "colorScheme": "scheme-2",
+    "transparentHome": false,
+    "transparentProduct": false,
+    "transparentCollection": false
+  },
+  "featuredCollection": {
+    "collection": "all",
+    "type": "grid",
+    "carouselOnMobile": false,
+    "productCount": 8,
+    "columns": 4,
+    "mobileColumns": 2,
+    "horizontalGap": 20,
+    "verticalGap": 36,
+    "sectionWidth": "page",
+    "alignment": "left",
+    "gap": 28,
+    "colorScheme": "scheme-1",
+    "paddingTop": 20,
+    "paddingBottom": 72,
+    "customCSS": ""
+  },
+  "slideshow": {
+    "navigation": "large-arrows",
+    "pagination": "dots",
+    "colorScheme": "scheme-1",
+    "autoRotate": false,
+    "autoRotateSpeed": 5,
+    "width": "full",
+    "height": "medium",
+    "paddingTop": 0,
+    "paddingBottom": 0,
+    "customCSS": ""
   }
 }

@@ -85,7 +85,7 @@ async function authenticate(req, res, next) {
 
         // Fetch user from database to ensure they still exist
         const user = await User.findByPk(decoded.userId, {
-            attributes: ['id', 'email', 'first_name', 'last_name']
+            attributes: ['id', 'email', 'first_name', 'last_name', 'name', 'role', 'phone', 'address', 'city', 'postal_code', 'google_id']
         });
 
         if (!user) {
@@ -124,7 +124,7 @@ async function optionalAuth(req, res, next) {
                     req.userId = 'admin-user-id';
                 } else {
                     const user = await User.findByPk(decoded.userId, {
-                        attributes: ['id', 'email', 'first_name', 'last_name']
+                        attributes: ['id', 'email', 'first_name', 'last_name', 'name', 'role', 'phone', 'address', 'city', 'postal_code', 'google_id']
                     });
 
                     if (user) {

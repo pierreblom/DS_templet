@@ -24,29 +24,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // --- Prefill logic ---
-        if (typeof window.supabaseClient !== 'undefined') {
-            const { data: { session } } = await window.supabaseClient.auth.getSession();
-            if (session?.user) {
-                console.log('Fetching user profile for prefill...');
-                const { data: profile } = await window.supabaseClient
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', session.user.id)
-                    .maybeSingle();
-
-                if (profile) {
-                    if (document.getElementById('email')) document.getElementById('email').value = session.user.email || '';
-                    if (document.getElementById('firstName')) document.getElementById('firstName').value = profile.first_name || '';
-                    if (document.getElementById('lastName')) document.getElementById('lastName').value = profile.last_name || '';
-                    if (document.getElementById('phone')) document.getElementById('phone').value = profile.phone || '';
-                    if (document.getElementById('address')) document.getElementById('address').value = profile.address || '';
-                    if (document.getElementById('city')) document.getElementById('city').value = profile.city || '';
-                    if (document.getElementById('postalCode')) document.getElementById('postalCode').value = profile.postal_code || '';
-                    console.log('Profile prefilled!');
-                } else {
-                    // Just prefill email from auth if no profile entry exists yet
-                    if (document.getElementById('email')) document.getElementById('email').value = session.user.email || '';
+        // --- Prefill logic using AuthManager ---
+        if (window.AuthManager && AuthManager.isLoggedIn()) {
+            try {
+                const response = await AuthManager.fetchWithAuth('/api/v1/auth/me');
+                if (response.ok) {
+                    const data = await response.json();
+                    const profile = data.user;
+                    if (profile) {
+                        if (document.getElementById('email')) document.getElementById('email').value = profile.email || '';
+                        if (document.getElementById('firstName')) document.getElementById('firstName').value = profile.first_name || '';
+                        if (document.getElementById('lastName')) document.getElementById('lastName').value = profile.last_name || '';
+                        if (document.getElementById('phone')) document.getElementById('phone').value = profile.phone || '';
+                        if (document.getElementById('address')) document.getElementById('address').value = profile.address || '';
+                        if (document.getElementById('city')) document.getElementById('city').value = profile.city || '';
+                        if (document.getElementById('postalCode')) document.getElementById('postalCode').value = profile.postal_code || '';
+                        console.log('Profile prefilled!');
+                    }
                 }
+            } catch (err) {
+                console.warn('Could not prefill profile:', err);
             }
         }
         // -----------------------
@@ -97,11 +94,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Remove blocking auth check
         let accessToken = null;
-        if (typeof window.supabaseClient !== 'undefined') {
-            const { data: { session } } = await window.supabaseClient.auth.getSession();
-            if (session) {
-                accessToken = session.access_token;
-            }
+        if (window.AuthManager && AuthManager.isLoggedIn()) {
+            accessToken = AuthManager.getAccessToken();
         }
 
         // Show loading state

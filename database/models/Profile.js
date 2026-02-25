@@ -54,6 +54,17 @@ const Profile = sequelize.define('Profile', {
     },
     phone: {
         type: DataTypes.STRING
+    },
+    google_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true,
+        comment: 'Google OAuth user ID for matching returning users'
+    },
+    avatar_url: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        comment: 'Profile picture URL from Google'
     }
 }, {
     timestamps: true,

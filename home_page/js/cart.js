@@ -1,39 +1,10 @@
-// Cart Module - Handles cart operations with Supabase and localStorage fallback
+// Cart Module - Handles cart operations with localStorage
 const CartModule = {
     CART_KEY: 'beha_cart_v1',
     PROMO_KEY: 'beha_promo_v1',
 
-    // Load cart from Supabase or localStorage
+    // Load cart from localStorage
     async loadCart() {
-        if (typeof supabaseClient !== 'undefined') {
-            try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                if (session?.user) {
-                    const { data: carts } = await supabaseClient
-                        .from('carts')
-                        .select('id, cart_items(product_id, quantity, size, color)')
-                        .eq('user_id', session.user.id)
-                        .eq('status', 'active')
-                        .maybeSingle();
-
-                    if (carts) {
-                        return carts.cart_items.map(item => ({
-                            productId: item.product_id,
-                            quantity: item.quantity,
-                            options: {
-                                size: item.size || '',
-                                color: item.color || ''
-                            }
-                        }));
-                    }
-                    return [];
-                }
-            } catch (error) {
-                console.error('Error loading cart from Supabase:', error);
-            }
-        }
-
-        // Fallback to localStorage
         try {
             const raw = localStorage.getItem(this.CART_KEY);
             if (!raw) return [];
@@ -45,48 +16,8 @@ const CartModule = {
         }
     },
 
-    // Save cart to Supabase or localStorage
+    // Save cart to localStorage
     async saveCart(cart) {
-        if (typeof supabaseClient !== 'undefined') {
-            try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                if (session?.user) {
-                    let { data: cartData } = await supabaseClient
-                        .from('carts')
-                        .select('id')
-                        .eq('user_id', session.user.id)
-                        .eq('status', 'active')
-                        .maybeSingle();
-
-                    if (!cartData) {
-                        const { data: newCart } = await supabaseClient
-                            .from('carts')
-                            .insert({ user_id: session.user.id })
-                            .select()
-                            .single();
-                        cartData = newCart;
-                    }
-
-                    await supabaseClient.from('cart_items').delete().eq('cart_id', cartData.id);
-
-                    if (cart.length > 0) {
-                        const itemsToInsert = cart.map(item => ({
-                            cart_id: cartData.id,
-                            product_id: item.productId,
-                            quantity: item.quantity,
-                            size: item.options?.size || null,
-                            color: item.options?.color || null
-                        }));
-                        await supabaseClient.from('cart_items').insert(itemsToInsert);
-                    }
-                    return;
-                }
-            } catch (error) {
-                console.error('Error saving cart to Supabase:', error);
-            }
-        }
-
-        // Fallback to localStorage
         try {
             localStorage.setItem(this.CART_KEY, JSON.stringify(cart));
         } catch (error) {

@@ -28,19 +28,29 @@ body {
 header {
     background: var(--header-bg);
     padding: 1rem 5%;
-    position: sticky;
-    top: 0;
     z-index: 1000;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+header.header-sticky {
+    position: sticky;
+    top: 0;
+}
+
+header.header-sticky-scroll {
+    position: sticky;
+    top: 0;
 }
 
 nav {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    display: flex;
     align-items: center;
+    justify-content: space-between;
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 1.5rem;
+    gap: 1rem;
 }
 
 .nav-left,

@@ -410,8 +410,7 @@
                 <%- include('login_modal.html') %>
 
                     <!-- Scripts -->
-                    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-                    <script src="/js/supabase-init.js"></script>
+                    <script src="/js/auth-init.js"></script>
                     <script src="/js/auth.js"></script>
                     <script src="js/account-popup.js"></script>
                     <script src="js/cart.js"></script>
@@ -422,21 +421,13 @@
                     <script>
                         // Check authentication and load profile
                         async function initProfilePage() {
-                            if (typeof window.supabaseClient === 'undefined') {
-                                console.error('Supabase client not initialized');
+                            if (!window.AuthManager || !AuthManager.isLoggedIn()) {
                                 showAuthPrompt();
                                 return;
                             }
 
-                            const { data: { session } } = await window.supabaseClient.auth.getSession();
-
-                            if (!session?.user) {
-                                showAuthPrompt();
-                                return;
-                            }
-
-                            // User is logged in, load their profile
-                            await loadProfile(session.user);
+                            const user = AuthManager.getUser();
+                            await loadProfile(user);
                         }
 
                         function showAuthPrompt() {
@@ -451,35 +442,33 @@
                             // Display user email
                             document.getElementById('profileEmail').textContent = user.email;
 
-                            // Fetch profile from table
-                            const { data: profile } = await window.supabaseClient
-                                .from('profiles')
-                                .select('*')
-                                .eq('id', user.id)
-                                .maybeSingle();
-
-                            if (profile) {
-                                document.getElementById('firstName').value = profile.first_name || '';
-                                document.getElementById('lastName').value = profile.last_name || '';
-                                document.getElementById('phone').value = profile.phone || '';
-                                document.getElementById('address').value = profile.address || '';
-                                document.getElementById('city').value = profile.city || '';
-                                document.getElementById('postalCode').value = profile.postal_code || '';
+                            // Fetch full profile from API
+                            try {
+                                const response = await AuthManager.fetchWithAuth('/api/v1/auth/me');
+                                if (response.ok) {
+                                    const data = await response.json();
+                                    const profile = data.user;
+                                    if (profile) {
+                                        document.getElementById('firstName').value = profile.first_name || '';
+                                        document.getElementById('lastName').value = profile.last_name || '';
+                                        document.getElementById('phone').value = profile.phone || '';
+                                        document.getElementById('address').value = profile.address || '';
+                                        document.getElementById('city').value = profile.city || '';
+                                        document.getElementById('postalCode').value = profile.postal_code || '';
+                                    }
+                                }
+                            } catch (error) {
+                                console.error('Error fetching profile:', error);
                             }
 
                             // Display account creation date
-                            const createdDate = new Date(user.created_at).toLocaleDateString('en-ZA', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            });
-                            document.getElementById('accountCreated').textContent = createdDate;
+                            document.getElementById('accountCreated').textContent = 'Member';
 
-                            // Display sign-in method
-                            const provider = user.app_metadata?.provider || 'email';
+                            // Display sign-in method based on whether user has google_id
+                            const isGoogleUser = user.google_id || false;
                             const methodEl = document.getElementById('signInMethod');
 
-                            if (provider === 'google') {
+                            if (isGoogleUser) {
                                 methodEl.innerHTML = `
                     <span class="provider-badge">
                         <svg viewBox="0 0 24 24" fill="currentColor">
@@ -491,7 +480,6 @@
                         Google
                     </span>
                 `;
-                                // Hide password section for Google users
                                 document.getElementById('passwordSection').style.display = 'none';
                             } else {
                                 methodEl.innerHTML = `
@@ -503,12 +491,11 @@
                         Email
                     </span>
                 `;
-                                // Show password section for email users
                                 document.getElementById('passwordSection').style.display = 'block';
                             }
 
                             // Load statistics
-                            await loadStatistics(user.id);
+                            await loadStatistics();
                         }
 
                         // Handle profile update
@@ -519,26 +506,26 @@
                             btn.textContent = 'Saving...';
 
                             try {
-                                const { data: { session } } = await window.supabaseClient.auth.getSession();
-                                if (!session?.user) throw new Error('Not logged in');
-
                                 const updates = {
-                                    id: session.user.id,
+                                    name: document.getElementById('firstName').value + ' ' + document.getElementById('lastName').value,
                                     first_name: document.getElementById('firstName').value,
                                     last_name: document.getElementById('lastName').value,
                                     phone: document.getElementById('phone').value,
                                     address: document.getElementById('address').value,
                                     city: document.getElementById('city').value,
-                                    postal_code: document.getElementById('postalCode').value,
-                                    updated_at: new Date()
+                                    postal_code: document.getElementById('postalCode').value
                                 };
 
-                                const { error } = await window.supabaseClient
-                                    .from('profiles')
-                                    .upsert(updates)
-                                    .select();
+                                const response = await AuthManager.fetchWithAuth('/api/v1/auth/me', {
+                                    method: 'PUT',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(updates)
+                                });
 
-                                if (error) throw error;
+                                if (!response.ok) {
+                                    const data = await response.json();
+                                    throw new Error(data.message || 'Failed to save profile');
+                                }
                                 window.showNotification('Profile updated successfully!', 'success');
                             } catch (error) {
                                 console.error('Error saving profile:', error);
@@ -549,17 +536,15 @@
                             }
                         });
 
-                        async function loadStatistics(userId) {
+                        async function loadStatistics() {
                             try {
-                                // Load total orders and spending
-                                const { data: orders, error: ordersError } = await window.supabaseClient
-                                    .from('orders')
-                                    .select('total_amount')
-                                    .eq('user_id', userId);
-
-                                if (!ordersError && orders) {
+                                // Load orders from API
+                                const response = await AuthManager.fetchWithAuth('/api/v1/orders');
+                                if (response.ok) {
+                                    const data = await response.json();
+                                    const orders = Array.isArray(data) ? data : (data.orders || []);
                                     document.getElementById('totalOrders').textContent = orders.length;
-                                    const totalSpent = orders.reduce((sum, order) => sum + parseFloat(order.total_amount), 0);
+                                    const totalSpent = orders.reduce((sum, order) => sum + parseFloat(order.total_amount || 0), 0);
                                     document.getElementById('totalSpent').textContent = `R ${totalSpent.toFixed(2)}`;
                                 }
 
@@ -591,11 +576,19 @@
                             }
 
                             try {
-                                const { data, error } = await window.supabaseClient.auth.updateUser({
-                                    password: newPassword
+                                const response = await AuthManager.fetchWithAuth('/api/v1/auth/me/password', {
+                                    method: 'PUT',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        currentPassword: '', // Google users won't have this
+                                        newPassword: newPassword
+                                    })
                                 });
 
-                                if (error) throw error;
+                                if (!response.ok) {
+                                    const data = await response.json();
+                                    throw new Error(data.message || 'Failed to update password');
+                                }
 
                                 window.showNotification('Password updated successfully!', 'success');
                                 document.getElementById('passwordForm').reset();
@@ -609,15 +602,17 @@
                         document.addEventListener('DOMContentLoaded', initProfilePage);
 
                         // Listen for auth state changes
-                        if (typeof window.supabaseClient !== 'undefined') {
-                            window.supabaseClient.auth.onAuthStateChange((event, session) => {
-                                if (event === 'SIGNED_IN') {
-                                    initProfilePage();
-                                } else if (event === 'SIGNED_OUT') {
-                                    showAuthPrompt();
-                                }
-                            });
-                        }
+                        document.addEventListener('DOMContentLoaded', () => {
+                            if (window.AuthManager) {
+                                AuthManager.onAuthStateChange((event) => {
+                                    if (event === 'SIGNED_IN') {
+                                        initProfilePage();
+                                    } else if (event === 'SIGNED_OUT') {
+                                        showAuthPrompt();
+                                    }
+                                });
+                            }
+                        });
                     </script>
 </body>
 

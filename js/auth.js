@@ -1,6 +1,6 @@
 
+// Auth Functions - Using in-house JWT auth (no Supabase)
 
-// Auth Functions
 window.openLoginModal = function (tab = 'signin') {
     const modal = document.getElementById('loginModal');
     if (modal) {
@@ -18,97 +18,93 @@ window.openLoginModal = function (tab = 'signin') {
 async function handleEmailSignIn(e) {
     e.preventDefault();
 
-    if (!window.supabaseClient) {
-        alert("Authentication system not ready. Please refresh the page.");
-        return;
-    }
-
     const email = document.getElementById('signinEmail').value;
     const password = document.getElementById('signinPassword').value;
 
-    const { data, error } = await window.supabaseClient.auth.signInWithPassword({
-        email,
-        password
-    });
+    try {
+        const response = await fetch('/api/v1/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
 
-    if (error) {
-        console.error('Sign in error:', error);
-        if (error.status === 400) {
-            alert("Invalid login credentials. Please check your email and password, or sign up if you don't have an account.");
-        } else {
-            alert("Error signing in: " + error.message);
+        const data = await response.json();
+
+        if (!response.ok) {
+            const msg = data.error?.message || data.message || 'Invalid login credentials';
+            alert(msg);
+            return;
         }
-    } else {
+
+        // Store tokens
+        localStorage.setItem(AuthManager.TOKEN_KEY, data.accessToken);
+        localStorage.setItem(AuthManager.REFRESH_KEY, data.refreshToken);
+        localStorage.setItem(AuthManager.USER_KEY, JSON.stringify(data.user));
+
+        // Notify listeners
+        AuthManager._notifyListeners('SIGNED_IN', data.user);
+
         closeModal('loginModal');
-        // The onAuthStateChange in account-popup.js will handle UI updates
         alert("Signed in successfully!");
+    } catch (err) {
+        console.error('Sign in error:', err);
+        alert("Error signing in: " + err.message);
     }
 }
 
 async function handleEmailSignUp(e) {
     e.preventDefault();
 
-    if (!window.supabaseClient) {
-        alert("Authentication system not ready. Please refresh the page.");
-        return;
-    }
-
     const email = document.getElementById('signupEmail').value;
     const password = document.getElementById('signupPassword').value;
 
-    const { data, error } = await window.supabaseClient.auth.signUp({
-        email,
-        password
-    });
-
-    if (error) {
-        console.error('Sign up error:', error);
-        alert("Error signing up: " + error.message);
-    } else {
-        closeModal('loginModal');
-        alert("Sign up successful! Please check your email for a verification link to complete your registration.");
-    }
-}
-
-window.handleGoogleSignIn = async function () {
     try {
-        if (!window.supabaseClient) {
-            alert("Supabase client not authenticated. Please refresh the page.");
+        const response = await fetch('/api/v1/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            const msg = data.error?.message || data.message || 'Error signing up';
+            alert(msg);
             return;
         }
 
-        const { data, error } = await window.supabaseClient.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: window.location.origin
-            }
-        });
+        // Store tokens — user is immediately signed in after registration
+        localStorage.setItem(AuthManager.TOKEN_KEY, data.accessToken);
+        localStorage.setItem(AuthManager.REFRESH_KEY, data.refreshToken);
+        localStorage.setItem(AuthManager.USER_KEY, JSON.stringify(data.user));
 
-        if (error) {
-            console.error("Google Sign In Error:", error);
-            alert("Error with Google Sign In: " + error.message);
-        }
+        // Notify listeners
+        AuthManager._notifyListeners('SIGNED_IN', data.user);
+
+        closeModal('loginModal');
+        alert("Sign up successful! You are now logged in.");
     } catch (err) {
-        console.error("Unexpected error during Google Sign In:", err);
-        alert("An unexpected error occurred: " + err.message);
+        console.error('Sign up error:', err);
+        alert("Error signing up: " + err.message);
     }
 }
 
-async function handleSignOut() {
-    if (!window.supabaseClient) {
-        alert("Authentication system not ready. Please refresh the page.");
-        return;
-    }
+window.handleGoogleSignIn = function () {
+    // Redirect to server-side Google OAuth flow
+    // Pass current page as returnTo so user comes back here after login
+    const returnTo = encodeURIComponent(window.location.pathname + window.location.search);
+    window.location.href = `/auth/google?returnTo=${returnTo}`;
+}
 
-    const { error } = await window.supabaseClient.auth.signOut();
-    if (error) {
-        alert("Error signing out: " + error.message);
-    } else {
-        // Close account popup
-        const popup = document.getElementById('accountPopup');
-        if (popup) popup.classList.remove('show');
-        alert("Signed out!");
+function handleSignOut() {
+    if (window.AuthManager) {
+        AuthManager.signOut();
     }
+    // Close account popup
+    const popup = document.getElementById('accountPopup');
+    if (popup) popup.classList.remove('show');
+    alert("Signed out!");
+    window.location.reload();
 }
 
 // Export functions to window for global access
@@ -119,20 +115,14 @@ window.handleSignUp = () => openLoginModal('signup');
 window.handleSignIn = () => openLoginModal('signin');
 
 window.handleOrdersClick = function () {
-    // Close the account popup
     const popup = document.getElementById('accountPopup');
     if (popup) popup.classList.remove('show');
-
-    // Navigate to orders page
     window.location.href = '/orders.html';
 }
 
 window.handleProfileClick = function () {
-    // Close the account popup
     const popup = document.getElementById('accountPopup');
     if (popup) popup.classList.remove('show');
-
-    // Navigate to profile page
     window.location.href = '/profile.html';
 }
 
@@ -209,18 +199,20 @@ function switchAuthTab(tab) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // Wait for supabaseClient to be available
-    if (typeof window.supabaseClient === 'undefined') {
-        console.error('Supabase client not initialized');
+document.addEventListener('DOMContentLoaded', () => {
+    // Wait for AuthManager to be available
+    if (typeof window.AuthManager === 'undefined') {
+        console.error('AuthManager not initialized');
         return;
     }
 
-    const { data: { session } } = await window.supabaseClient.auth.getSession();
-    updateAuthUI(session?.user);
+    // Update UI based on current auth state
+    const user = AuthManager.getUser();
+    updateAuthUI(user);
 
-    window.supabaseClient.auth.onAuthStateChange((event, session) => {
-        updateAuthUI(session?.user);
+    // Listen for auth state changes
+    AuthManager.onAuthStateChange((event, user) => {
+        updateAuthUI(user);
         if (typeof updateCartBadge === 'function') {
             updateCartBadge();
         }

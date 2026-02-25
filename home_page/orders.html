@@ -292,8 +292,7 @@
                 <%- include('login_modal.html') %>
 
                     <!-- Scripts -->
-                    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-                    <script src="/js/supabase-init.js"></script>
+                    <script src="/js/auth-init.js"></script>
                     <script src="/js/auth.js"></script>
                     <script src="js/account-popup.js"></script>
                     <script src="js/cart.js"></script>
@@ -304,36 +303,25 @@
                         const STEPS = ['Ordered', 'Verified', 'Shipping to You', 'Delivery', 'Complete'];
 
                         async function initOrdersPage() {
-                            // 1. Check for success param & Clear Cart (Run this first, for ALL users including guests)
+                            // 1. Check for success param & Clear Cart
                             const urlParams = new URLSearchParams(window.location.search);
                             if (urlParams.get('status') === 'success') {
                                 if (window.CartModule) {
                                     await window.CartModule.clearCart();
                                     console.log('Cart cleared after successful payment');
                                 }
-                                // Remove params from URL to avoid re-triggering on refresh
                                 window.history.replaceState({}, document.title, window.location.pathname);
-
-                                // Optional: You might want to show a specific "Thank You" message here for guests
-                                // instead of the auth prompt, if they just bought something.
                             }
 
-                            if (typeof window.supabaseClient === 'undefined') {
+                            // Check if user is logged in via AuthManager
+                            if (!window.AuthManager || !AuthManager.isLoggedIn()) {
                                 document.getElementById('authPrompt').style.display = 'block';
                                 return;
                             }
 
-                            const { data: { session } } = await window.supabaseClient.auth.getSession();
-
-                            if (!session?.user) {
-                                document.getElementById('authPrompt').style.display = 'block';
-                                return;
-                            }
-
-                            // Check for orderId params
+                            const user = AuthManager.getUser();
                             const orderIdArg = urlParams.get('orderId');
-
-                            await loadOrders(session.user.id, orderIdArg);
+                            await loadOrders(user.id, orderIdArg);
                         }
 
                         async function loadOrders(userId, specificOrderId = null) {
@@ -343,32 +331,26 @@
                             ordersList.innerHTML = '<div style="text-align:center; padding: 2rem;">Loading details...</div>';
 
                             try {
-                                let query = window.supabaseClient
-                                    .from('orders')
-                                    .select(`
-                        id,
-                        status,
-                        total_amount,
-                        created_at,
-                        order_items (
-                            quantity,
-                            price,
-                            product_id
-                        )
-                    `)
-                                    .eq('user_id', userId)
-                                    .neq('status', 'cancelled')
-                                    .order('created_at', { ascending: false });
-
+                                let url = '/api/v1/orders';
                                 if (specificOrderId) {
-                                    query = query.eq('id', specificOrderId);
+                                    url = `/api/v1/orders/${specificOrderId}`;
                                 }
 
-                                const { data: orders, error } = await query;
+                                const response = await AuthManager.fetchWithAuth(url);
+                                const data = await response.json();
 
-                                if (error) throw error;
+                                if (!response.ok) throw new Error(data.message || 'Failed to load orders');
 
-                                if (!orders || orders.length === 0) {
+                                // Normalize: API may return single order or array
+                                let orders = Array.isArray(data) ? data : (data.orders || (data.order ? [data.order] : [data]));
+
+                                // Normalize order_items key (Sequelize might use OrderItems)
+                                orders = orders.filter(o => o && o.id).map(o => ({
+                                    ...o,
+                                    order_items: o.order_items || o.OrderItems || []
+                                }));
+
+                                if (orders.length === 0) {
                                     ordersList.innerHTML = `
                         <div class="tracking-header">
                             <h1>No Order Found</h1>
@@ -380,20 +362,10 @@
                                     return;
                                 }
 
-                                // Helper to get product details
-                                // Use the global 'products' array from shopbeha.js which matches the shop data
-                                const productIds = [...new Set(orders.flatMap(o => o.order_items.map(i => i.product_id)))];
+                                // Build products map from global products array
                                 let productsMap = {};
-
-                                // Try to use global products array first (from shopbeha.js)
                                 if (typeof products !== 'undefined' && Array.isArray(products)) {
-                                    products.forEach(p => {
-                                        productsMap[p.id] = p;
-                                    });
-                                } else {
-                                    // Fallback: Try to fetch from Supabase if global array missing (shouldn't happen)
-                                    // But since we know Supabase table is missing/broken, we rely on this or placeholders.
-                                    console.warn('Global products array not found, falling back to placeholders');
+                                    products.forEach(p => { productsMap[p.id] = p; });
                                 }
 
                                 const title = specificOrderId ? 'Order Confirmed' : 'Your Order History';
@@ -415,25 +387,21 @@
 
                         function getStepIndex(status) {
                             const s = (status || '').toLowerCase();
-                            if (s === 'pending') return 0; // Ordered
-                            if (s === 'paid' || s === 'processing') return 1; // Verified
-                            if (s === 'shipped') return 2; // Shipping
-                            if (s === 'delivered') return 3; // Delivery
-                            if (s === 'completed') return 4; // Complete
+                            if (s === 'pending') return 0;
+                            if (s === 'paid' || s === 'processing') return 1;
+                            if (s === 'shipped') return 2;
+                            if (s === 'delivered') return 3;
+                            if (s === 'completed') return 4;
                             return 0;
                         }
 
                         function renderOrderCard(order, productsMap) {
-                            // Determine progress based on order status
                             const currentStepIdx = getStepIndex(order.status);
                             const progressPercent = (currentStepIdx / (STEPS.length - 1)) * 100;
 
-                            // Render items
                             const itemsHtml = order.order_items.map(item => {
                                 const product = productsMap[item.product_id] || { name: 'Product #' + item.product_id, image: '', description: '' };
                                 const imageSrc = product.image || 'https://placehold.co/100?text=No+Img';
-                                // For this design, we create a timeline PER ITEM to match the image, 
-                                // even though they share the order status for now.
 
                                 return `
                     <div class="product-group">
@@ -448,14 +416,9 @@
                                     <span class="info-label">Price:</span>
                                     <span class="info-value">R ${(item.price * item.quantity).toFixed(2)}</span>
                                 </div>
-                                <!--<div class="info-row">
-                                    <span class="info-label">Quantity:</span>
-                                    <span class="info-value">${item.quantity}</span>
-                                </div>-->
                             </div>
                         </div>
 
-                        <!-- Timeline for this item -->
                         <div class="timeline-container">
                             <div class="timeline-track"></div>
                             <div class="timeline-progress" style="width: ${progressPercent}%;"></div>
@@ -463,8 +426,6 @@
                             <div class="timeline-steps">
                                 ${STEPS.map((step, idx) => {
                                     const isCompleted = idx <= currentStepIdx;
-                                    const isActive = idx === currentStepIdx; // The current stage
-
                                     let circleClass = 'step-circle';
                                     if (isCompleted) circleClass += ' completed';
 
@@ -497,16 +458,17 @@
 
                         document.addEventListener('DOMContentLoaded', () => {
                             initOrdersPage();
-
-
                         });
 
-                        if (typeof window.supabaseClient !== 'undefined') {
-                            window.supabaseClient.auth.onAuthStateChange((event) => {
-                                if (event === 'SIGNED_IN') initOrdersPage();
-                                if (event === 'SIGNED_OUT') location.reload();
-                            });
-                        }
+                        // Listen for auth state changes via AuthManager
+                        document.addEventListener('DOMContentLoaded', () => {
+                            if (window.AuthManager) {
+                                AuthManager.onAuthStateChange((event) => {
+                                    if (event === 'SIGNED_IN') initOrdersPage();
+                                    if (event === 'SIGNED_OUT') location.reload();
+                                });
+                            }
+                        });
 
                         function renderGuestOrder(order) {
                             document.getElementById('authPrompt').style.display = 'none';

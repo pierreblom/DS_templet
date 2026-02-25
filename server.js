@@ -12,7 +12,7 @@ const { errorHandler, notFoundHandler } = require('./api/middleware/errorHandler
 const fs = require('fs');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 9000;
 
 // Load initial settings
 const SETTINGS_FILE_PATH = path.join(__dirname, 'config/settings.json');
@@ -44,7 +44,36 @@ try {
         media: { logo: "/images/logo.png", favicon: "/favicon.ico", heroBackground: "/images/hero-bg.jpg", heroPosition: "center", heroSize: "cover", heroHeight: "80vh" },
         branding: { websiteTitle: "shopbeha.com - The Most Comfortable Bra" },
         contact: { email: "hello@shopbeha.com" },
-        footer: { copyright: "© 2026 ShopBeha. All rights reserved." }
+        footer: { copyright: "© 2026 ShopBeha. All rights reserved." },
+        header: {
+            logo: { position: "center" },
+            menu: { position: "left", row: "top" },
+            search: { enabled: true, position: "left" },
+            customerAccount: true,
+            font: "heading",
+            fontSize: "16px",
+            announcementPosition: "left",
+            announcementRow: "top",
+            appearance: { width: "full", height: "standard" },
+            stickyHeader: "always",
+            borderThickness: 0,
+            colorScheme: "scheme-2",
+            transparentHome: false,
+            transparentProduct: false,
+            transparentCollection: false
+        },
+        featuredCollection: {
+            collection: "all", type: "grid", carouselOnMobile: false,
+            productCount: 8, columns: 4, mobileColumns: 2,
+            horizontalGap: 20, verticalGap: 36,
+            sectionWidth: "page", alignment: "left", gap: 28,
+            colorScheme: "scheme-1", paddingTop: 20, paddingBottom: 72, customCSS: ""
+        },
+        slideshow: {
+            navigation: "large-arrows", pagination: "dots", colorScheme: "scheme-1",
+            autoRotate: false, autoRotateSpeed: 5, width: "full", height: "medium",
+            paddingTop: 0, paddingBottom: 0, customCSS: ""
+        }
     };
 }
 
@@ -74,7 +103,8 @@ app.use(
                 fontSrc: ["'self'", "https://fonts.gstatic.com"],
                 connectSrc: [
                     "'self'",
-                    "https://*.supabase.co",
+                    "https://accounts.google.com",
+                    "https://oauth2.googleapis.com",
                     "https://*.yoco.com",
                     "http://localhost:*",
                     "https://fonts.googleapis.com",
@@ -95,15 +125,15 @@ app.use(
 // CORS configuration - restrict to allowed origins
 const allowedOrigins = process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',')
-    : ['http://localhost:3000', 'http://127.0.0.1:3000'];
+    : ['http://localhost:9000', 'http://127.0.0.1:9000'];
 
 if (process.env.NODE_ENV !== 'production') {
-    const port = process.env.PORT || 3000;
+    const port = process.env.PORT || 9000;
     const localOrigins = [
         `http://localhost:${port}`,
         `http://127.0.0.1:${port}`,
-        'http://localhost:3000',
-        'http://127.0.0.1:3000',
+        'http://localhost:9000',
+        'http://127.0.0.1:9000',
         'http://localhost:5500',
         'http://127.0.0.1:5500'
     ];
@@ -278,6 +308,7 @@ app.use(express.static(path.join(__dirname)));
 // ===================
 
 const authRoutes = require('./api/routes/auth');
+const googleOAuthRoutes = require('./api/routes/google-oauth');
 const productRoutes = require('./api/routes/products');
 const yocoRoutes = require('./api/routes/yoco');
 const promosRoutes = require('./api/routes/promos');
@@ -296,6 +327,9 @@ app.use('/api/v1/auth/register', authLimiter);
 
 // Webhook routes need raw body - mount before JSON parsing
 // Note: This is handled in the webhook route file with express.raw()
+
+// Mount Google OAuth routes (separate from API auth)
+app.use('/auth', googleOAuthRoutes);
 
 // Mount API v1 routes
 app.use('/api/v1/auth', authRoutes);

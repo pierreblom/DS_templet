@@ -1,9 +1,6 @@
-// Update account popup state based on login status
-async function updateAccountPopupState() {
-    if (typeof supabaseClient === 'undefined') return;
-
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    const user = session?.user;
+// Update account popup state based on login status (in-house auth)
+function updateAccountPopupState() {
+    const user = window.AuthManager ? AuthManager.getUser() : null;
 
     const loggedOutState = document.getElementById('loggedOutState');
     const loggedInState = document.getElementById('loggedInState');
@@ -22,39 +19,41 @@ async function updateAccountPopupState() {
 }
 
 // Override toggleAccountPopup to update state when opening
-window.toggleAccountPopup = async function (event) {
+window.toggleAccountPopup = function (event) {
     if (event) event.stopPropagation();
     const popup = document.getElementById('accountPopup');
 
     // Update popup content based on login status
-    await updateAccountPopupState();
+    updateAccountPopupState();
 
     popup.classList.toggle('show');
 };
 
 // Sign out handler
-async function handleSignOut() {
-    if (typeof supabaseClient === 'undefined') return;
-
-    const { error } = await supabaseClient.auth.signOut();
-    if (error) {
-        console.error('Error signing out:', error);
-        if (window.showNotification) window.showNotification('Failed to sign out: ' + error.message, 'error');
-        else alert('Failed to sign out: ' + error.message);
-    } else {
-        console.log('User signed out successfully');
-        await updateAccountPopupState();
-        // Close the popup
-        const popup = document.getElementById('accountPopup');
-        if (popup) popup.classList.remove('show');
-        // Optionally reload the page
-        window.location.reload();
+function handleSignOut() {
+    if (window.AuthManager) {
+        AuthManager.signOut();
     }
+    updateAccountPopupState();
+    // Close the popup
+    const popup = document.getElementById('accountPopup');
+    if (popup) popup.classList.remove('show');
+    // Reload the page
+    window.location.reload();
 }
 
 // Update state when auth state changes
-if (typeof supabaseClient !== 'undefined') {
-    supabaseClient.auth.onAuthStateChange((event, session) => {
+if (typeof window.AuthManager !== 'undefined') {
+    AuthManager.onAuthStateChange(() => {
         updateAccountPopupState();
+    });
+} else {
+    // AuthManager might load after this script — listen for DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.AuthManager) {
+            AuthManager.onAuthStateChange(() => {
+                updateAccountPopupState();
+            });
+        }
     });
 }

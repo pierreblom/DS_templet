@@ -1,7 +1,24 @@
-<!-- Products -->
-<section id="featured">
-    <h2>PRODUCTS</h2>
-    <div class="products" id="trail-favorites-container">
-        <!-- Products will be dynamically loaded here -->
-    </div>
-</section>
+<!-- Products - Featured collection: Grid -->
+<% const fc=siteSettings.featuredCollection || {}; const fcCols=fc.columns || 4; const fcMobileCols=fc.mobileColumns ||
+    2; const fcHGap=fc.horizontalGap ?? 20; const fcVGap=fc.verticalGap ?? 36; const fcPadTop=fc.paddingTop ?? 20; const
+    fcPadBot=fc.paddingBottom ?? 72; const fcWidth=fc.sectionWidth || 'page' ; const fcAlign=fc.alignment || 'left' ; %>
+    <section id="featured"
+        style="padding-top: <%= fcPadTop %>px; padding-bottom: <%= fcPadBot %>px; <%= fcWidth === 'page' ? 'max-width: 1400px; margin: 0 auto;' : 'max-width: none;' %> text-align: <%= fcAlign %>;">
+        <h2>PRODUCTS</h2>
+        <div class="products" id="trail-favorites-container"
+            style="display: grid; grid-template-columns: repeat(<%= fcCols %>, 1fr); column-gap: <%= fcHGap %>px; row-gap: <%= fcVGap %>px;">
+            <!-- Products will be dynamically loaded here -->
+        </div>
+    </section>
+    <% if (fc.customCSS) { %>
+        <style>
+            <%=fc.customCSS %>
+        </style>
+        <% } %>
+            <style>
+                @media (max-width: 768px) {
+                    #trail-favorites-container {
+                        grid-template-columns: repeat(<%=fcMobileCols %>, 1fr) !important;
+                    }
+                }
+            </style>
