@@ -29,15 +29,30 @@
             --bg-color: <%=siteSettings.theme.backgroundColor || '#F9F5F0' %>;
             --text-color: <%=siteSettings.theme.textColor || '#000000' %>;
             --header-bg: <%=siteSettings.theme.headerBackgroundColor || '#FFFFFF' %>;
-            --bg-color: <%=siteSettings.theme.backgroundColor || '#F9F5F0' %>;
-            --text-color: <%=siteSettings.theme.textColor || '#000000' %>;
-            --header-bg: <%=siteSettings.theme.headerBackgroundColor || '#FFFFFF' %>;
             --font-family-base: <%=siteSettings.theme.typography.fontFamily %>;
             --font-family-heading: <%=siteSettings.theme.typography.headingFontFamily %>;
             --border-radius: <%=siteSettings.theme.shapes.borderRadius %>;
             --global-padding: <%=siteSettings.theme.spacing.globalPadding %>;
             --global-margin: <%=siteSettings.theme.spacing.globalMargin %>;
         }
+
+        /* Color Schemes generated from settings */
+        <% if (siteSettings.theme.schemes) {
+            %><% Object.keys(siteSettings.theme.schemes).forEach(schemeId=> {
+                    %> .<%=schemeId %> {
+                        --bg-color: <%=siteSettings.theme.schemes[schemeId].background %>;
+                        --text-color: <%=siteSettings.theme.schemes[schemeId].text %>;
+                        --primary-color: <%=siteSettings.theme.schemes[schemeId].primary %>;
+                        --secondary-color: <%=siteSettings.theme.schemes[schemeId].secondary %>;
+                        background-color: var(--bg-color);
+                        color: var(--text-color);
+                    }
+
+                    <%
+                }) %><%
+        }
+
+        %>
 
         /* Override global styles with variables */
         body {

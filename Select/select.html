@@ -18,14 +18,23 @@
         :root {
             --primary-color: <%=siteSettings.theme.primaryColor %>;
             --secondary-color: <%=siteSettings.theme.secondaryColor %>;
-            --bg-color: <%=siteSettings.theme.backgroundColor || '#F9F5F0' %>;
-            --text-color: <%=siteSettings.theme.textColor || '#000000' %>;
-            --header-bg: <%=siteSettings.theme.headerBackgroundColor || '#FFFFFF' %>;
+            --bg-color: <%=siteSettings.selectPage?.backgroundColor || siteSettings.theme.backgroundColor || '#F9F5F0' %>;
+            --text-color: <%=siteSettings.selectPage?.textColor || siteSettings.theme.textColor || '#000000' %>;
+            --header-bg: <%=siteSettings.selectPage?.headerBackgroundColor || siteSettings.theme.headerBackgroundColor || '#FFFFFF' %>;
             --font-family-base: <%=siteSettings.theme.typography.fontFamily %>;
             --font-family-heading: <%=siteSettings.theme.typography.headingFontFamily %>;
             --border-radius: <%=siteSettings.theme.shapes.borderRadius %>;
             --global-padding: <%=siteSettings.theme.spacing.globalPadding %>;
             --global-margin: <%=siteSettings.theme.spacing.globalMargin %>;
+
+            --button-bg: <%=siteSettings.selectPage?.buttonColor || siteSettings.theme.primaryColor %>;
+            --button-text: <%=siteSettings.selectPage?.buttonTextColor || '#FFFFFF' %>;
+        }
+
+        /* Specific Select Page Button Reset */
+        .add-to-cart-btn {
+            background: var(--button-bg) !important;
+            color: var(--button-text) !important;
         }
 
         body {

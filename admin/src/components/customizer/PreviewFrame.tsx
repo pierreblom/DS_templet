@@ -2,11 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 
 interface PreviewFrameProps {
     settings: any;
+    activeTab?: string;
 }
 
-export default function PreviewFrame({ settings }: PreviewFrameProps) {
+export default function PreviewFrame({ settings, activeTab }: PreviewFrameProps) {
     const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop');
     const iframeRef = useRef<HTMLIFrameElement>(null);
+
+    // Determine the preview URL based on the active tab
+    const previewUrl = activeTab === 'selectPage' ? '/Select' : '/';
 
     // Send settings diffs securely to the store frontend
     useEffect(() => {
@@ -17,7 +21,7 @@ export default function PreviewFrame({ settings }: PreviewFrameProps) {
                 '*'
             );
         }
-    }, [settings]);
+    }, [settings, previewUrl]);
 
     return (
         <div className="flex flex-col h-full bg-gray-100 border-l border-gray-200">
@@ -55,7 +59,7 @@ export default function PreviewFrame({ settings }: PreviewFrameProps) {
                 >
                     <iframe
                         ref={iframeRef}
-                        src="/" // Defaults to the domain root
+                        src={previewUrl}
                         className="w-full h-full border-none"
                         title="Storefront Preview"
                     />

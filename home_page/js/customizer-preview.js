@@ -34,6 +34,32 @@ window.addEventListener('message', (event) => {
                 if (settings.theme.spacing.globalPadding) root.style.setProperty('--global-padding', settings.theme.spacing.globalPadding);
                 if (settings.theme.spacing.globalMargin) root.style.setProperty('--global-margin', settings.theme.spacing.globalMargin);
             }
+
+            if (settings.theme.schemes) {
+                let dynamicStyles = document.getElementById('dynamic-schemes');
+                if (!dynamicStyles) {
+                    dynamicStyles = document.createElement('style');
+                    dynamicStyles.id = 'dynamic-schemes';
+                    document.head.appendChild(dynamicStyles);
+                }
+
+                let cssString = '';
+                Object.keys(settings.theme.schemes).forEach(schemeId => {
+                    const scheme = settings.theme.schemes[schemeId];
+                    if (scheme) {
+                        cssString += `\n.${schemeId} {
+                            --bg-color: ${scheme.background};
+                            --text-color: ${scheme.text};
+                            --primary-color: ${scheme.primary};
+                            --secondary-color: ${scheme.secondary};
+                            background-color: var(--bg-color);
+                            color: var(--text-color);
+                        }`;
+                    }
+                });
+
+                dynamicStyles.textContent = cssString;
+            }
         }
 
         // --- 2. Update Layout Toggles (Sections visibility) ---
@@ -59,6 +85,9 @@ window.addEventListener('message', (event) => {
 
             const newsletter = document.querySelector('.newsletter');
             if (newsletter) newsletter.style.display = settings.layout.newsletterEnabled ? '' : 'none';
+
+            const slideshow = document.querySelector('.slideshow');
+            if (slideshow) slideshow.style.display = settings.layout.slideshowEnabled ? '' : 'none';
         }
 
         // --- 3. Update Hero Texts & Layout ---
@@ -95,10 +124,19 @@ window.addEventListener('message', (event) => {
                 }
             }
 
-            if (heroSection && settings.media && settings.media.heroSize) {
-                heroSection.style.backgroundSize = settings.media.heroSize;
-                if (settings.media.heroPosition) heroSection.style.backgroundPosition = settings.media.heroPosition;
-                if (settings.media.heroHeight) heroSection.style.minHeight = settings.media.heroHeight;
+            if (heroSection && settings.media) {
+                if (settings.media.heroBackground) {
+                    heroSection.style.backgroundImage = `url('${settings.media.heroBackground}')`;
+                }
+                if (settings.media.heroSize) {
+                    heroSection.style.backgroundSize = settings.media.heroSize;
+                }
+                if (settings.media.heroPosition) {
+                    heroSection.style.backgroundPosition = settings.media.heroPosition;
+                }
+                if (settings.media.heroHeight) {
+                    heroSection.style.minHeight = settings.media.heroHeight;
+                }
             }
         }
 
@@ -148,7 +186,21 @@ window.addEventListener('message', (event) => {
                 if (settings.header.fontSize) headerEl.style.fontSize = settings.header.fontSize;
 
                 const stickyClass = settings.header.stickyHeader === 'always' ? 'header-sticky' : (settings.header.stickyHeader === 'on-scroll-up' ? 'header-sticky-scroll' : '');
-                headerEl.className = stickyClass;
+
+                // Base classes
+                let classes = stickyClass;
+
+                // Color scheme selection
+                if (settings.header.colorScheme) {
+                    classes += ` ${settings.header.colorScheme}`;
+                }
+
+                // Transparent Home
+                if (settings.header.transparentHome && window.location.pathname === '/') {
+                    classes += ' header-transparent';
+                }
+
+                headerEl.className = classes.trim();
             }
 
             const headerNav = document.querySelector('header nav');
@@ -206,6 +258,85 @@ window.addEventListener('message', (event) => {
                     fcSection.style.maxWidth = 'none';
                 }
                 fcSection.style.textAlign = settings.featuredCollection.alignment || 'left';
+            }
+        }
+
+        // --- 8. Navigation Links ---
+        if (settings.navigation) {
+            if (settings.navigation.headerLinks) {
+                const navLinksContainer = document.querySelector('header .nav-links');
+                if (navLinksContainer) {
+                    navLinksContainer.innerHTML = settings.navigation.headerLinks.map(link =>
+                        `<li><a href="${link.url}">${link.label}</a></li>`
+                    ).join('');
+                }
+            }
+            if (settings.navigation.footerLinks) {
+                const footerLinksContainer = document.getElementById('terms-menu');
+                if (footerLinksContainer) {
+                    footerLinksContainer.innerHTML = settings.navigation.footerLinks.map(link =>
+                        `<a href="${link.url}">${link.label}</a>`
+                    ).join('');
+                }
+            }
+        }
+
+        // --- 9. Dynamic Content Lists (Customer Love, Value Props, Newsletter) ---
+        if (settings.content) {
+            if (settings.content.customerLove) {
+                const loveContainer = document.querySelector('.love-items');
+                if (loveContainer) {
+                    loveContainer.innerHTML = settings.content.customerLove.map(review => {
+                        const starsVal = parseInt(review.stars) || 5;
+                        const fullStars = '★'.repeat(starsVal);
+                        const emptyStars = '☆'.repeat(5 - starsVal);
+                        return `
+                        <div class="love-item">
+                            <div class="stars">${fullStars}${emptyStars}</div>
+                            <div class="review-title">${review.title || ''}</div>
+                            <div class="review-text">${review.text || ''}</div>
+                            <div class="reviewer"><strong>${review.reviewer || ''}</strong> - ${review.product || ''}</div>
+                        </div>`;
+                    }).join('');
+                }
+            }
+            if (settings.content.valueProps) {
+                const vpContainer = document.querySelector('.value-props-container');
+                if (vpContainer) {
+                    vpContainer.innerHTML = settings.content.valueProps.map(prop => `
+                        <div class="value-prop-item">
+                            <div class="value-prop-icon">${prop.icon || ''}</div>
+                            <h3>${prop.title || ''}</h3>
+                            <p>${prop.description || ''}</p>
+                        </div>`).join('');
+                }
+            }
+            if (settings.content.newsletter) {
+                const newsletterSection = document.querySelector('.newsletter');
+                if (newsletterSection) {
+                    const h2 = newsletterSection.querySelector('h2');
+                    const p = newsletterSection.querySelector('p');
+                    if (h2) h2.textContent = settings.content.newsletter.title || '';
+                    if (p) p.textContent = settings.content.newsletter.subtitle || '';
+                }
+            }
+        }
+
+        // --- 10. Header Icons Config ---
+        if (settings.header) {
+            const searchBtn = Array.from(document.querySelectorAll('.icon-btn')).find(btn => btn.getAttribute('aria-label') === 'Search');
+            const accountBtn = Array.from(document.querySelectorAll('.icon-btn')).find(btn => btn.getAttribute('aria-label') === 'Account');
+
+            if (searchBtn) {
+                const searchEnabled = settings.header.search?.enabled !== false;
+                searchBtn.style.display = searchEnabled ? 'flex' : 'none';
+                if (settings.header.search?.position) {
+                    searchBtn.style.order = settings.header.search.position === 'left' ? 1 : 3;
+                }
+            }
+            if (accountBtn) {
+                const accEnabled = settings.header.customerAccount !== false;
+                accountBtn.style.display = accEnabled ? 'flex' : 'none';
             }
         }
     }

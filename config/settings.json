@@ -5,6 +5,32 @@
     "backgroundColor": "#f9f5f1",
     "textColor": "#000000",
     "headerBackgroundColor": "#ffffff",
+    "schemes": {
+      "scheme-1": {
+        "background": "#FFFFFF",
+        "text": "#000000",
+        "primary": "#C88E75",
+        "secondary": "#A0522D"
+      },
+      "scheme-2": {
+        "background": "#F9F5F0",
+        "text": "#333333",
+        "primary": "#A0522D",
+        "secondary": "#8B4513"
+      },
+      "scheme-3": {
+        "background": "#222222",
+        "text": "#FFFFFF",
+        "primary": "#FFFFFF",
+        "secondary": "#CCCCCC"
+      },
+      "scheme-4": {
+        "background": "#C88E75",
+        "text": "#FFFFFF",
+        "primary": "#111111",
+        "secondary": "#222222"
+      }
+    },
     "typography": {
       "fontFamily": "Outfit, sans-serif",
       "headingFontFamily": "Playfair Display, serif"
@@ -212,5 +238,12 @@
     "paddingTop": 0,
     "paddingBottom": 0,
     "customCSS": ""
+  },
+  "selectPage": {
+    "backgroundColor": "#faf5f1",
+    "headerBackgroundColor": "#ffffff",
+    "textColor": "",
+    "buttonColor": "",
+    "buttonTextColor": "#000000"
   }
 }

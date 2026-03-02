@@ -73,6 +73,13 @@ try {
             navigation: "large-arrows", pagination: "dots", colorScheme: "scheme-1",
             autoRotate: false, autoRotateSpeed: 5, width: "full", height: "medium",
             paddingTop: 0, paddingBottom: 0, customCSS: ""
+        },
+        selectPage: {
+            backgroundColor: "",
+            headerBackgroundColor: "",
+            textColor: "",
+            buttonColor: "",
+            buttonTextColor: ""
         }
     };
 }
